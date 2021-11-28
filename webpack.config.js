@@ -8,4 +8,8 @@ module.exports = {
   },
 	devtool: 'source-map',	
 
+devServer: {
+	hot: false,
+}
+
 }
