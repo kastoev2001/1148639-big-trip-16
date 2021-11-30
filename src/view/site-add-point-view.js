@@ -1,5 +1,5 @@
 export function createAddPointTemplate() {
-	return (`
+  return (`
 	<ul class="trip-events__list">
 	<li class="trip-events__item">
 		<form class="event event--edit" action="#" method="post">
@@ -163,5 +163,5 @@ export function createAddPointTemplate() {
 			</section>
 		</form>
 	</li>
-	`)
+	`);
 }

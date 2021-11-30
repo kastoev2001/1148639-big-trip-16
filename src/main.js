@@ -1,11 +1,11 @@
-import { createMenuTemplate } from "./view/site-menu-view";
-import { createFilterTemplate } from "./view/site-filter-view"
-import { createSortingTemplate } from "./view/site-sorting-view";
-import { createContentTemplate } from "./view/site-content-view";
-import { createEditPointTemplate } from "./view/site-edit-point-view";
-import { createPointTemplate } from "./view/site-point-view";
+import { createMenuTemplate } from './view/site-menu-view';
+import { createFilterTemplate } from './view/site-filter-view';
+import { createSortingTemplate } from './view/site-sorting-view';
+import { createContentTemplate } from './view/site-content-view';
+import { createEditPointTemplate } from './view/site-edit-point-view';
+import { createPointTemplate } from './view/site-point-view';
 
-import { renderTemplate, renderPosition } from "./render";
+import { renderTemplate, renderPosition } from './render';
 
 const tripMainElement = document.querySelector('.trip-main');
 const tripControlsNavigationElement = tripMainElement.querySelector('.trip-controls__navigation');
@@ -26,6 +26,6 @@ const tripEventsListElement = pageMainElement.querySelector('.trip-events__list'
 renderTemplate(tripEventsListElement, createEditPointTemplate(), renderPosition.BEFOREEND);
 
 for (let i = 1; i < COUNT_LIST; i++) {
-	renderTemplate(tripEventsListElement, createPointTemplate(), renderPosition.BEFOREEND);
+  renderTemplate(tripEventsListElement, createPointTemplate(), renderPosition.BEFOREEND);
 
 }
