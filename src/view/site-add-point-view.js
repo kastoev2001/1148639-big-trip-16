@@ -1,4 +1,4 @@
-export function createAddPointTemplate() {
+export const createAddPointTemplate = function () {
   return (`
 	<ul class="trip-events__list">
 	<li class="trip-events__item">
@@ -164,4 +164,4 @@ export function createAddPointTemplate() {
 		</form>
 	</li>
 	`);
-}
+};
