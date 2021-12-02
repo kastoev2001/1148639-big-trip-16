@@ -1,19 +1,23 @@
 
+import {nanoid} from '../nanoid';
 import dayjs from 'dayjs';
+import { getRandomInteger } from '../utils';
 
-const getRandomInteger = (first = 0, last = 1) => {
-  const lower = Math.ceil(Math.min(first, last));
-  const upper = Math.floor(Math.max(first, last));
+const COUNT_PICS = 5;
 
-  return Math.floor(lower + Math.random() * (upper - lower + 1));
-};
-function generateDescription() {
+// const getRandomInteger = (first = 0, last = 1) => {
+//   const lower = Math.ceil(Math.min(first, last));
+//   const upper = Math.floor(Math.max(first, last));
+
+//   return Math.floor(lower + Math.random() * (upper - lower + 1));
+// };
+const generateDescription = function () {
   const descriptions = [
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-    'Cras aliquet varius magna, non porta ligula feugiat eget.',
-    'Fusce tristique felis at fermentum pharetra.',
-    'Aliquam id orci ut lectus varius viverra.',
-    'Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.'
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit', null,
+    'Cras aliquet varius magna, non porta ligula feugiat eget.', null,
+    'Fusce tristique felis at fermentum pharetra.', null,
+    'Aliquam id orci ut lectus varius viverra.', null,
+    'Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.', null
   ];
 
   const randomIndex = getRandomInteger(0, descriptions.length - 1);
@@ -21,13 +25,18 @@ function generateDescription() {
   return descriptions[randomIndex];
 };
 
-function renserPics() {
-  let requestUrl = `http://picsum.photos/248/152?${(10 * Math.random())}`;
+const renserPics =function () {
+  const requestUrl = [];
 
+  for (let i = 0; i < COUNT_PICS; i++) {
+
+    requestUrl.push(`http://picsum.photos/248/152?${(Math.floor(10 * Math.random()))}`);
+
+  }
   return requestUrl;
 };
 
-function generateType() {
+const generateType = function () {
   const waypoints = [
     'Taxi',
     'Bus',
@@ -45,124 +54,142 @@ function generateType() {
   return waypoints[randomIndex];
 };
 
-function generateCities() {
+const generateCities = function () {
   const cities = [
-    'Amsterdam', 
-    'Chamonix', 
-    'Moscow', 
-    'Obninsk', 
+    'Amsterdam',
+    'Chamonix',
+    'Moscow',
+    'Obninsk',
     'New-York'
   ];
- 
+
   const randomIndex = getRandomInteger(0, cities.length - 1);
 
   return cities[randomIndex];
 };
- 
-function generateService() {
-  const services = [{
-			services: ['Add meal', 'Add luggage'],
-			prices: [20, 30]
-		},{
-			services: null,
-			prices: null
 
-		},{
-			services: ['Switch to comfort'],
-				prices: [80]
-	}];
-	
+const generateService = function () {
+  const services = [[
+    {
+      id: nanoid(),
+      service: 'Add luggage',
+      price: 30,
+      isChecked: Boolean(getRandomInteger())
+    },{
+      id: nanoid(),
+      service: 'Switch to comfort class',
+      price: 100,
+      isChecked: Boolean(getRandomInteger())
+    },{
+      id: nanoid(),
+      service: 'choose seats',
+      price: 5,
+      isChecked: Boolean(getRandomInteger())
+    }
+
+  ], null ,[{
+    id: nanoid(),
+    service: 'Travel by train',
+    price: 40,
+    isChecked: Boolean(getRandomInteger())
+  },{
+    id: nanoid(),
+    service: 'Add meal',
+    price: 15,
+    isChecked: Boolean(getRandomInteger())
+  },{
+    id: nanoid(),
+    service: 'add luggage',
+    price: 30,
+    isChecked: Boolean(getRandomInteger())
+  },{
+    id: nanoid(),
+    service: 'Travel by train',
+    price: 40,
+    isChecked: Boolean(getRandomInteger())
+  }
+  ]];
+
   const randomIndex = getRandomInteger(0, services.length - 1);
-	return services[randomIndex];
+  return services[randomIndex];
 };
 
-function generateDate() {
-	const startDaysGap = 3;
-	const startHoursGap = 13
-	const startMinutesGap = 35;
+const generateDate = function () {
+  const startDaysGap = 3;
+  const startHoursGap = 13;
+  const startMinutesGap = 35;
 
+  const generateStartDate = function () {
 
-	function generateStartDate() {
-	
-		const daysGap = getRandomInteger(0, startDaysGap);
-		const hoursGap = getRandomInteger(0, startHoursGap);
-		const minutesGap = getRandomInteger(0, startMinutesGap);
+    const daysGap = getRandomInteger(-startDaysGap, startDaysGap);
+    const hoursGap = getRandomInteger(0, startHoursGap);
+    const minutesGap = getRandomInteger(0, startMinutesGap);
 
-		const resultStartDate = dayjs()
-		.add(daysGap, 'day')
-		.add(hoursGap, 'hour')
-		.add(minutesGap, 'minute');
-	
-		return resultStartDate;
-	};
-	
-	function generateEndDate() {
-		const endDaysGap = 7;
-		const endHoursGap = 24;
-		const endMinutesGap = 60;
+    const resultStartDate = dayjs()
+      .add(daysGap, 'day')
+      .add(hoursGap, 'hour')
+      .add(minutesGap, 'minute');
 
-		const daysGap = getRandomInteger(startDaysGap, endDaysGap);
-		const hoursGap = getRandomInteger(startHoursGap, endHoursGap);
-		const minutesGap = getRandomInteger(startMinutesGap, endMinutesGap);
+    return resultStartDate;
+  };
 
-		const resultEndDate = dayjs()
-		.add(daysGap, 'day')
-		.add(hoursGap, 'hour')
-		.add(minutesGap, 'minute');
+  const generateEndDate = function () {
+    const endDaysGap = 7;
+    const endHoursGap = 24;
+    const endMinutesGap = 60;
 
-		return resultEndDate;
-	}
+    const daysGap = getRandomInteger(startDaysGap, endDaysGap);
+    const hoursGap = getRandomInteger(startHoursGap, endHoursGap);
+    const minutesGap = getRandomInteger(startMinutesGap, endMinutesGap);
 
-	const startDate = generateStartDate();
-	const endDate = generateEndDate();
+    const resultEndDate = dayjs()
+      .add(daysGap, 'day')
+      .add(hoursGap, 'hour')
+      .add(minutesGap, 'minute');
 
-	const gapDate = {
-		day: endDate.diff(startDate, 'day'),
-		hour: endDate.diff(startDate, 'hour') % 24,
-		minute: endDate.diff(startDate, 'minute') % 60
-	};
+    return resultEndDate;
+  };
 
-	return {
-		startDate: {
-			day: startDate.date(),
-			hour: startDate.hour(),
-			minute: startDate.minute(),
-		},
-		endDate: {
-			day: endDate.date(),
-			hour: endDate.hour(),
-			minute: endDate.minute(),
-		},
-		gapDate
-	}
+  const startDate = generateStartDate();
+  const endDate = generateEndDate();
 
-}
+  const gapDate = {
+    day: endDate.diff(startDate, 'day'),
+    hour: endDate.diff(startDate, 'hour') % 24,
+    minute: endDate.diff(startDate, 'minute') % 60
+  };
+
+  return {
+    startDate,
+    endDate,
+    gapDate
+  };
+};
 
 export const generatePoint = () => ({
   pics: renserPics(),
   type: generateType(),
   city: generateCities(),
-	services: generateService(),
+  services: generateService(),
   description: generateDescription(),
   dueDate: generateDate(),
   get price() {
-		const initialPrice = getRandomInteger(20, 100);
-		let overallPrice = initialPrice;
-		if (this.services.prices !== null) {
-			this.services.prices.forEach(elem => {
-				overallPrice += elem;
-			})
-			
-			return {
-				initialPrice,
-				overallPrice
-			};
-		} else {
-			return {
-				initialPrice,
-				overallPrice: null
-			};
-		}
-	},
+    const initialPrice = getRandomInteger(20, 100);
+    let overallPrice = initialPrice;
+    if (this.services !== null) {
+      this.services.map((element) => {
+        overallPrice += element.price;
+      });
+      return {
+        initialPrice,
+        overallPrice
+      };
+    } else {
+      return {
+        initialPrice,
+        overallPrice: null
+      };
+    }
+  },
   isFavorites: Boolean(getRandomInteger()),
-});      
+});
