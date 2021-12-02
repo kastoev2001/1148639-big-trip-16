@@ -61,8 +61,8 @@ function generateCities() {
  
 function generateService() {
   const services = [{
-			services: ['Order Uber', 'Add luggage'],
-			prices: [20, 50]
+			services: ['Add meal', 'Add luggage'],
+			prices: [20, 30]
 		},{
 			services: null,
 			prices: null
@@ -138,8 +138,6 @@ function generateDate() {
 
 }
 
- 
-
 export const generatePoint = () => ({
   pics: renserPics(),
   type: generateType(),
@@ -148,20 +146,20 @@ export const generatePoint = () => ({
   description: generateDescription(),
   dueDate: generateDate(),
   get price() {
-		const price = getRandomInteger(20, 100);
-		let overallPrice = price;
+		const initialPrice = getRandomInteger(20, 100);
+		let overallPrice = initialPrice;
 		if (this.services.prices !== null) {
 			this.services.prices.forEach(elem => {
 				overallPrice += elem;
 			})
 			
 			return {
-				price,
+				initialPrice,
 				overallPrice
 			};
 		} else {
 			return {
-				price,
+				initialPrice,
 				overallPrice: null
 			};
 		}
