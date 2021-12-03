@@ -1,7 +1,7 @@
-export function createContentTemplate() {
+export const createContentTemplate = function () {
   return (`
 	<ul class="trip-events__list">
 
 	</ul>
 	`);
-}
+};
