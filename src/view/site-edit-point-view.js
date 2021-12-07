@@ -1,46 +1,78 @@
+import { createElement } from '../render';
+
 const createEditPointDescriptionTemplate = function (description, pics) {
-  return `${description
-    ? `<section class="event__section  event__section--destination">
+  return (
+    `${description
+      ? `<section class="event__section  event__section--destination">
 		<h3 class="event__section-title  event__section-title--destination">Destination</h3>
 		<p class="event__destination-description">${description}</p>
 		${`<div class="event__photos-container">
 			<div class="event__photos-tape">
-			${pics.map((link) =>`<img class="event__photo" src="${link}" alt="Event photo">`).join('')}
+			${pics.map((link) => `<img class="event__photo" src="${link}" alt="Event photo">`).join('')}
 			</div>
 			</div>`}
 			</section>`
-    : ''}`;
+      : ''}`
+  );
 };
 
 const createEditPointServicesTemplate = function (services) {
 
-  return `${services
-    ? `<section class="event__section  event__section--offers">
+  return (
+    `${services
+      ? `<section class="event__section  event__section--offers">
 	<h3 class="event__section-title  event__section-title--offers">Offers</h3>
 	<div class="event__available-offers">
-	${services.map((element) => `<div class="event__offer-selector">
-	<input class="event__offer-checkbox  visually-hidden" id="${element.id}" type="checkbox" name="event-offer-comfort" ${element.isChecked ? 'checked' : ''}>
-	<label class="event__offer-label" for="${element.id}">
-		<span class="event__offer-title">${element.service}</span>
-		&plus;&euro;&nbsp;
-		<span class="event__offer-price">${element.price}</span>
-	</label>
-</div>`).join('')}
+	  ${services.map((servicesElements) => {
+
+      const serviceId = servicesElements.id;
+      const service = servicesElements.service;
+      const price = servicesElements.price;
+      const isChecked = servicesElements.isChecked;
+
+      return (
+        `<div class="event__offer-selector">
+	         <input class="event__offer-checkbox  visually-hidden" id="${serviceId}" type="checkbox" name="event-offer-comfort" ${isChecked ? 'checked' : ''}>
+	         <label class="event__offer-label" for="${serviceId}">
+		       <span class="event__offer-title">${service}</span>
+		       &plus;&euro;&nbsp;
+		       <span class="event__offer-price">${price}</span>
+	       </label>
+       </div>`
+      );
+    })
+      .join('')}
 	</div>
 	</section>`
-    : ''}`;
+      : ''}`
+  );
 };
 
-export const createEditPointTemplate = function (point = {}) {
+const BLANK_POINT = {
+  type: 'Taxi',
+  city: 'Amsterdam',
+  price: null,
+  description: null,
+  services: {
+    id: 1,
+    service: 'Add luggage',
+    price: 30,
+    isChecked: false
+  },
+  pics: null,
+  dueDate: null
+};
+
+const createEditPointTemplate = function (point = {}) {
 
   const {
-    type = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'],
+    type,
     city,
     price,
     description,
     services,
     pics,
-    dueDate = null
+    dueDate
   } = point;
 
   const startDate = dueDate.startDate.format('DD/MM/YY hh:mm');
@@ -51,8 +83,8 @@ export const createEditPointTemplate = function (point = {}) {
 
   const initialPrice = price.initialPrice;
 
-  return (`
-	<li class="trip-events__item">
+  return (
+    `<li class="trip-events__item">
 	<form class="event event--edit" action="#" method="post">
 		<header class="event__header">
 			<div class="event__type-wrapper">
@@ -149,16 +181,35 @@ export const createEditPointTemplate = function (point = {}) {
 			</button>
 		</header>
 		<section class="event__details">
-			${services !== null
-      ? `			<section class="event__section  event__section--offers">
-				<h3 class="event__section-title  event__section-title--offers">Offers</h3>
-				<div class="event__available-offers">
-				${servicesTemplate}
-				</div>
-			</section>`
-      : ''}
+			${servicesTemplate}
 			${descriptionTemplate}
 		</section>
 	</form>
-</li>`);
+  </li>`
+  );
 };
+
+export default class EditPointWiew {
+  #element = null;
+  #point = null;
+
+  constructor(point = BLANK_POINT) {
+    this.#point = point;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+    return this.#element;
+  }
+
+  get template() {
+    return createEditPointTemplate(this.#point);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+
+}
