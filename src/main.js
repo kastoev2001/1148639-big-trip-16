@@ -41,7 +41,6 @@ const renderPoint = (EventList, point) => {
   const pointEditComponent = new EditPointView(point);
 
   const pointOpen = pointComponent.element.querySelector('.event__rollup-btn');
-  const pointEditClose = pointEditComponent.element.querySelector('.event__rollup-btn');
   const onSubmitPointEdit = pointEditComponent.element.querySelector('form');
 
   const replacePointToForm = () => {
@@ -52,24 +51,13 @@ const renderPoint = (EventList, point) => {
     EventList.element.replaceChild(pointComponent.element, pointEditComponent.element);
   };
 
-  const onEscKeyDown = (evt) => {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
-      evt.preventDefault();
-      replaceFormToPoint();
-    }
-    document.removeEventListener('keydown', onEscKeyDown);
-  };
-
   pointOpen.addEventListener('click', () => {
     replacePointToForm();
-    document.addEventListener('keydown', onEscKeyDown);
   });
 
-  pointEditClose.addEventListener('click', replaceFormToPoint);
   onSubmitPointEdit.addEventListener('submit', (evt) => {
     evt.preventDefault();
     replaceFormToPoint();
-    document.removeEventListener('keydown', onEscKeyDown);
   });
 
   render(EventList.element, pointComponent.element, RenderPosition.BEFOREEND);
