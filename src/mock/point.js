@@ -1,18 +1,13 @@
 
-import {nanoid} from '../nanoid';
 import dayjs from 'dayjs';
 import { getRandomInteger } from '../utils';
+import {TYPE_POINT} from '../const';
 
 const COUNT_PICS = 5;
 
-// const getRandomInteger = (first = 0, last = 1) => {
-//   const lower = Math.ceil(Math.min(first, last));
-//   const upper = Math.floor(Math.max(first, last));
-
-//   return Math.floor(lower + Math.random() * (upper - lower + 1));
-// };
 const generateDescription = function () {
-  const descriptions = [
+
+  const DESCRIPTIONS = [
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit', null,
     'Cras aliquet varius magna, non porta ligula feugiat eget.', null,
     'Fusce tristique felis at fermentum pharetra.', null,
@@ -20,9 +15,9 @@ const generateDescription = function () {
     'Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.', null
   ];
 
-  const randomIndex = getRandomInteger(0, descriptions.length - 1);
+  const randomIndex = getRandomInteger(0,DESCRIPTIONS.length - 1);
 
-  return descriptions[randomIndex];
+  return DESCRIPTIONS[randomIndex];
 };
 
 const renserPics =function () {
@@ -37,25 +32,15 @@ const renserPics =function () {
 };
 
 const generateType = function () {
-  const waypoints = [
-    'Taxi',
-    'Bus',
-    'Train',
-    'Ship',
-    'Drive',
-    'Flight',
-    'Check-in',
-    'Sightseeing',
-    'Restaurant'
-  ];
 
-  const randomIndex = getRandomInteger(0, waypoints.length - 1);
+  const randomIndex = getRandomInteger(0, TYPE_POINT.length - 1);
 
-  return waypoints[randomIndex];
+  return TYPE_POINT[randomIndex];
 };
 
 const generateCities = function () {
-  const cities = [
+
+  const CITIES = [
     'Amsterdam',
     'Chamonix',
     'Moscow',
@@ -63,48 +48,76 @@ const generateCities = function () {
     'New-York'
   ];
 
-  const randomIndex = getRandomInteger(0, cities.length - 1);
+  const randomIndex = getRandomInteger(0, CITIES.length - 1);
 
-  return cities[randomIndex];
+  return CITIES[randomIndex];
 };
 
 const generateService = function () {
   const services = [[
     {
-      id: nanoid(),
-      service: 'Add luggage',
+      id: null,
+      get service() {
+        this.id = 'Add luggage';
+
+        return 'Add luggage';
+      },
       price: 30,
       isChecked: Boolean(getRandomInteger())
     },{
-      id: nanoid(),
-      service: 'Switch to comfort class',
+      id: null,
+      get service()  {
+        this.id = 'Switch to comfort class';
+
+        return 'Switch to comfort class';
+      },
       price: 100,
       isChecked: Boolean(getRandomInteger())
     },{
-      id: nanoid(),
-      service: 'choose seats',
+      id: null,
+      get service()  {
+        this.id = 'choose seats';
+
+        return 'choose seats';
+      },
       price: 5,
       isChecked: Boolean(getRandomInteger())
     }
 
-  ], null ,[{
-    id: nanoid(),
-    service: 'Travel by train',
+  ], null, [{
+    id: null,
+    get service() {
+      this.id ='Travel by train';
+
+      return 'Travel by train';
+    },
     price: 40,
     isChecked: Boolean(getRandomInteger())
   },{
-    id: nanoid(),
-    service: 'Add meal',
+    id: null,
+    get service() {
+      this.id =  'Add meal';
+
+      return  'Add meal';
+    },
     price: 15,
     isChecked: Boolean(getRandomInteger())
   },{
-    id: nanoid(),
-    service: 'add luggage',
+    id: null,
+    get service()  {
+      this.id = 'add luggage';
+
+      return 'add luggage';
+    },
     price: 30,
     isChecked: Boolean(getRandomInteger())
   },{
-    id: nanoid(),
-    service: 'Travel by train',
+    id: null,
+    get service()  {
+      this.id = 'Travel by train';
+
+      return 'Travel by train';
+    },
     price: 40,
     isChecked: Boolean(getRandomInteger())
   }
@@ -115,15 +128,17 @@ const generateService = function () {
 };
 
 const generateDate = function () {
-  const startDaysGap = 3;
-  const startHoursGap = 13;
-  const startMinutesGap = 35;
+  const StartDate = {
+    DAY: 3,
+    HOUR: 13,
+    MINUTE: 35
+  };
 
   const generateStartDate = function () {
 
-    const daysGap = getRandomInteger(-startDaysGap, startDaysGap);
-    const hoursGap = getRandomInteger(0, startHoursGap);
-    const minutesGap = getRandomInteger(0, startMinutesGap);
+    const daysGap = getRandomInteger(-StartDate.DAY, StartDate.DAY);
+    const hoursGap = getRandomInteger(0, StartDate.HOUR);
+    const minutesGap = getRandomInteger(0, StartDate.MINUTE);
 
     const resultStartDate = dayjs()
       .add(daysGap, 'day')
@@ -134,13 +149,15 @@ const generateDate = function () {
   };
 
   const generateEndDate = function () {
-    const endDaysGap = 7;
-    const endHoursGap = 24;
-    const endMinutesGap = 60;
+    const EndDate = {
+      DAY: 7,
+      HOUR: 24,
+      MINUTE: 60
+    };
 
-    const daysGap = getRandomInteger(startDaysGap, endDaysGap);
-    const hoursGap = getRandomInteger(startHoursGap, endHoursGap);
-    const minutesGap = getRandomInteger(startMinutesGap, endMinutesGap);
+    const daysGap = getRandomInteger(StartDate.DAY, EndDate.DAY);
+    const hoursGap = getRandomInteger(StartDate.HOUR, EndDate.HOUR);
+    const minutesGap = getRandomInteger(StartDate.MINUTE, EndDate.MINUTE);
 
     const resultEndDate = dayjs()
       .add(daysGap, 'day')
@@ -166,30 +183,35 @@ const generateDate = function () {
   };
 };
 
-export const generatePoint = () => ({
-  pics: renserPics(),
-  type: generateType(),
-  city: generateCities(),
-  services: generateService(),
-  description: generateDescription(),
-  dueDate: generateDate(),
-  get price() {
-    const initialPrice = getRandomInteger(20, 100);
-    let overallPrice = initialPrice;
-    if (this.services !== null) {
-      this.services.map((element) => {
-        overallPrice += element.price;
-      });
-      return {
-        initialPrice,
-        overallPrice
-      };
-    } else {
-      return {
-        initialPrice,
-        overallPrice: null
-      };
-    }
-  },
-  isFavorites: Boolean(getRandomInteger()),
-});
+export const generatePoint = () => {
+  const initialPrice = getRandomInteger(20, 100);
+
+  return {
+    pics: renserPics(),
+    type: generateType(),
+    city: generateCities(),
+    services: generateService(),
+    description: generateDescription(),
+    dueDate: generateDate(),
+    get price() {
+      let overallPrice = initialPrice;
+      if (this.services !== null) {
+        this.services.map((services) => {
+          if (services.isChecked) {
+            overallPrice += services.price;
+          }
+        });
+        return {
+          initialPrice,
+          overallPrice
+        };
+      } else {
+        return {
+          initialPrice,
+          overallPrice: null
+        };
+      }
+    },
+    isFavorite: Boolean(getRandomInteger()),
+  };
+};
