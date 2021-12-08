@@ -1,22 +1,22 @@
 export const RenderPosition = {
-  BEFOREBEGIN: 'beforebegin',
-  AFTERBEGIN: 'afterbegin',
-  BEFOREEND: 'beforeend',
-  AFTEREND: 'afterend',
+  BEFORE_BEGIN: 'beforebegin',
+  AFTER_BEGIN: 'afterbegin',
+  BEFORE_END: 'beforeend',
+  AFTER_END: 'afterend',
 };
 
 export const render = (container, element, place) => {
   switch (place) {
-    case RenderPosition.BEFOREBEGIN:
+    case RenderPosition.BEFORE_BEGIN:
       container.before(element);
       break;
-    case RenderPosition.AFTERBEGIN:
+    case RenderPosition.AFTER_BEGIN:
       container.prepend(element);
       break;
-    case RenderPosition.BEFOREEND:
+    case RenderPosition.BEFORE_END:
       container.append(element);
       break;
-    case RenderPosition.AFTEREND:
+    case RenderPosition.AFTER_END:
       container.after(element);
       break;
   }
