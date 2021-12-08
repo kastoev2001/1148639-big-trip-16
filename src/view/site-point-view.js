@@ -1,10 +1,26 @@
-const createServicesTemplate =function (services) {
+import { createElement } from '../render';
 
-  return services.map((element) => `<li class="event__offer">
-	<span class="event__offer-title">${element.service}</span>
-		&plus;&euro;&nbsp;
-	<span class="event__offer-price">${element.price}</span>
-</li>`).join('');
+const createServicesTemplate =function (services) {
+  return services.map((servicesElements) => {
+
+    const isChecked = servicesElements.isChecked;
+
+    if (!isChecked) {
+      return null;
+    }
+
+    const service = servicesElements.service;
+    const price = servicesElements.price;
+
+
+    return `<li class="event__offer">
+		<span class="event__offer-title">${service}</span>
+			&plus;&euro;&nbsp;
+		<span class="event__offer-price">${price}</span>
+    </li>`;
+  })
+    .filter((service) => service !== null)
+    .join('');
 };
 
 export const createPointTemplate = function (point) {
@@ -34,8 +50,8 @@ export const createPointTemplate = function (point) {
     : price.initialPrice;
 
 
-  return (`
-<li class="trip-events__item">
+  return (
+    `<li class="trip-events__item">
 <div class="event">
 	<time class="event__date" datetime="2019-03-18">${date}</time>
 	<div class="event__type">
@@ -69,6 +85,31 @@ export const createPointTemplate = function (point) {
 		<span class="visually-hidden">Open event</span>
 	</button>
 </div>
-</li>
-`);
+</li>`
+  );
 };
+
+export default class PointView {
+  #element = null;
+  #point = null;
+
+  constructor(point) {
+    this.#point = point;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.tempalte);
+    }
+
+    return this.#element;
+  }
+
+  get tempalte() {
+    return createPointTemplate(this.#point);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
