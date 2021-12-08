@@ -257,26 +257,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "createElement": () => (/* binding */ createElement)
 /* harmony export */ });
 const RenderPosition = {
-  BEFOREBEGIN: 'beforebegin',
-  AFTERBEGIN: 'afterbegin',
-  BEFOREEND: 'beforeend',
-  AFTEREND: 'afterend'
+  BEFORE_BEGIN: 'beforebegin',
+  AFTER_BEGIN: 'afterbegin',
+  BEFORE_END: 'beforeend',
+  AFTER_END: 'afterend'
 };
 const render = (container, element, place) => {
   switch (place) {
-    case RenderPosition.BEFOREBEGIN:
+    case RenderPosition.BEFORE_BEGIN:
       container.before(element);
       break;
 
-    case RenderPosition.AFTERBEGIN:
+    case RenderPosition.AFTER_BEGIN:
       container.prepend(element);
       break;
 
-    case RenderPosition.BEFOREEND:
+    case RenderPosition.BEFORE_END:
       container.append(element);
       break;
 
-    case RenderPosition.AFTEREND:
+    case RenderPosition.AFTER_END:
       container.after(element);
       break;
   }
@@ -302,8 +302,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "isFuture": () => (/* binding */ isFuture),
 /* harmony export */   "isPast": () => (/* binding */ isPast),
 /* harmony export */   "isPointExpiringToday": () => (/* binding */ isPointExpiringToday),
-/* harmony export */   "getSortTime": () => (/* binding */ getSortTime),
-/* harmony export */   "getSortPoints": () => (/* binding */ getSortPoints)
+/* harmony export */   "sortPoints": () => (/* binding */ sortPoints)
 /* harmony export */ });
 /* harmony import */ var dayjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! dayjs */ "./node_modules/dayjs/dayjs.min.js");
 /* harmony import */ var dayjs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(dayjs__WEBPACK_IMPORTED_MODULE_0__);
@@ -316,12 +315,7 @@ const getRandomInteger = (first = 0, last = 1) => {
 const isFuture = dueDate => dueDate && dayjs__WEBPACK_IMPORTED_MODULE_0___default()().isBefore(dueDate, 'D');
 const isPast = dueDate => dueDate && dayjs__WEBPACK_IMPORTED_MODULE_0___default()().isAfter(dueDate, 'D');
 const isPointExpiringToday = dueDate => dueDate && dayjs__WEBPACK_IMPORTED_MODULE_0___default()(dueDate).isSame(dayjs__WEBPACK_IMPORTED_MODULE_0___default()(), 'D');
-const getSortTime = (a, b) => b - a;
-const getSortPoints = function (points) {
-  const sortPointsDates = points.map(date => date.dueDate.startDate).sort((a, b) => b - a);
-  const sortPoints = sortPointsDates.map(date => points.filter(point => point.dueDate.startDate === date)[0]);
-  return sortPoints;
-};
+const sortPoints = data => [...data].sort((a, b) => b.dueDate.startDate - a.dueDate.startDate);
 
 /***/ }),
 
@@ -1218,19 +1212,19 @@ const COUNT_LIST = 5;
 const points = Array.from({
   length: COUNT_LIST
 }, _mock_point__WEBPACK_IMPORTED_MODULE_8__.generatePoint);
-const sortPoints = (0,_utils__WEBPACK_IMPORTED_MODULE_10__.getSortPoints)(points);
+const sortedPoints = (0,_utils__WEBPACK_IMPORTED_MODULE_10__.sortPoints)(points);
 const filters = (0,_mock_filter__WEBPACK_IMPORTED_MODULE_7__.generateFilter)(points);
 const tripMainElement = document.querySelector('.trip-main');
 const tripControlsNavigationElement = tripMainElement.querySelector('.trip-controls__navigation');
 const tripControlsFiltersElements = tripMainElement.querySelector('.trip-controls__filters');
-(0,_render__WEBPACK_IMPORTED_MODULE_9__.render)(tripControlsNavigationElement, new _view_site_menu_view__WEBPACK_IMPORTED_MODULE_1__["default"]().element, _render__WEBPACK_IMPORTED_MODULE_9__.RenderPosition.BEFOREEND);
-(0,_render__WEBPACK_IMPORTED_MODULE_9__.render)(tripControlsFiltersElements, new _view_site_filter_view__WEBPACK_IMPORTED_MODULE_2__["default"](filters).element, _render__WEBPACK_IMPORTED_MODULE_9__.RenderPosition.BEFOREEND);
+(0,_render__WEBPACK_IMPORTED_MODULE_9__.render)(tripControlsNavigationElement, new _view_site_menu_view__WEBPACK_IMPORTED_MODULE_1__["default"]().element, _render__WEBPACK_IMPORTED_MODULE_9__.RenderPosition.BEFORE_END);
+(0,_render__WEBPACK_IMPORTED_MODULE_9__.render)(tripControlsFiltersElements, new _view_site_filter_view__WEBPACK_IMPORTED_MODULE_2__["default"](filters).element, _render__WEBPACK_IMPORTED_MODULE_9__.RenderPosition.BEFORE_END);
 const tripEventsElement = new _view_site_trip_events_view__WEBPACK_IMPORTED_MODULE_4__["default"]();
 const pageMainElement = document.querySelector('.page-main');
 const tripEvents = pageMainElement.querySelector('.trip-events');
-(0,_render__WEBPACK_IMPORTED_MODULE_9__.render)(tripEvents, new _view_site_sorting_view__WEBPACK_IMPORTED_MODULE_3__["default"]().element, _render__WEBPACK_IMPORTED_MODULE_9__.RenderPosition.BEFOREEND);
-(0,_render__WEBPACK_IMPORTED_MODULE_9__.render)(tripMainElement, new _view_site_joint_trip_view__WEBPACK_IMPORTED_MODULE_0__["default"](sortPoints).element, _render__WEBPACK_IMPORTED_MODULE_9__.RenderPosition.AFTERBEGIN);
-(0,_render__WEBPACK_IMPORTED_MODULE_9__.render)(tripEvents, tripEventsElement.element, _render__WEBPACK_IMPORTED_MODULE_9__.RenderPosition.BEFOREEND);
+(0,_render__WEBPACK_IMPORTED_MODULE_9__.render)(tripEvents, new _view_site_sorting_view__WEBPACK_IMPORTED_MODULE_3__["default"]().element, _render__WEBPACK_IMPORTED_MODULE_9__.RenderPosition.BEFORE_END);
+(0,_render__WEBPACK_IMPORTED_MODULE_9__.render)(tripMainElement, new _view_site_joint_trip_view__WEBPACK_IMPORTED_MODULE_0__["default"](sortedPoints).element, _render__WEBPACK_IMPORTED_MODULE_9__.RenderPosition.AFTER_BEGIN);
+(0,_render__WEBPACK_IMPORTED_MODULE_9__.render)(tripEvents, tripEventsElement.element, _render__WEBPACK_IMPORTED_MODULE_9__.RenderPosition.BEFORE_END);
 
 const renderPoint = (EventList, point) => {
   const pointComponent = new _view_site_point_view__WEBPACK_IMPORTED_MODULE_6__["default"](point);
@@ -1253,10 +1247,10 @@ const renderPoint = (EventList, point) => {
     evt.preventDefault();
     replaceFormToPoint();
   });
-  (0,_render__WEBPACK_IMPORTED_MODULE_9__.render)(EventList.element, pointComponent.element, _render__WEBPACK_IMPORTED_MODULE_9__.RenderPosition.BEFOREEND);
+  (0,_render__WEBPACK_IMPORTED_MODULE_9__.render)(EventList.element, pointComponent.element, _render__WEBPACK_IMPORTED_MODULE_9__.RenderPosition.BEFORE_END);
 };
 
-sortPoints.forEach(point => {
+sortedPoints.forEach(point => {
   renderPoint(tripEventsElement, point);
 });
 })();
