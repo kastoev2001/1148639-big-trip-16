@@ -89,15 +89,29 @@ export const createPointTemplate = function (point) {
   );
 };
 
-export default class PointView extends AbstractView{
+export default class PointView extends AbstractView {
   #point = null;
 
   constructor(point) {
-		super();
+    super();
     this.#point = point;
   }
 
   get template() {
     return createPointTemplate(this.#point);
+  }
+
+  setPointClickHandler = (callback) => {
+    this._callback.pointClick = callback;
+
+    const downArrowPoint = this.element.querySelector('.event__rollup-btn');
+
+    downArrowPoint.addEventListener('click', this.#pointClickHandler);
+  }
+
+  #pointClickHandler = (evt) => {
+    evt.preventDefault();
+
+    this._callback.pointClick();
   }
 }

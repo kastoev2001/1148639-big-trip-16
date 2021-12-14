@@ -41,10 +41,6 @@ const renderPoint = (eventList, point) => {
   const pointComponent = new PointView(point);
   const pointEditComponent = new EditPointView(point);
 
-  const downArrowPoint = pointComponent.element.querySelector('.event__rollup-btn');
-  const upArrowPointForm = pointEditComponent.element.querySelector('.event__rollup-btn');
-  const pointForm = pointEditComponent.element.querySelector('form');
-
   const replacePointToForm = () => {
     eventList.replaceChild(pointEditComponent.element, pointComponent.element);
   };
@@ -53,42 +49,39 @@ const renderPoint = (eventList, point) => {
     eventList.replaceChild(pointComponent.element, pointEditComponent.element);
   };
 
-  const EscKeyDownHandler = (evt) => {
+  const escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       replaceFormToPoint();
-      document.removeEventListener('keydown', EscKeyDownHandler);
+      document.removeEventListener('keydown', escKeyDownHandler);
     }
   };
 
   const closePointForm = () => {
     replaceFormToPoint();
-    document.removeEventListener('keydown', EscKeyDownHandler);
+    document.removeEventListener('keydown', escKeyDownHandler);
   };
 
-  const PointFormSubmitHandler = (evt) => {
-    evt.preventDefault();
+  const pointFormSubmitHandler = () => {
     closePointForm();
   };
 
   const openPointForm = () => {
     replacePointToForm();
-    document.addEventListener('keydown', EscKeyDownHandler);
+    document.addEventListener('keydown', escKeyDownHandler);
   };
 
-  const DownArrowPointClickHandler = () => {
+  const arrowPointClickHandler = () => {
     openPointForm();
   };
 
-  const onUpArrowPointFormClick = () => {
+  const arrowPointFormClickHandler = () => {
     closePointForm();
   };
 
-  downArrowPoint.addEventListener('click', DownArrowPointClickHandler);
-
-  upArrowPointForm.addEventListener('click', onUpArrowPointFormClick);
-
-  pointForm.addEventListener('submit', PointFormSubmitHandler);
+  pointComponent.setPointClickHandler(arrowPointClickHandler);
+  pointEditComponent.setPointFormClickHandler(arrowPointFormClickHandler);
+  pointEditComponent.setPointFormSubmitHandler(pointFormSubmitHandler);
 
   render(eventList, pointComponent.element, RenderPosition.BEFORE_END);
 };
