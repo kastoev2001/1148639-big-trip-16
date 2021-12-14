@@ -1,4 +1,4 @@
-import { createElement } from '../render';
+import AbstractView from './site-abstract-view';
 
 const createEditPointDescriptionTemplate = function (description, pics) {
   return (
@@ -189,27 +189,16 @@ const createEditPointTemplate = function (point = {}) {
   );
 };
 
-export default class EditPointWiew {
-  #element = null;
+export default class EditPointWiew extends AbstractView {
   #point = null;
 
   constructor(point = BLANK_POINT) {
+		super();
     this.#point = point;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
   }
 
   get template() {
     return createEditPointTemplate(this.#point);
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 
 }
