@@ -3,7 +3,7 @@ import MenuView from './view/site-menu-view';
 import FilterView from './view/site-filter-view';
 import SortingView from './view/site-sorting-view';
 import TripEventsView from './view/site-trip-events-view';
-import EmptyPointsWiew from './view/site-empty-view';
+import EmptyView from './view/site-empty-view';
 import EditPointView from './view/site-edit-point-view';
 import PointView from './view/site-point-view';
 
@@ -95,7 +95,7 @@ const renderPoint = (EventList, point) => {
 
 if (points.length === 0) {
 
-  render(tripEvents, new EmptyPointsWiew(EmptyFiter.EVERYTHING).element, RenderPosition.BEFORE_END);
+  render(tripEvents, new EmptyView(EmptyFiter.EVERYTHING).element, RenderPosition.BEFORE_END);
 
 } else {
 
