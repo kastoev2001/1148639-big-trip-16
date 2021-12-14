@@ -30,27 +30,27 @@ const tripControlsFiltersElements = tripMainElement.querySelector('.trip-control
 
 render(tripControlsNavigationElement, new MenuView().element, RenderPosition.BEFORE_END);
 
-const tripEventsElement = new TripEventsView();
+const tripEventsComponent = new TripEventsView();
 
 const pageMainElement = document.querySelector('.page-main');
 const tripEvents = pageMainElement.querySelector('.trip-events');
 
 render(tripEvents, new SortingView().element, RenderPosition.BEFORE_END);
 
-const renderPoint = (EventList, point) => {
+const renderPoint = (eventList, point) => {
   const pointComponent = new PointView(point);
   const pointEditComponent = new EditPointView(point);
 
-  const downArrowPointForm = pointComponent.element.querySelector('.event__rollup-btn');
+  const downArrowPoint = pointComponent.element.querySelector('.event__rollup-btn');
   const upArrowPointForm = pointEditComponent.element.querySelector('.event__rollup-btn');
   const pointForm = pointEditComponent.element.querySelector('form');
 
   const replacePointToForm = () => {
-    EventList.element.replaceChild(pointEditComponent.element, pointComponent.element);
+    eventList.replaceChild(pointEditComponent.element, pointComponent.element);
   };
 
   const replaceFormToPoint = () => {
-    EventList.element.replaceChild(pointComponent.element, pointEditComponent.element);
+    eventList.replaceChild(pointComponent.element, pointEditComponent.element);
   };
 
   const EscKeyDownHandler = (evt) => {
@@ -76,7 +76,7 @@ const renderPoint = (EventList, point) => {
     document.addEventListener('keydown', EscKeyDownHandler);
   };
 
-  const DownArrowPointFormClickHandler = () => {
+  const DownArrowPointClickHandler = () => {
     openPointForm();
   };
 
@@ -84,13 +84,13 @@ const renderPoint = (EventList, point) => {
     closePointForm();
   };
 
-  downArrowPointForm.addEventListener('click', DownArrowPointFormClickHandler);
+  downArrowPoint.addEventListener('click', DownArrowPointClickHandler);
 
   upArrowPointForm.addEventListener('click', onUpArrowPointFormClick);
 
   pointForm.addEventListener('submit', PointFormSubmitHandler);
 
-  render(EventList.element, pointComponent.element, RenderPosition.BEFORE_END);
+  render(eventList, pointComponent.element, RenderPosition.BEFORE_END);
 };
 
 if (points.length === 0) {
@@ -107,8 +107,8 @@ if (points.length === 0) {
 
 
   sortedPoints.forEach((point) => {
-    renderPoint(tripEventsElement, point);
+    renderPoint(tripEventsComponent.element, point);
   });
 
-  render(tripEvents, tripEventsElement.element, RenderPosition.BEFORE_END);
+  render(tripEvents, tripEventsComponent.element, RenderPosition.BEFORE_END);
 }
