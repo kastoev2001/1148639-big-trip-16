@@ -10,8 +10,8 @@ import PointView from './view/site-point-view';
 import { generateFilter } from './mock/filter';
 import { generatePoint } from './mock/point';
 
-import {RenderPosition, render, } from './render';
-import { sortPoints } from './utils';
+import {RenderPosition, render, } from './utils/render';
+import { sortPoints } from './utils/point';
 
 
 const EmptyFiter = {

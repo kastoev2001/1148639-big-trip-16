@@ -57,7 +57,7 @@ export default class JointTripView extends AbstractView {
   #points = null;
 
   constructor(points) {
-		super();
+    super();
     this.#points = points;
   }
 

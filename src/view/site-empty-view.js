@@ -10,7 +10,7 @@ export default class EmptyPointsWiew extends AbstractView{
   #text = null;
 
   constructor(text) {
-		super();
+    super();
     this.#text = text;
   }
 
