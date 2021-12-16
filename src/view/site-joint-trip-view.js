@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { createElement } from '../render';
+import AbstractView from './site-abstract-view';
 
 const getNotPassedPath = function (points) {
   const sities = points.map((point) => point.city);
@@ -53,27 +53,15 @@ const createJointTripTemplate = function (points) {
   );
 };
 
-export default class JointTripView {
-  #element = null;
+export default class JointTripView extends AbstractView {
   #points = null;
 
   constructor(points) {
+    super();
     this.#points = points;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
     return createJointTripTemplate(this.#points);
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
