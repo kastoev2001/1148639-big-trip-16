@@ -1,4 +1,4 @@
-import { createElement } from '../render';
+import AbstractView from './site-abstract-view';
 
 const createMenuTemplate = function () {
   return (
@@ -9,22 +9,9 @@ const createMenuTemplate = function () {
   );
 };
 
-export default class MenuView {
-  #element = null;
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
+export default class MenuView extends AbstractView {
 
   get template() {
     return createMenuTemplate();
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

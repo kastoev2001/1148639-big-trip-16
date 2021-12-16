@@ -1,6 +1,6 @@
 
 import dayjs from 'dayjs';
-import { getRandomInteger } from '../utils';
+import { getRandomInteger, generateId } from '../utils/commonds';
 import {TYPE_POINT} from '../const';
 
 const COUNT_PICS = 5;
@@ -56,28 +56,22 @@ const generateCities = function () {
 const generateService = function () {
   const services = [[
     {
-      id: null,
+      id: generateId(),
       get service() {
-        this.id = 'Add luggage';
-
         return 'Add luggage';
       },
       price: 30,
       isChecked: Boolean(getRandomInteger())
     },{
-      id: null,
+      id: generateId(),
       get service()  {
-        this.id = 'Switch to comfort class';
-
         return 'Switch to comfort class';
       },
       price: 100,
       isChecked: Boolean(getRandomInteger())
     },{
-      id: null,
+      id: generateId(),
       get service()  {
-        this.id = 'choose seats';
-
         return 'choose seats';
       },
       price: 5,
@@ -85,37 +79,29 @@ const generateService = function () {
     }
 
   ], null, [{
-    id: null,
+    id: generateId(),
     get service() {
-      this.id ='Travel by train';
-
       return 'Travel by train';
     },
     price: 40,
     isChecked: Boolean(getRandomInteger())
   },{
-    id: null,
+    id: generateId(),
     get service() {
-      this.id =  'Add meal';
-
       return  'Add meal';
     },
     price: 15,
     isChecked: Boolean(getRandomInteger())
   },{
-    id: null,
+    id: generateId(),
     get service()  {
-      this.id = 'add luggage';
-
       return 'add luggage';
     },
     price: 30,
     isChecked: Boolean(getRandomInteger())
   },{
-    id: null,
+    id: generateId(),
     get service()  {
-      this.id = 'Travel by train';
-
       return 'Travel by train';
     },
     price: 40,

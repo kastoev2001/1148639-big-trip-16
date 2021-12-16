@@ -1,4 +1,4 @@
-import { createElement } from '../render';
+import AbstractView from './site-abstract-view';
 
 const createServicesTemplate =function (services) {
   return services.map((servicesElements) => {
@@ -25,14 +25,7 @@ const createServicesTemplate =function (services) {
 
 export const createPointTemplate = function (point) {
 
-  const {
-    dueDate,
-    type,
-    city,
-    price,
-    services,
-    isFavorites
-  } = point;
+  const {dueDate, type, city, price, services, isFavorites} = point;
 
   const {startDate, endDate, gapDate} = dueDate;
 
@@ -62,7 +55,7 @@ export const createPointTemplate = function (point) {
 <div class="event">
 	<time class="event__date" datetime="2019-03-18">${date}</time>
 	<div class="event__type">
-		<img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
+		<img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
 	</div>
 	<h3 class="event__title">${type} ${city}</h3>
 	<div class="event__schedule"> 
@@ -96,27 +89,29 @@ export const createPointTemplate = function (point) {
   );
 };
 
-export default class PointView {
-  #element = null;
+export default class PointView extends AbstractView {
   #point = null;
 
   constructor(point) {
+    super();
     this.#point = point;
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.tempalte);
-    }
-
-    return this.#element;
-  }
-
-  get tempalte() {
+  get template() {
     return createPointTemplate(this.#point);
   }
 
-  removeElement() {
-    this.#element = null;
+  setPointClickHandler = (callback) => {
+    this._callback.pointClick = callback;
+
+    const downArrowPoint = this.element.querySelector('.event__rollup-btn');
+
+    downArrowPoint.addEventListener('click', this.#pointClickHandler);
+  }
+
+  #pointClickHandler = (evt) => {
+    evt.preventDefault();
+
+    this._callback.pointClick();
   }
 }
