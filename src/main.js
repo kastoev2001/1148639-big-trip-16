@@ -1,107 +1,36 @@
-import JointTripView from './view/site-joint-trip-view';
 import MenuView from './view/site-menu-view';
 import FilterView from './view/site-filter-view';
-import SortingView from './view/site-sorting-view';
-import EventListView from './view/site-event-list-view';
-import EmptyView from './view/site-no-points-view';
-import EditPointView from './view/site-edit-point-view';
-import PointView from './view/site-point-view';
+import JointTripView from './view/site-joint-trip-view';
+import TripEventsPresenter from './presenter/trip-events-presenter';
 
 import { generateFilter } from './mock/filter';
 import { generatePoint } from './mock/point';
 
-import {RenderPosition, render, } from './utils/render';
 import { sortPoints } from './utils/point';
-
-
-const EmptyFiter = {
-  EVERYTHING: 'Click New Event to create your first point',
-  FUTURE: 'There are no future events now',
-  PAST: 'There are no past events now'
-};
+import {RenderPosition, render, } from './utils/render';
 
 const COUNT_LIST = 10;
+
 const points = Array.from({ length: COUNT_LIST }, generatePoint);
+const sortedPoints = sortPoints(points);
 
 const tripMainElement = document.querySelector('.trip-main');
 
 const tripControlsNavigationElement = tripMainElement.querySelector('.trip-controls__navigation');
 const tripControlsFiltersElements = tripMainElement.querySelector('.trip-controls__filters');
 
-render(tripControlsNavigationElement, new MenuView(), RenderPosition.BEFORE_END);
+let MenuComponent = new MenuView();
+let JointTripComponent = new JointTripView(sortedPoints);
 
-const eventListComponent = new EventListView();
+render(tripControlsNavigationElement, MenuComponent, RenderPosition.BEFORE_END);
+render(MenuComponent, JointTripComponent, RenderPosition.BEFORE_END);
 
-const pageMainElement = document.querySelector('.page-main');
-const tripEvents = pageMainElement.querySelector('.trip-events');
+const filters = generateFilter(points);
 
-render(tripEvents, new SortingView(), RenderPosition.BEFORE_END);
+render(tripControlsFiltersElements, new FilterView(filters), RenderPosition.BEFORE_END);
 
-const renderPoint = (eventList, point) => {
-  const pointComponent = new PointView(point);
-  const pointEditComponent = new EditPointView(point);
+const tripEvents = document.querySelector('.trip-events');
 
-  const replacePointToForm = () => {
-    eventList.replaceChild(pointEditComponent.element, pointComponent.element);
-  };
+const tripEventPresenter = new TripEventsPresenter(tripEvents);
 
-  const replaceFormToPoint = () => {
-    eventList.replaceChild(pointComponent.element, pointEditComponent.element);
-  };
-
-  const escKeyDownHandler = (evt) => {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
-      evt.preventDefault();
-      replaceFormToPoint();
-      document.removeEventListener('keydown', escKeyDownHandler);
-    }
-  };
-
-  const closePointForm = () => {
-    replaceFormToPoint();
-    document.removeEventListener('keydown', escKeyDownHandler);
-  };
-
-  const pointFormSubmitHandler = () => {
-    closePointForm();
-  };
-
-  const openPointForm = () => {
-    replacePointToForm();
-    document.addEventListener('keydown', escKeyDownHandler);
-  };
-
-  const arrowPointClickHandler = () => {
-    openPointForm();
-  };
-
-  const arrowPointFormClickHandler = () => {
-    closePointForm();
-  };
-
-  pointComponent.setPointClickHandler(arrowPointClickHandler);
-  pointEditComponent.setPointFormClickHandler(arrowPointFormClickHandler);
-  pointEditComponent.setPointFormSubmitHandler(pointFormSubmitHandler);
-
-  render(eventList, pointComponent, RenderPosition.BEFORE_END);
-};
-
-if (points.length === 0) {
-
-  render(tripEvents, new EmptyView(EmptyFiter.EVERYTHING), RenderPosition.BEFORE_END);
-
-} else {
-
-  const sortedPoints = sortPoints(points);
-  const filters = generateFilter(points);
-
-  render(tripMainElement, new JointTripView(sortedPoints), RenderPosition.AFTER_BEGIN);
-  render(tripControlsFiltersElements, new FilterView(filters), RenderPosition.BEFORE_END);
-
-
-  sortedPoints.forEach((point) => {
-    renderPoint(eventListComponent.element, point);
-  });
-
-  render(tripEvents, eventListComponent, RenderPosition.BEFORE_END);
-}
+tripEventPresenter.init(points);
