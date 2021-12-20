@@ -3,18 +3,26 @@ import EditPointView from '../view/site-edit-point-view';
 
 import {render, RenderPosition, replace} from '../utils/render';
 
+const Mode = {
+	DEFAULT: 'DAFAULT',
+	EDITING: 'EDITING'
+}
+
 export default class PointPresenter {
 	#pointListComponent = null;
 	#changeData = null
+	#changeMode = null;
 
 	#pointComponent = null;
 	#editPointComponent = null;
 
 	#point = null;
-
-	constructor(pointListComponent, changeData) {
+	#mode = Mode.DEFAULT;
+	
+	constructor(pointListComponent, changeData, changeMode) {
 		this.#pointListComponent = pointListComponent;
 		this.#changeData = changeData;
+		this.#changeMode = changeMode;
 	}
 
 	init = (point) => {
@@ -45,14 +53,23 @@ export default class PointPresenter {
 		}
 	}
 
+	resetPoint = () => {
+		if (this.#mode !== Mode.DEFAULT) {
+			this.#replaceFormToPoint();
+		}
+	}
+
 	#replacePointToForm = () => {
 		replace(this.#editPointComponent, this.#pointComponent);
 		document.addEventListener('keydown', this.#escKeyDownHandler);
+		this.#changeMode();
+		this.#mode = Mode.EDITING;
 	}
 
 	#replaceFormToPoint = () => {
 		replace(this.#pointComponent, this.#editPointComponent);
 		document.removeEventListener('keydown', this.#escKeyDownHandler);
+		this.#mode = Mode.DEFAULT;
 	}
 
 	#escKeyDownHandler = (evt) => {

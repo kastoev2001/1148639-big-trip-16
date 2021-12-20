@@ -43,11 +43,11 @@ export default class TripEventsPresenter {
 	}
 
 	#handleModeChange = () => {
-		this.#pointsInited.forEach(presenter => presenter.resetPoint());
+		this.#pointsInited.forEach(presenter => presenter.resetView());
 	}
 	
   #renderPoint = (point) => {
-		const pointPresenter = new PointPresenter(this.#eventListComponent, this.#handlePointChenge);
+		const pointPresenter = new PointPresenter(this.#eventListComponent, this.#handlePointChenge, this.#handleModeChange);
 		pointPresenter.init(point);
 
 		this.#pointsInited.set(point.id, pointPresenter);
