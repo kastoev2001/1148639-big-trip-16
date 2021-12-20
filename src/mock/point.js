@@ -1,7 +1,8 @@
 
 import dayjs from 'dayjs';
-import { getRandomInteger, generateId } from '../utils/commonds';
+import { getRandomInteger } from '../utils/commonds';
 import {TYPE_POINT} from '../const';
+import { nanoid } from 'nanoid';
 
 const COUNT_PICS = 5;
 
@@ -56,21 +57,21 @@ const generateCities = function () {
 const generateService = function () {
   const services = [[
     {
-      id: generateId(),
+      id: nanoid(),
       get service() {
         return 'Add luggage';
       },
       price: 30,
       isChecked: Boolean(getRandomInteger())
     },{
-      id: generateId(),
+      id: nanoid(),
       get service()  {
         return 'Switch to comfort class';
       },
       price: 100,
       isChecked: Boolean(getRandomInteger())
     },{
-      id: generateId(),
+      id: nanoid(),
       get service()  {
         return 'choose seats';
       },
@@ -79,28 +80,28 @@ const generateService = function () {
     }
 
   ], null, [{
-    id: generateId(),
+    id: nanoid(),
     get service() {
       return 'Travel by train';
     },
     price: 40,
     isChecked: Boolean(getRandomInteger())
   },{
-    id: generateId(),
+    id: nanoid(),
     get service() {
       return  'Add meal';
     },
     price: 15,
     isChecked: Boolean(getRandomInteger())
   },{
-    id: generateId(),
+    id: nanoid(),
     get service()  {
       return 'add luggage';
     },
     price: 30,
     isChecked: Boolean(getRandomInteger())
   },{
-    id: generateId(),
+    id: nanoid(),
     get service()  {
       return 'Travel by train';
     },
@@ -173,6 +174,7 @@ export const generatePoint = () => {
   const initialPrice = getRandomInteger(20, 100);
 
   return {
+		id: nanoid(),
     pics: renserPics(),
     type: generateType(),
     city: generateCities(),
