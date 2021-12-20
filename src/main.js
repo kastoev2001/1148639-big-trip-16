@@ -2,8 +2,8 @@ import JointTripView from './view/site-joint-trip-view';
 import MenuView from './view/site-menu-view';
 import FilterView from './view/site-filter-view';
 import SortingView from './view/site-sorting-view';
-import TripEventsView from './view/site-trip-events-view';
-import EmptyView from './view/site-empty-view';
+import EventListView from './view/site-event-list-view';
+import EmptyView from './view/site-no-points-view';
 import EditPointView from './view/site-edit-point-view';
 import PointView from './view/site-point-view';
 
@@ -28,14 +28,14 @@ const tripMainElement = document.querySelector('.trip-main');
 const tripControlsNavigationElement = tripMainElement.querySelector('.trip-controls__navigation');
 const tripControlsFiltersElements = tripMainElement.querySelector('.trip-controls__filters');
 
-render(tripControlsNavigationElement, new MenuView().element, RenderPosition.BEFORE_END);
+render(tripControlsNavigationElement, new MenuView(), RenderPosition.BEFORE_END);
 
-const tripEventsComponent = new TripEventsView();
+const eventListComponent = new EventListView();
 
 const pageMainElement = document.querySelector('.page-main');
 const tripEvents = pageMainElement.querySelector('.trip-events');
 
-render(tripEvents, new SortingView().element, RenderPosition.BEFORE_END);
+render(tripEvents, new SortingView(), RenderPosition.BEFORE_END);
 
 const renderPoint = (eventList, point) => {
   const pointComponent = new PointView(point);
@@ -83,25 +83,25 @@ const renderPoint = (eventList, point) => {
   pointEditComponent.setPointFormClickHandler(arrowPointFormClickHandler);
   pointEditComponent.setPointFormSubmitHandler(pointFormSubmitHandler);
 
-  render(eventList, pointComponent.element, RenderPosition.BEFORE_END);
+  render(eventList, pointComponent, RenderPosition.BEFORE_END);
 };
 
 if (points.length === 0) {
 
-  render(tripEvents, new EmptyView(EmptyFiter.EVERYTHING).element, RenderPosition.BEFORE_END);
+  render(tripEvents, new EmptyView(EmptyFiter.EVERYTHING), RenderPosition.BEFORE_END);
 
 } else {
 
   const sortedPoints = sortPoints(points);
   const filters = generateFilter(points);
 
-  render(tripMainElement, new JointTripView(sortedPoints).element, RenderPosition.AFTER_BEGIN);
-  render(tripControlsFiltersElements, new FilterView(filters).element, RenderPosition.BEFORE_END);
+  render(tripMainElement, new JointTripView(sortedPoints), RenderPosition.AFTER_BEGIN);
+  render(tripControlsFiltersElements, new FilterView(filters), RenderPosition.BEFORE_END);
 
 
   sortedPoints.forEach((point) => {
-    renderPoint(tripEventsComponent.element, point);
+    renderPoint(eventListComponent.element, point);
   });
 
-  render(tripEvents, tripEventsComponent.element, RenderPosition.BEFORE_END);
+  render(tripEvents, eventListComponent, RenderPosition.BEFORE_END);
 }
