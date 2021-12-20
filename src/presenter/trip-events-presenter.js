@@ -42,9 +42,9 @@ export default class TripEventsPresenter {
 		this.#pointsInited.get(updatePoint.id).init(updatePoint);
 
 	}
-
+	
   #renderPoint = (point) => {
-		const pointPresenter = new PointPresenter(this.#eventListComponent);
+		const pointPresenter = new PointPresenter(this.#eventListComponent, this.#handlePointChenge);
 		pointPresenter.init(point);
 
 		this.#pointsInited.set(point.id, pointPresenter);
