@@ -19,8 +19,8 @@ const tripMainElement = document.querySelector('.trip-main');
 const tripControlsNavigationElement = tripMainElement.querySelector('.trip-controls__navigation');
 const tripControlsFiltersElements = tripMainElement.querySelector('.trip-controls__filters');
 
-let MenuComponent = new MenuView();
-let JointTripComponent = new JointTripView(sortedPoints);
+const MenuComponent = new MenuView();
+const JointTripComponent = new JointTripView(sortedPoints);
 
 render(tripControlsNavigationElement, MenuComponent, RenderPosition.BEFORE_END);
 render(MenuComponent, JointTripComponent, RenderPosition.BEFORE_END);

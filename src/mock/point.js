@@ -174,7 +174,7 @@ export const generatePoint = () => {
   const initialPrice = getRandomInteger(20, 100);
 
   return {
-		id: nanoid(),
+    id: nanoid(),
     pics: renserPics(),
     type: generateType(),
     city: generateCities(),

@@ -1,97 +1,100 @@
 import PointView from '../view/site-point-view';
 import EditPointView from '../view/site-edit-point-view';
 
-import {render, RenderPosition, replace} from '../utils/render';
+import {remove, render, RenderPosition, replace} from '../utils/render';
 
 const Mode = {
-	DEFAULT: 'DAFAULT',
-	EDITING: 'EDITING'
-}
+  DEFAULT: 'DAFAULT',
+  EDITING: 'EDITING'
+};
 
 export default class PointPresenter {
-	#pointListComponent = null;
-	#changeData = null
-	#changeMode = null;
+  #pointListComponent = null;
+  #changeData = null
+  #changeMode = null;
 
-	#pointComponent = null;
-	#editPointComponent = null;
+  #pointComponent = null;
+  #editPointComponent = null;
 
-	#point = null;
-	#mode = Mode.DEFAULT;
-	
-	constructor(pointListComponent, changeData, changeMode) {
-		this.#pointListComponent = pointListComponent;
-		this.#changeData = changeData;
-		this.#changeMode = changeMode;
-	}
+  #point = null;
+  #mode = Mode.DEFAULT;
 
-	init = (point) => {
-		this.#point = point;
+  constructor(pointListComponent, changeData, changeMode) {
+    this.#pointListComponent = pointListComponent;
+    this.#changeData = changeData;
+    this.#changeMode = changeMode;
+  }
 
-		const prevPointComponent = this.#pointComponent;
-		const prevEditPointComponent = this.#editPointComponent;
+  init = (point) => {
+    this.#point = point;
 
-		this.#pointComponent = new PointView(point);
-		this.#editPointComponent = new EditPointView(point);
+    const prevPointComponent = this.#pointComponent;
+    const prevEditPointComponent = this.#editPointComponent;
 
-		this.#pointComponent.setPointClickHandler(this.#arrowPointClickHandler);
-		this.#pointComponent.setFavoriteClickHandler(this.#favoriteClickHandler);
-		this.#editPointComponent.setPointFormClickHandler(this.#arrowPointFormClickHandler);
-		this.#editPointComponent.setPointFormSubmitHandler(this.#pointFormSubmitHandler);
+    this.#pointComponent = new PointView(point);
+    this.#editPointComponent = new EditPointView(point);
 
-		if (prevPointComponent === null || prevEditPointComponent === null) {
-		render(this.#pointListComponent, this.#pointComponent, RenderPosition.BEFORE_END);
-		return;
-  	}
+    this.#pointComponent.setPointClickHandler(this.#arrowPointClickHandler);
+    this.#pointComponent.setFavoriteClickHandler(this.#favoriteClickHandler);
+    this.#editPointComponent.setPointFormClickHandler(this.#arrowPointFormClickHandler);
+    this.#editPointComponent.setPointFormSubmitHandler(this.#pointFormSubmitHandler);
 
-		if (this.#pointListComponent.element.contains(prevPointComponent.element)) {
-			replace(this.#pointComponent, prevPointComponent);
-		}
+    if (prevPointComponent === null || prevEditPointComponent === null) {
+      render(this.#pointListComponent, this.#pointComponent, RenderPosition.BEFORE_END);
+      return;
+    }
 
-		if (this.#pointListComponent.element.contains(prevEditPointComponent.element)) {
-			replace(this.#editPointComponent, prevEditPointComponent);
-		}
-	}
+    if (this.#pointListComponent.element.contains(prevPointComponent.element)) {
+      replace(this.#pointComponent, prevPointComponent);
+    }
 
-	resetPoint = () => {
-		if (this.#mode !== Mode.DEFAULT) {
-			this.#replaceFormToPoint();
-		}
-	}
+    if (this.#pointListComponent.element.contains(prevEditPointComponent.element)) {
+      replace(this.#editPointComponent, prevEditPointComponent);
+    }
 
-	#replacePointToForm = () => {
-		replace(this.#editPointComponent, this.#pointComponent);
-		document.addEventListener('keydown', this.#escKeyDownHandler);
-		this.#changeMode();
-		this.#mode = Mode.EDITING;
-	}
+    remove(prevPointComponent);
+    remove(prevEditPointComponent);
+  }
 
-	#replaceFormToPoint = () => {
-		replace(this.#pointComponent, this.#editPointComponent);
-		document.removeEventListener('keydown', this.#escKeyDownHandler);
-		this.#mode = Mode.DEFAULT;
-	}
+  resetPoint = () => {
+    if (this.#mode !== Mode.DEFAULT) {
+      this.#replaceFormToPoint();
+    }
+  }
 
-	#escKeyDownHandler = (evt) => {
-		if (evt.key === 'Escape' || evt.key === 'Esc') {
-			evt.preventDefault();
-			this.#replaceFormToPoint();
-		}
-	}
+  #replacePointToForm = () => {
+    replace(this.#editPointComponent, this.#pointComponent);
+    document.addEventListener('keydown', this.#escKeyDownHandler);
+    this.#changeMode();
+    this.#mode = Mode.EDITING;
+  }
 
-	#pointFormSubmitHandler = () => {
-		this.#replaceFormToPoint();
-	}
+  #replaceFormToPoint = () => {
+    replace(this.#pointComponent, this.#editPointComponent);
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
+    this.#mode = Mode.DEFAULT;
+  }
 
-	#arrowPointClickHandler = () => {
-		this.#replacePointToForm();
-	}
+  #escKeyDownHandler = (evt) => {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+      this.#replaceFormToPoint();
+    }
+  }
 
-	#arrowPointFormClickHandler = () => {
-		this.#replaceFormToPoint();
-	}
+  #pointFormSubmitHandler = () => {
+    this.#replaceFormToPoint();
+  }
 
-	#favoriteClickHandler = () => {
-		this.#changeData({...this.#point, isFavorite: !this.#point.isFavorite});
-	}
+  #arrowPointClickHandler = () => {
+    this.#replacePointToForm();
+  }
+
+  #arrowPointFormClickHandler = () => {
+    this.#replaceFormToPoint();
+  }
+
+  #favoriteClickHandler = () => {
+    this.#changeData({...this.#point, isFavorite: !this.#point.isFavorite});
+  }
 }

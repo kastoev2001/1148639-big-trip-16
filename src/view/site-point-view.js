@@ -115,15 +115,15 @@ export default class PointView extends AbstractView {
     this._callback.pointClick();
   }
 
-	setFavoriteClickHandler = (callback) => {
-		this._callback.favoriteClick = callback;
+  setFavoriteClickHandler = (callback) => {
+    this._callback.favoriteClick = callback;
 
-		this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteClickHandler);
-	}
+    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteClickHandler);
+  }
 
-	#favoriteClickHandler = (evt) => {
-		evt.preventDefault();
+  #favoriteClickHandler = (evt) => {
+    evt.preventDefault();
 
-		this._callback.favoriteClick();
-	}
+    this._callback.favoriteClick();
+  }
 }
