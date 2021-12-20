@@ -5,6 +5,7 @@ import PointPresenter from './point-presenter';
 
 import { render, RenderPosition } from '../utils/render';
 import { sortPoints } from '../utils/point';
+import { updateItem } from '../utils/commonds';
 
 const EmptyFiter = {
   EVERYTHING: 'Click New Event to create your first point',
@@ -21,6 +22,7 @@ export default class TripEventsPresenter {
 
 	#pointList = [];
 	#sortedPoints = [];
+	#pointsInited = new Map();
 
 	constructor(tripEventsContainer) {
 		this.#tripEventsContainer = tripEventsContainer;
@@ -33,9 +35,19 @@ export default class TripEventsPresenter {
 		this.#renderTripEvents();
 	}
 
+	#handlePointChenge = (updatePoint) => {
+		this.#pointList = updateItem(this.#pointList, updatePoint);
+		this.#sortedPoints = sortPoints(this.#pointList);
+
+		this.#pointsInited.get(updatePoint.id).init(updatePoint);
+
+	}
+
   #renderPoint = (point) => {
 		const pointPresenter = new PointPresenter(this.#eventListComponent);
 		pointPresenter.init(point);
+
+		this.#pointsInited.set(point.id, pointPresenter);
 	}
 
 	#renderPoints = () => {
