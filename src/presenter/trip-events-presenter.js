@@ -40,7 +40,10 @@ export default class TripEventsPresenter {
 		this.#sortedPoints = sortPoints(this.#pointList);
 
 		this.#pointsInited.get(updatePoint.id).init(updatePoint);
+	}
 
+	#handleModeChange = () => {
+		this.#pointsInited.forEach(presenter => presenter.resetPoint());
 	}
 	
   #renderPoint = (point) => {
