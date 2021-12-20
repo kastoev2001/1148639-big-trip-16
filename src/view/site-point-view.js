@@ -25,7 +25,7 @@ const createServicesTemplate =function (services) {
 
 export const createPointTemplate = function (point) {
 
-  const {dueDate, type, city, price, services, isFavorites} = point;
+  const {dueDate, type, city, price, services, isFavorite} = point;
 
   const {startDate, endDate, gapDate} = dueDate;
 
@@ -41,7 +41,7 @@ export const createPointTemplate = function (point) {
     ? gapDate.minute
     : `${gapDate.hour}Ч ${gapDate.minute}М`;
 
-  const fovoritesClassName = isFavorites
+  const fovoritesClassName = isFavorite
     ? 'event__favorite-btn--active'
     : '';
 
@@ -114,4 +114,16 @@ export default class PointView extends AbstractView {
 
     this._callback.pointClick();
   }
+
+	setFavoriteClickHandler = (callback) => {
+		this._callback.favoriteClick = callback;
+
+		this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteClickHandler);
+	}
+
+	#favoriteClickHandler = (evt) => {
+		evt.preventDefault();
+
+		this._callback.favoriteClick();
+	}
 }
