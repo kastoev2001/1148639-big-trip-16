@@ -1,5 +1,5 @@
 import AbstractView from './site-abstract-view';
-import { getDateDiff } from '../utils/point'
+import { getDateDiff } from '../utils/point';
 const createServicesTemplate =function (services) {
   return services.map((servicesElements) => {
 

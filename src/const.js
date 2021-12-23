@@ -11,7 +11,7 @@ export const TYPE_POINT = [
 ];
 
 export const SortType = {
-	DEFAULT: 'default',
-	TIME_DOWN: 'time',
-	PRICE_DOWN: 'price'
-}
+  DEFAULT: 'default',
+  TIME_DOWN: 'time',
+  PRICE_DOWN: 'price'
+};

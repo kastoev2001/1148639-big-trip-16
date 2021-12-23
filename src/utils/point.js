@@ -9,20 +9,20 @@ export const sortPrices = (data) => [...data].sort((a, b) => b.price.overallPric
 export const sortTimes = (data) => [...data].sort((a, b) =>	b.dueDate.endDate.diff(b.dueDate.startDate, 'minute') - a.dueDate.endDate.diff(a.dueDate.startDate, 'minute'));
 
 export const getDateDiff = (endDate, startDate) => {
-	const currentDate = dayjs();
+  const currentDate = dayjs();
 
-	const dayDiff = endDate.diff(startDate, 'day') + 1;
-	const hourDiff = (endDate.diff(startDate, 'hour') % 24)
-	const minuteDiff = (endDate.diff(startDate, 'minute') % 60)
+  const dayDiff = endDate.diff(startDate, 'day') + 1;
+  const hourDiff = (endDate.diff(startDate, 'hour') % 24);
+  const minuteDiff = (endDate.diff(startDate, 'minute') % 60);
 
 
   const dateDiff =	dayjs(`${currentDate.year()}-${currentDate.month()}-${dayDiff} ${hourDiff}:${minuteDiff}`);
 
-	const dateDiffFormat = (dateDiff.date() > 1)
-	? `${dateDiff.subtract(1, 'day').format('DD')}Д ${dateDiff.format('hh')}Ч ${dateDiff.format('mm')}М`
-	: (dateDiff.hour() !== 0)
-	? `${dateDiff.format('hh')}Ч ${dateDiff.format('mm')}М`
-	: `${dateDiff.format('mm')}M`;
-
-	return dateDiffFormat;
-}
+  if (dateDiff.date() > 1) {
+    return `${dateDiff.subtract(1, 'day').format('DD')}Д ${dateDiff.format('hh')}Ч ${dateDiff.format('mm')}М`;
+  } else if (dateDiff.hour() !== 0) {
+    return `${dateDiff.format('hh')}Ч ${dateDiff.format('mm')}М`;
+  } else {
+    return `${dateDiff.format('mm')}M`;
+  }
+};

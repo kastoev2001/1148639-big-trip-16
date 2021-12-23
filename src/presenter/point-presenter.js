@@ -56,10 +56,10 @@ export default class PointPresenter {
     remove(prevEditPointComponent);
   }
 
-	destroy = () => {
-		remove(this.#pointComponent);
-		remove(this.#editPointComponent);
-	}
+  destroy = () => {
+    remove(this.#pointComponent);
+    remove(this.#editPointComponent);
+  }
 
   resetPoint = () => {
     if (this.#mode !== Mode.DEFAULT) {

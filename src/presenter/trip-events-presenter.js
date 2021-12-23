@@ -6,8 +6,9 @@ import PointPresenter from './point-presenter';
 import ObserverEvent from '../pattern/pattern-observer';
 
 import { render, RenderPosition } from '../utils/render';
-import { sortPoints } from '../utils/point';
+import { sortPoints, sortPrices, sortTimes } from '../utils/point';
 import { updateItem } from '../utils/commonds';
+import { SortType } from '../const';
 
 const EmptyFiter = {
   EVERYTHING: 'Click New Event to create your first point',
@@ -25,6 +26,8 @@ export default class TripEventsPresenter {
   #pointList = [];
   #sortedPoints = [];
   #pointsInited = new Map();
+  #currentSortType = SortType.DEFAULT;
+  #sourcedSortedPoints = [];
 
   constructor(tripEventsContainer) {
     this.#tripEventsContainer = tripEventsContainer;
@@ -34,7 +37,36 @@ export default class TripEventsPresenter {
     this.#pointList = [...pointList];
     this.#sortedPoints = sortPoints(this.#pointList);
 
+    this.#sourcedSortedPoints = [...this.#sortedPoints];
+
     this.#renderTripEvents();
+  }
+
+  #sortPoints = (sortType) => {
+    switch(sortType) {
+      case SortType.TIME_DOWN:
+        this.#sortedPoints = sortTimes(this.#sortedPoints);
+        break;
+      case SortType.PRICE_DOWN:
+        this.#sortedPoints = sortPrices(this.#sortedPoints);
+        break;
+      default:
+        this.#sortedPoints = this.#sourcedSortedPoints;
+    }
+
+    this.#currentSortType = sortType;
+  }
+
+  #handleSortTypeChange  = (sortType) => {
+
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#sortPoints(sortType);
+    this.#clearPointList();
+    this.#renderPointList();
+
   }
 
   resetPointsAll = () => {
@@ -56,6 +88,11 @@ export default class TripEventsPresenter {
 
   #handleModeChange = () => {
     this.#pointsInited.forEach((presenter) => presenter.resetPoint());
+  }
+
+  #clearPointList = () => {
+    this.#pointsInited.forEach((presenter) => presenter.destroy());
+    this.#pointsInited.clear();
   }
 
   #renderPoint = (point) => {
@@ -93,5 +130,6 @@ export default class TripEventsPresenter {
 
   #renderSort = () => {
     render(this.#tripEventsContainer, this.#sortingComponent, RenderPosition.BEFORE_END);
+    this.#sortingComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
   }
 }
