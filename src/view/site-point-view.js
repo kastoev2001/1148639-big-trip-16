@@ -1,5 +1,5 @@
 import AbstractView from './site-abstract-view';
-
+import { getDateDiff } from '../utils/point'
 const createServicesTemplate =function (services) {
   return services.map((servicesElements) => {
 
@@ -27,7 +27,7 @@ export const createPointTemplate = function (point) {
 
   const {dueDate, type, city, price, services, isFavorite} = point;
 
-  const {startDate, endDate, gapDate} = dueDate;
+  const {startDate, endDate} = dueDate;
 
   const startDateHour = startDate.format('hh');
   const startDateMinute = startDate.format('mm');
@@ -37,9 +37,7 @@ export const createPointTemplate = function (point) {
 
   const date = startDate.format('MMM D');
 
-  const gapDateHour = (gapDate.hour === 0)
-    ? gapDate.minute
-    : `${gapDate.hour}Ч ${gapDate.minute}М`;
+  const dateDiff = getDateDiff(endDate, startDate);
 
   const fovoritesClassName = isFavorite
     ? 'event__favorite-btn--active'
@@ -64,7 +62,7 @@ export const createPointTemplate = function (point) {
 			&mdash;
 			<time class="event__end-time" datetime="2019-03-18T11:00">${endDateHour}:${endDateMinute}</time>
 		</p>
-		<p class="event__duration">${gapDateHour}</p>
+		<p class="event__duration">${dateDiff}</p>
 	</div>
 	<p class="event__price">
 		&euro;&nbsp;<span class="event__price-value">${resultPrice}</span>
