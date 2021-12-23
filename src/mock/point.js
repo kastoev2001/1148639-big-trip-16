@@ -189,7 +189,7 @@ export const generatePoint = () => {
       } else {
         return {
           initialPrice,
-          overallPrice: null
+          overallPrice
         };
       }
     },
