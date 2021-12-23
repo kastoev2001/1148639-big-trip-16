@@ -5,6 +5,8 @@ export const isPast = (dueDate) => dueDate && dayjs().isAfter(dueDate, 'D');
 export const isPointExpiringToday = (dueDate) => dueDate && dayjs(dueDate).isSame(dayjs(), 'D');
 
 export const sortPoints = (data) => [...data].sort((a, b) => b.dueDate.startDate - a.dueDate.startDate);
+export const sortPrices = (data) => [...data].sort((a, b) => b.price.overallPrice - a.price.overallPrice);
+export const sortTimes = (data) => [...data].sort((a, b) =>	b.dueDate.endDate.diff(b.dueDate.startDate, 'minute') - a.dueDate.endDate.diff(a.dueDate.startDate, 'minute'));
 
 export const getDateDiff = (endDate, startDate) => {
 	const currentDate = dayjs();
