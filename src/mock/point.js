@@ -157,16 +157,9 @@ const generateDate = function () {
   const startDate = generateStartDate();
   const endDate = generateEndDate();
 
-  const gapDate = {
-    day: endDate.diff(startDate, 'day'),
-    hour: endDate.diff(startDate, 'hour') % 24,
-    minute: endDate.diff(startDate, 'minute') % 60
-  };
-
   return {
     startDate,
     endDate,
-    gapDate
   };
 };
 
@@ -196,7 +189,7 @@ export const generatePoint = () => {
       } else {
         return {
           initialPrice,
-          overallPrice: null
+          overallPrice
         };
       }
     },
