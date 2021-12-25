@@ -9,3 +9,9 @@ export const TYPE_POINT = [
   'Sightseeing',
   'Restaurant'
 ];
+
+export const SortType = {
+  DEFAULT: 'default',
+  TIME_DOWN: 'time',
+  PRICE_DOWN: 'price'
+};
