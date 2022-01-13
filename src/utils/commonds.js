@@ -17,6 +17,4 @@ export const updateItem = (items, update) => {
   ];
 };
 
-export const deepClone = (element) => {
-	return JSON.parse(JSON.stringify(element))
-}
+export const deepClone = (element) => JSON.parse(JSON.stringify(element));

@@ -7,11 +7,13 @@ import { nanoid } from 'nanoid';
 const generateType = function () {
   const randomIndex = getRandomInteger(0, types.length - 1);
 
-	let type = deepClone(types[randomIndex]);
+  const type = deepClone(types[randomIndex]);
 
-	if (type.services) {
-		type.services.map((service) => service.isChecked = Boolean(getRandomInteger()))
-	}
+  if (type.services) {
+    type.services.forEach((service) => {
+      service.isChecked = Boolean(getRandomInteger());
+    });
+  }
   return type;
 };
 
@@ -76,6 +78,6 @@ export const generatePoint = () => ({
   type: generateType(),
   city: generateCity(),
   dueDate: generateDate(),
-	price: getRandomInteger(20, 100),
+  price: getRandomInteger(20, 100),
   isFavorite: Boolean(getRandomInteger()),
-})
+});

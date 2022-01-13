@@ -4,19 +4,17 @@ import AbstractView from './site-abstract-view';
 const getNotPassedPath = function (points) {
 
   const sities = points
-	.map((point) => point.city.name)
-  .filter((city, i, arr) =>  {
-    const instantElement = city;
-    const nextElement = arr[i + 1];
+    .map((point) => point.city.name)
+    .filter((city, i, arr) =>  {
+      const instantElement = city;
+      const nextElement = arr[i + 1];
 
-    if (instantElement !== nextElement) {
-      return instantElement;
-    } else {
-      return;
-    }
+      if (instantElement !== nextElement) {
+        return instantElement;
+      }
 
-  })
-  .join(' — ');
+    })
+    .join(' — ');
 
 
   return (
@@ -29,7 +27,7 @@ const getStartAndEndTrip = function (points) {
   const endTimePoint = dayjs(points[0].dueDate.startDate).format('MMM D');
   const startTimePoint = dayjs(points[0].dueDate.startDate).format('MMM') !== dayjs(points[points.length - 1].dueDate.startDate).format('MMM')
     ? dayjs(points[points.length - 1].dueDate.startDate).format('MMM D')
-    :	dayjs(points[points.length - 1].dueDate.startDate).format('D');
+    :  dayjs(points[points.length - 1].dueDate.startDate).format('D');
 
   return(
     `<p class="trip-info__dates"> ${points ? `${endTimePoint} — ${startTimePoint}` : ''}</p>`
@@ -40,14 +38,14 @@ const createJointTripTemplate = function (points) {
 
   return (
     `<section class="trip-main__trip-info  trip-info">
-   	<div class="trip-info__main">
-			 ${getNotPassedPath(points)}
-			${getStartAndEndTrip(points)}
-		</div>
+     <div class="trip-info__main">
+       ${getNotPassedPath(points)}
+      ${getStartAndEndTrip(points)}
+    </div>
    
-   	<p class="trip-info__cost">
-   		Total: &euro;&nbsp;<span class="trip-info__cost-value">1230</span>
-   	</p>
+     <p class="trip-info__cost">
+       Total: &euro;&nbsp;<span class="trip-info__cost-value">1230</span>
+     </p>
    </section>`
   );
 };

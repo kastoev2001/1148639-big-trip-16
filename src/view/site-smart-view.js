@@ -11,9 +11,9 @@ export default class SmartView extends AbstractView {
     }
 
     this._date = {
-			...deepClone(this._date),
-			dueDate: {...this._date.dueDate},
-			...update};
+      ...deepClone(this._date),
+      dueDate: {...this._date.dueDate},
+      ...update};
     if (onlyDateUpdate) {
       return;
     }

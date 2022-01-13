@@ -1,6 +1,7 @@
 import PointView from '../view/site-point-view';
 import EditPointView from '../view/site-edit-point-view';
 
+import { deepClone } from '../utils/commonds';
 import {remove, render, RenderPosition, replace} from '../utils/render';
 
 const Mode = {
@@ -75,6 +76,7 @@ export default class PointPresenter {
   }
 
   #replaceFormToPoint = () => {
+    this.#editPointComponent.reset(this.#point);
     replace(this.#pointComponent, this.#editPointComponent);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
     this.#mode = Mode.DEFAULT;
@@ -87,7 +89,11 @@ export default class PointPresenter {
     }
   }
 
-  #pointFormSubmitHandler = () => {
+  #pointFormSubmitHandler = (point) => {
+    this.#changeData({
+      ...deepClone(point),
+      dueDate: point.dueDate
+    });
     this.#replaceFormToPoint();
   }
 

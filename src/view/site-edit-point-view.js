@@ -8,14 +8,14 @@ const createEditPointDescriptionTemplate = function (description, pics, isDescri
   return (
     `${isDescription
       ? `<section class="event__section  event__section--destination">
-		<h3 class="event__section-title  event__section-title--destination">Destination</h3>
-		<p class="event__destination-description">${description}</p>
-		${`<div class="event__photos-container">
-			<div class="event__photos-tape">
-			${pics.map((link) => `<img class="event__photo" src="${link}" alt="Event photo">`).join('')}
-			</div>
-			</div>`}
-			</section>`
+    <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+    <p class="event__destination-description">${description}</p>
+    ${`<div class="event__photos-container">
+      <div class="event__photos-tape">
+      ${pics.map((link) => `<img class="event__photo" src="${link}" alt="Event photo">`).join('')}
+      </div>
+      </div>`}
+      </section>`
       : ''}`
   );
 };
@@ -25,9 +25,9 @@ const createEditPointServicesTemplate = function (services, isServices) {
   return (
     `${isServices
       ? `<section class="event__section  event__section--offers">
-	<h3 class="event__section-title  event__section-title--offers">Offers</h3>
-	<div class="event__available-offers">
-	  ${services.map((servicesElements) => {
+  <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+  <div class="event__available-offers">
+    ${services.map((servicesElements) => {
 
       const serviceId = servicesElements.id;
       const service = servicesElements.service;
@@ -36,77 +36,71 @@ const createEditPointServicesTemplate = function (services, isServices) {
 
       return (
         `<div class="event__offer-selector">
-	         <input class="event__offer-checkbox  visually-hidden" id="${serviceId}" type="checkbox" name="event-offer-comfort" ${isChecked ? 'checked' : ''}>
-	         <label class="event__offer-label" for="${serviceId}">
-		       <span class="event__offer-title">${service}</span>
-		       &plus;&euro;&nbsp;
-		       <span class="event__offer-price">${price}</span>
-	       </label>
+           <input class="event__offer-checkbox  visually-hidden" id="${serviceId}" type="checkbox" name="event-offer-comfort" ${isChecked ? 'checked' : ''}>
+           <label class="event__offer-label" for="${serviceId}">
+           <span class="event__offer-title">${service}</span>
+           &plus;&euro;&nbsp;
+           <span class="event__offer-price">${price}</span>
+         </label>
        </div>`
       );
     })
       .join('')}
-	</div>
-	</section>`
+  </div>
+  </section>`
       : ''}`
   );
 };
 
-const createTypesEvent = (currentType) => {
+const createTypesEvent = (currentType) => (types
+  .map((type) => {
+    const checked = type.name.toLowerCase() === currentType.toLowerCase()
+      ? 'checked'
+      : '';
+    return (
+      `<div class="event__type-item">
+        <input id="event-type-${type.name.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" ${checked} value="${type.name.toLowerCase()}">
+        <label class="event__type-label  event__type-label--${type.name.toLowerCase()}" for="event-type-${type.name.toLowerCase()}-1">${type.name}</label>
+      </div>`
+    );
+  })
+  .join(''));
 
-	return types
-	  .map((type) => {
-			const checked = type.name.toLowerCase() === currentType.toLowerCase()
-			  ? 'checked'
-				: '';
-			return (
-				`<div class="event__type-item">
-					<input id="event-type-${type.name.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" ${checked} value="${type.name.toLowerCase()}">
-					<label class="event__type-label  event__type-label--${type.name.toLowerCase()}" for="event-type-${type.name.toLowerCase()}-1">${type.name}</label>
-				</div>`
-			)
-		})
-	  .join('');
-}
-
-const createCityList = (cities) => {
-
-	return cities
-		.map((city) => (`<option value="${city}"></option>`))
-		.join('');
-
-}
+const createCityListDestination = (cityList) => (cityList
+  .map((city) => (`<option value="${city}"></option>`))
+  .join('')
+);
 
 const BLANK_POINT = {
-	id: nanoid(),
+  id: nanoid(),
   type: {
-		name: 'Taxi',
-		services: null
-	},
+    name: 'Taxi',
+    services: null
+  },
   city: {
-		name: 'Amsterdam',
-		description: null,
-		pics: null
-	},
+    name: 'Amsterdam',
+    description: null,
+    pics: null
+  },
   price: null,
   dueDate: null,
-	isFavorite: false
+  isFavorite: false
 };
 
 const createEditPointTemplate = function (point = {}) {
   const {
     type,
-		isServices,
+    isServices,
     city,
-		isDescription,
+    isDescription,
     price,
     dueDate
   } = point;
 
-	const services = type.services;
-	const description = city.description;
-	const pics = city.pics;
-	const citiesList = cities.map((city) => city.name);
+  const services = type.services;
+  const description = city.description;
+  const pics = city.pics;
+  const cityList = cities.map((element) => element.name);
 
 
   const startDate = dueDate.startDate.format('DD/MM/YY hh:mm');
@@ -114,133 +108,137 @@ const createEditPointTemplate = function (point = {}) {
 
   const servicesTemplate = createEditPointServicesTemplate(services, isServices);
   const descriptionTemplate = createEditPointDescriptionTemplate(description, pics, isDescription);
-	const typesEvent = createTypesEvent(type.name);
-	const cityList = createCityList(citiesList);
+  const typesEvent = createTypesEvent(type.name);
+  const cityListDestination = createCityListDestination(cityList);
 
   return (
     `<li class="trip-events__item">
-	<form class="event event--edit" action="#" method="post">
-		<header class="event__header">
-			<div class="event__type-wrapper">
-				<label class="event__type  event__type-btn" for="event-type-toggle-1">
-					<span class="visually-hidden">Choose event type</span>
-					<img class="event__type-icon" width="17" height="17" src="img/icons/${type.name}.png" alt="Event type icon">
-				</label>
-				<input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+  <form class="event event--edit" action="#" method="post">
+    <header class="event__header">
+      <div class="event__type-wrapper">
+        <label class="event__type  event__type-btn" for="event-type-toggle-1">
+          <span class="visually-hidden">Choose event type</span>
+          <img class="event__type-icon" width="17" height="17" src="img/icons/${type.name}.png" alt="Event type icon">
+        </label>
+        <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
-				<div class="event__type-list">
-					<fieldset class="event__type-group">
-						<legend class="visually-hidden">Event type</legend>
+        <div class="event__type-list">
+          <fieldset class="event__type-group">
+            <legend class="visually-hidden">Event type</legend>
 
-						${typesEvent}
+            ${typesEvent}
 
-					</fieldset>
-				</div>
-			</div>
+          </fieldset>
+        </div>
+      </div>
 
-			<div class="event__field-group  event__field-group--destination">
-				<label class="event__label  event__type-output" for="event-destination-1">
-					${type.name}
-				</label>
-				<input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city.name}" list="destination-list-1">
-				
-				<datalist id="destination-list-1">
-				${cityList}
-				</datalist>
-			</div>
+      <div class="event__field-group  event__field-group--destination">
+        <label class="event__label  event__type-output" for="event-destination-1">
+          ${type.name}
+        </label>
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city.name}" list="destination-list-1">
+        
+        <datalist id="destination-list-1">
+        ${cityListDestination}
+        </datalist>
+      </div>
 
-			<div class="event__field-group  event__field-group--time">
-				<label class="visually-hidden" for="event-start-time-1">From</label>
-				<input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDate}">
-				&mdash;
-				<label class="visually-hidden" for="event-end-time-1">To</label>
-				<input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDate}">
-			</div>
+      <div class="event__field-group  event__field-group--time">
+        <label class="visually-hidden" for="event-start-time-1">From</label>
+        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDate}">
+        &mdash;
+        <label class="visually-hidden" for="event-end-time-1">To</label>
+        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDate}">
+      </div>
 
-			<div class="event__field-group  event__field-group--price">
-				<label class="event__label" for="event-price-1">
-					<span class="visually-hidden">Price</span>
-					&euro;
-				</label>
-				<input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
-			</div>
+      <div class="event__field-group  event__field-group--price">
+        <label class="event__label" for="event-price-1">
+          <span class="visually-hidden">Price</span>
+          &euro;
+        </label>
+        <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+      </div>
 
-			<button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-			<button class="event__reset-btn" type="reset">Delete</button>
-			<button class="event__rollup-btn" type="button">
-				<span class="visually-hidden">Open event</span>
-			</button>
-		</header>
-		<section class="event__details">
-			${servicesTemplate}
-			${descriptionTemplate}
-		</section>
-	</form>
+      <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+      <button class="event__reset-btn" type="reset">Delete</button>
+      <button class="event__rollup-btn" type="button">
+        <span class="visually-hidden">Open event</span>
+      </button>
+    </header>
+    <section class="event__details">
+      ${servicesTemplate}
+      ${descriptionTemplate}
+    </section>
+  </form>
   </li>`
   );
 };
 
 export default class EditPointView extends SmartView {
+
   constructor(point = BLANK_POINT) {
     super();
-    this._date = EditPointView.parcePointToDate(point)
+    this._date = EditPointView.parcePointToDate(point);
 
-		this.#setInnderHandlers();
+    this.#setInnderHandlers();
   }
 
   get template() {
     return createEditPointTemplate(this._date);
   }
 
-	reset = (point) => {
-		this.updateDate({
-			...deepClone(point),
-			dueDate: {...point.dueDate}
-		})
-	}
+  reset = (point) => this.updateDate(
+    EditPointView.parcePointToDate(point)
+  );
 
-	#setInnderHandlers = () => {
-		const typesEventElement = this.element.querySelector('.event__type-group');
-		const cityDestination = this.element.querySelector('.event__input--destination');
+  #setInnderHandlers = () => {
+    const typesEventElement = this.element.querySelector('.event__type-group');
+    const cityDestination = this.element.querySelector('.event__input--destination');
 
-		typesEventElement.addEventListener('click', this.#typesEventClickHandler);
-		cityDestination.addEventListener('input', this.#cityDestinationInputHandler);
-	}
-	
-	#typesEventClickHandler = (evt) => {
-		
-		if (evt.target.tagName !== 'INPUT') {
-			return;
-		}
-		let inputElement = evt.target;
+    typesEventElement.addEventListener('click', this.#typesEventClickHandler);
+    cityDestination.addEventListener('input', this.#cityDestinationInputHandler);
+  }
 
-		const type = types.find((type) => type.name.toLowerCase() === inputElement.value.toLowerCase());
-		this.updateDate({
-			...deepClone(this._date),
-			type,
-			isServices: type.services !== null,
-			dueDate: {...this._date.dueDate}
-		})
-	}
+  restoreHandlers = () => {
+    this.#setInnderHandlers();
+    this.setPointRollupClickHandler(this._callback.pointRollupClick);
+    this.setPointFormSubmitHandler(this._callback.pointFormSubmit);
+  }
 
-	#cityDestinationInputHandler = (evt) => {
-		evt.preventDefault();
-		const inputElement = evt.target;
+  #typesEventClickHandler = (evt) => {
 
-		inputElement.value = cities.some((city) => city.name === inputElement.value)
-		  ? inputElement.value
-			: '';
+    if (evt.target.tagName !== 'INPUT') {
+      return;
+    }
+    const inputElement = evt.target;
 
-		if (inputElement.value === '') {
-			return;
-		}
+    const type = types.find((fella) => fella.name.toLowerCase() === inputElement.value.toLowerCase());
+    this.updateDate({
+      ...deepClone(this._date),
+      type,
+      isServices: type.services !== null,
+      dueDate: {...this._date.dueDate}
+    });
+  }
 
-		const city = cities.find((city) => city.name === inputElement.value);
+  #cityDestinationInputHandler = (evt) => {
+    evt.preventDefault();
+    const inputElement = evt.target;
 
-			this.updateDate({
-				city
-			})
-	}
+    inputElement.value = cities.some((element) => element.name === inputElement.value)
+      ? inputElement.value
+      : '';
+
+    if (inputElement.value === '') {
+      return;
+    }
+
+    const city = cities.find((element) => element.name === inputElement.value);
+
+    this.updateDate({
+      city
+    });
+  }
 
   setPointRollupClickHandler = (callback) => {
     this._callback.pointRollupClick = callback;
@@ -270,22 +268,22 @@ export default class EditPointView extends SmartView {
     this._callback.pointFormSubmit(EditPointView.parceDateToPoint(this._date));
   }
 
-	static parcePointToDate = (point) => ({
-		...deepClone(point),
-		dueDate: {...point.dueDate},
-		isServices: point.type.services !== null,
-		isDescription: point.city !== null
-	});
+  static parcePointToDate = (point) => ({
+    ...deepClone(point),
+    dueDate: {...point.dueDate},
+    isServices: point.type.services !== null,
+    isDescription: point.city !== null
+  });
 
-	static parceDateToPoint = (date) => {
-		const point = {
-			...deepClone(date),
-			dueDate: {...date.dueDate}
-		};
+  static parceDateToPoint = (date) => {
+    const point = {
+      ...deepClone(date),
+      dueDate: {...date.dueDate}
+    };
 
-		delete point.isServices;
-		delete point.isDescription;
+    delete point.isServices;
+    delete point.isDescription;
 
-		return point;
-	};
+    return point;
+  };
 }
