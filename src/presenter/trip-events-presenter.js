@@ -121,9 +121,9 @@ export default class TripEventsPresenter {
     this.#sortingComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
   }
 
-	#handleSortTypeChange  = (sortType) => {
+  #handleSortTypeChange = (sortType) => {
 
-    if (this.#currentSortType === sortType) {
+    if  (this.#currentSortType === sortType) {
       return;
     }
 
@@ -132,5 +132,5 @@ export default class TripEventsPresenter {
     this.#renderPointList();
 
   }
-	
+
 }
