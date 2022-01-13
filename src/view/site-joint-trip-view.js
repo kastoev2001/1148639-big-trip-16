@@ -2,26 +2,25 @@ import dayjs from 'dayjs';
 import AbstractView from './site-abstract-view';
 
 const getNotPassedPath = function (points) {
-  const sities = points.map((point) => point.city);
 
-  const sortPoints = sities
-    .map((city, i, arr) =>  {
-      const instantElement = city;
-      const nextElement = arr[i + 1];
+  const sities = points
+	.map((point) => point.city.name)
+  .filter((city, i, arr) =>  {
+    const instantElement = city;
+    const nextElement = arr[i + 1];
 
-      if (instantElement !== nextElement) {
-        return instantElement;
-      } else {
-        return null;
-      }
+    if (instantElement !== nextElement) {
+      return instantElement;
+    } else {
+      return;
+    }
 
-    })
-    .filter((city) => city !== null)
-    .join(' — ');
+  })
+  .join(' — ');
 
 
   return (
-    `<h1 class="trip-info__title">${sortPoints}</h1>`
+    `<h1 class="trip-info__title">${points ? sities : ''}</h1>`
   );
 };
 
@@ -33,7 +32,7 @@ const getStartAndEndTrip = function (points) {
     :	dayjs(points[points.length - 1].dueDate.startDate).format('D');
 
   return(
-    `<p class="trip-info__dates"> ${endTimePoint} — ${startTimePoint}</p>`
+    `<p class="trip-info__dates"> ${points ? `${endTimePoint} — ${startTimePoint}` : ''}</p>`
   );
 };
 

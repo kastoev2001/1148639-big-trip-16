@@ -1,117 +1,25 @@
 
 import dayjs from 'dayjs';
-import { getRandomInteger } from '../utils/commonds';
-import {TYPE_POINT} from '../const';
+import { getRandomInteger, deepClone } from '../utils/commonds';
+import {types, cities} from '../const';
 import { nanoid } from 'nanoid';
 
-const COUNT_PICS = 5;
-
-const generateDescription = function () {
-
-  const DESCRIPTIONS = [
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit', null,
-    'Cras aliquet varius magna, non porta ligula feugiat eget.', null,
-    'Fusce tristique felis at fermentum pharetra.', null,
-    'Aliquam id orci ut lectus varius viverra.', null,
-    'Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.', null
-  ];
-
-  const randomIndex = getRandomInteger(0,DESCRIPTIONS.length - 1);
-
-  return DESCRIPTIONS[randomIndex];
-};
-
-const renserPics =function () {
-  const requestUrl = [];
-
-  for (let i = 0; i < COUNT_PICS; i++) {
-
-    requestUrl.push(`http://picsum.photos/248/152?${(Math.floor(10 * Math.random()))}`);
-
-  }
-  return requestUrl;
-};
-
 const generateType = function () {
+  const randomIndex = getRandomInteger(0, types.length - 1);
 
-  const randomIndex = getRandomInteger(0, TYPE_POINT.length - 1);
+	let type = deepClone(types[randomIndex]);
 
-  return TYPE_POINT[randomIndex];
+	if (type.services) {
+		type.services.map((service) => service.isChecked = Boolean(getRandomInteger()))
+	}
+  return type;
 };
 
-const generateCities = function () {
+const generateCity = function () {
 
-  const CITIES = [
-    'Amsterdam',
-    'Chamonix',
-    'Moscow',
-    'Obninsk',
-    'New-York'
-  ];
+  const randomIndex = getRandomInteger(0, cities.length - 1);
 
-  const randomIndex = getRandomInteger(0, CITIES.length - 1);
-
-  return CITIES[randomIndex];
-};
-
-const generateService = function () {
-  const services = [[
-    {
-      id: nanoid(),
-      get service() {
-        return 'Add luggage';
-      },
-      price: 30,
-      isChecked: Boolean(getRandomInteger())
-    },{
-      id: nanoid(),
-      get service()  {
-        return 'Switch to comfort class';
-      },
-      price: 100,
-      isChecked: Boolean(getRandomInteger())
-    },{
-      id: nanoid(),
-      get service()  {
-        return 'choose seats';
-      },
-      price: 5,
-      isChecked: Boolean(getRandomInteger())
-    }
-
-  ], null, [{
-    id: nanoid(),
-    get service() {
-      return 'Travel by train';
-    },
-    price: 40,
-    isChecked: Boolean(getRandomInteger())
-  },{
-    id: nanoid(),
-    get service() {
-      return  'Add meal';
-    },
-    price: 15,
-    isChecked: Boolean(getRandomInteger())
-  },{
-    id: nanoid(),
-    get service()  {
-      return 'add luggage';
-    },
-    price: 30,
-    isChecked: Boolean(getRandomInteger())
-  },{
-    id: nanoid(),
-    get service()  {
-      return 'Travel by train';
-    },
-    price: 40,
-    isChecked: Boolean(getRandomInteger())
-  }
-  ]];
-
-  const randomIndex = getRandomInteger(0, services.length - 1);
-  return services[randomIndex];
+  return cities[randomIndex];
 };
 
 const generateDate = function () {
@@ -163,36 +71,11 @@ const generateDate = function () {
   };
 };
 
-export const generatePoint = () => {
-  const initialPrice = getRandomInteger(20, 100);
-
-  return {
-    id: nanoid(),
-    pics: renserPics(),
-    type: generateType(),
-    city: generateCities(),
-    services: generateService(),
-    description: generateDescription(),
-    dueDate: generateDate(),
-    get price() {
-      let overallPrice = initialPrice;
-      if (this.services !== null) {
-        this.services.map((services) => {
-          if (services.isChecked) {
-            overallPrice += services.price;
-          }
-        });
-        return {
-          initialPrice,
-          overallPrice
-        };
-      } else {
-        return {
-          initialPrice,
-          overallPrice
-        };
-      }
-    },
-    isFavorite: Boolean(getRandomInteger()),
-  };
-};
+export const generatePoint = () => ({
+  id: nanoid(),
+  type: generateType(),
+  city: generateCity(),
+  dueDate: generateDate(),
+	price: getRandomInteger(20, 100),
+  isFavorite: Boolean(getRandomInteger()),
+})

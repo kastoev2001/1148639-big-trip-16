@@ -34,9 +34,9 @@ export default class PointPresenter {
     this.#pointComponent = new PointView(point);
     this.#editPointComponent = new EditPointView(point);
 
-    this.#pointComponent.setPointClickHandler(this.#arrowPointClickHandler);
+    this.#pointComponent.setPointExpandClickHandler(this.#pointExpandClickHandler);
     this.#pointComponent.setFavoriteClickHandler(this.#favoriteClickHandler);
-    this.#editPointComponent.setPointFormClickHandler(this.#arrowPointFormClickHandler);
+    this.#editPointComponent.setPointRollupClickHandler(this.#pointRollupClickHandler);
     this.#editPointComponent.setPointFormSubmitHandler(this.#pointFormSubmitHandler);
 
     if (prevPointComponent === null || prevEditPointComponent === null) {
@@ -91,11 +91,11 @@ export default class PointPresenter {
     this.#replaceFormToPoint();
   }
 
-  #arrowPointClickHandler = () => {
+  #pointExpandClickHandler = () => {
     this.#replacePointToForm();
   }
 
-  #arrowPointFormClickHandler = () => {
+  #pointRollupClickHandler = () => {
     this.#replaceFormToPoint();
   }
 

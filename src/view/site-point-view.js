@@ -1,16 +1,18 @@
 import AbstractView from './site-abstract-view';
 import { getDateDiff } from '../utils/point';
-const createServicesTemplate =function (services) {
-  return services.map((servicesElements) => {
+import { getOverallPrice } from '../utils/point';
 
-    const isChecked = servicesElements.isChecked;
+const createServicesTemplate = function (descriptionServices) {
+  return descriptionServices.map((descriptionService) => {
+
+    const isChecked = descriptionService.isChecked;
 
     if (!isChecked) {
       return null;
     }
 
-    const service = servicesElements.service;
-    const price = servicesElements.price;
+    const service = descriptionService.service;
+    const price = descriptionService.price;
 
 
     return `<li class="event__offer">
@@ -19,15 +21,21 @@ const createServicesTemplate =function (services) {
 		<span class="event__offer-price">${price}</span>
     </li>`;
   })
-    .filter((service) => service !== null)
+    .filter((descriptionService) => descriptionService !== null)
     .join('');
 };
 
 export const createPointTemplate = function (point) {
+  const {
+		type,
+		city,
+    dueDate,
+    price,
+    isFavorite
+  } = point;
+  const service = type.services;
 
-  const {dueDate, type, city, price, services, isFavorite} = point;
-
-  const {startDate, endDate} = dueDate;
+  const { startDate, endDate } = dueDate;
 
   const startDateHour = startDate.format('hh');
   const startDateMinute = startDate.format('mm');
@@ -43,34 +51,31 @@ export const createPointTemplate = function (point) {
     ? 'event__favorite-btn--active'
     : '';
 
-  const resultPrice =  price.overallPrice !== null
-    ? price.overallPrice
-    : price.initialPrice;
-
+  const overallPrice = getOverallPrice(price, service);
 
   return (
     `<li class="trip-events__item">
-<div class="event">
-	<time class="event__date" datetime="2019-03-18">${date}</time>
-	<div class="event__type">
-		<img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
-	</div>
-	<h3 class="event__title">${type} ${city}</h3>
-	<div class="event__schedule"> 
-		<p class="event__time">
-			<time class="event__start-time" datetime="2019-03-18T10:30">${startDateHour}:${startDateMinute}</time>
-			&mdash;
-			<time class="event__end-time" datetime="2019-03-18T11:00">${endDateHour}:${endDateMinute}</time>
+		<div class="event">
+			<time class="event__date" datetime="2019-03-18">${date}</time>
+			<div class="event__type">
+				<img class="event__type-icon" width="42" height="42" src="img/icons/${type.name}.png" alt="Event type icon">
+			</div>
+			<h3 class="event__title">${type.name} ${city.name}</h3>
+			<div class="event__schedule"> 
+			<p class="event__time">
+				<time class="event__start-time" datetime="2019-03-18T10:30">${startDateHour}:${startDateMinute}</time>
+				&mdash;
+				<time class="event__end-time" datetime="2019-03-18T11:00">${endDateHour}:${endDateMinute}</time>
+			</p>
+			<p class="event__duration">${dateDiff}</p>
+		</div>
+		<p class="event__price">
+		&euro;&nbsp;<span class="event__price-value">${overallPrice}</span>
 		</p>
-		<p class="event__duration">${dateDiff}</p>
-	</div>
-	<p class="event__price">
-		&euro;&nbsp;<span class="event__price-value">${resultPrice}</span>
-	</p>
-	<h4 class="visually-hidden">Offers:</h4>
-	<ul class="event__selected-offers">
-	${services !== null
-      ? createServicesTemplate(services)
+		<h4 class="visually-hidden">Offers:</h4>
+		<ul class="event__selected-offers">
+  ${service !== null
+      ? createServicesTemplate(service)
       : '<li class="event__offer"></li>'}
 	</ul>
 	<button class="event__favorite-btn ${fovoritesClassName}" type="button">
@@ -83,8 +88,7 @@ export const createPointTemplate = function (point) {
 		<span class="visually-hidden">Open event</span>
 	</button>
 </div>
-</li>`
-  );
+</li>`);
 };
 
 export default class PointView extends AbstractView {
@@ -99,18 +103,18 @@ export default class PointView extends AbstractView {
     return createPointTemplate(this.#point);
   }
 
-  setPointClickHandler = (callback) => {
-    this._callback.pointClick = callback;
+  setPointExpandClickHandler = (callback) => {
+    this._callback.pointExpandClick = callback;
 
-    const downArrowPoint = this.element.querySelector('.event__rollup-btn');
+    const pointExpandElement = this.element.querySelector('.event__rollup-btn');
 
-    downArrowPoint.addEventListener('click', this.#pointClickHandler);
+    pointExpandElement.addEventListener('click', this.#pointExpandClickHandler);
   }
 
-  #pointClickHandler = (evt) => {
+  #pointExpandClickHandler = (evt) => {
     evt.preventDefault();
 
-    this._callback.pointClick();
+    this._callback.pointExpandClick();
   }
 
   setFavoriteClickHandler = (callback) => {

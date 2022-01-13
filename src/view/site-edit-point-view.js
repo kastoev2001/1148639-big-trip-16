@@ -1,5 +1,7 @@
 import AbstractView from './site-abstract-view';
+import { nanoid } from 'nanoid';
 
+import { types, cities } from '../const';
 const createEditPointDescriptionTemplate = function (description, pics) {
   return (
     `${description
@@ -48,40 +50,68 @@ const createEditPointServicesTemplate = function (services) {
   );
 };
 
+const createTypesEvent = (currentType) => {
+
+	return types
+	  .map((type) => {
+			const checked = type.name.toLowerCase() === currentType.toLowerCase()
+			  ? 'checked'
+				: '';
+			return (
+				`<div class="event__type-item">
+					<input id="event-type-${type.name.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" ${checked} value="${type.name.toLowerCase()}">
+					<label class="event__type-label  event__type-label--${type.name.toLowerCase()}" for="event-type-${type.name.toLowerCase()}-1">${type.name}</label>
+				</div>`
+			)
+		})
+	  .join('');
+}
+
+const createCityList = (cities) => {
+
+	return cities
+		.map((city) => (`<option value="${city}"></option>`))
+		.join('');
+
+}
+
 const BLANK_POINT = {
-  type: 'Taxi',
-  city: 'Amsterdam',
+	id: nanoid(),
+  type: {
+		name: 'Taxi',
+		services: null
+	},
+  city: {
+		name: 'Amsterdam',
+		description: null,
+		pics: null
+	},
   price: null,
-  description: null,
-  services: {
-    id: 1,
-    service: 'Add luggage',
-    price: 30,
-    isChecked: false
-  },
-  pics: null,
-  dueDate: null
+  dueDate: null,
+	isFavorite: false
 };
 
 const createEditPointTemplate = function (point = {}) {
-
   const {
     type,
     city,
     price,
-    description,
-    services,
-    pics,
     dueDate
   } = point;
+
+	const services = type.services;
+	const description = city.description;
+	const pics = city.pics;
+	const citiesList = cities.map((city) => city.name);
+
 
   const startDate = dueDate.startDate.format('DD/MM/YY hh:mm');
   const endDate = dueDate.endDate.format('DD/MM/YY hh:mm');
 
   const servicesTemplate = createEditPointServicesTemplate(services);
   const descriptionTemplate = createEditPointDescriptionTemplate(description, pics);
-
-  const initialPrice = price.initialPrice;
+	const typesEvent = createTypesEvent(type.name);
+	const cityList = createCityList(citiesList);
 
   return (
     `<li class="trip-events__item">
@@ -90,7 +120,7 @@ const createEditPointTemplate = function (point = {}) {
 			<div class="event__type-wrapper">
 				<label class="event__type  event__type-btn" for="event-type-toggle-1">
 					<span class="visually-hidden">Choose event type</span>
-					<img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
+					<img class="event__type-icon" width="17" height="17" src="img/icons/${type.name}.png" alt="Event type icon">
 				</label>
 				<input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -98,63 +128,20 @@ const createEditPointTemplate = function (point = {}) {
 					<fieldset class="event__type-group">
 						<legend class="visually-hidden">Event type</legend>
 
-						<div class="event__type-item">
-							<input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi">
-							<label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
-						</div>
+						${typesEvent}
 
-						<div class="event__type-item">
-							<input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus">
-							<label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
-						</div>
-
-						<div class="event__type-item">
-							<input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train">
-							<label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
-						</div>
-
-						<div class="event__type-item">
-							<input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship">
-							<label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
-						</div>
-
-						<div class="event__type-item">
-							<input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive">
-							<label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
-						</div>
-
-						<div class="event__type-item">
-							<input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked>
-							<label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
-						</div>
-
-						<div class="event__type-item">
-							<input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in">
-							<label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
-						</div>
-
-						<div class="event__type-item">
-							<input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing">
-							<label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
-						</div>
-
-						<div class="event__type-item">
-							<input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant">
-							<label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
-						</div>
 					</fieldset>
 				</div>
 			</div>
 
 			<div class="event__field-group  event__field-group--destination">
 				<label class="event__label  event__type-output" for="event-destination-1">
-					${type}
+					${type.name}
 				</label>
-				<input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
+				<input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city.name}" list="destination-list-1">
+				
 				<datalist id="destination-list-1">
-					<option value="Amsterdam"></option>
-					<option value="Geneva"></option>
-					<option value="Chamonix"></option>
+				${cityList}
 				</datalist>
 			</div>
 
@@ -171,7 +158,7 @@ const createEditPointTemplate = function (point = {}) {
 					<span class="visually-hidden">Price</span>
 					&euro;
 				</label>
-				<input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${initialPrice}">
+				<input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
 			</div>
 
 			<button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -189,9 +176,9 @@ const createEditPointTemplate = function (point = {}) {
   );
 };
 
-export default class EditPointWiew extends AbstractView {
-  #point = null;
-
+export default class EditPointView extends AbstractView {
+	#point = null;
+	
   constructor(point = BLANK_POINT) {
     super();
     this.#point = point;
@@ -201,18 +188,18 @@ export default class EditPointWiew extends AbstractView {
     return createEditPointTemplate(this.#point);
   }
 
-  setPointFormClickHandler = (callback) => {
-    this._callback.pointFormClick = callback;
+  setPointRollupClickHandler = (callback) => {
+    this._callback.pointRollupClick = callback;
 
-    const arrowPointForm = this.element.querySelector('.event__rollup-btn');
+    const pointRollupElement = this.element.querySelector('.event__rollup-btn');
 
-    arrowPointForm.addEventListener('click', this.#pointFormClickHandler);
+    pointRollupElement.addEventListener('click', this.#pointRollupClickHandler);
   }
 
-  #pointFormClickHandler = (evt) => {
+  #pointRollupClickHandler = (evt) => {
     evt.preventDefault();
 
-    this._callback.pointFormClick();
+    this._callback.pointRollupClick();
   }
 
   setPointFormSubmitHandler = (callback) => {
