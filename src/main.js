@@ -6,13 +6,13 @@ import TripEventsPresenter from './presenter/trip-events-presenter';
 import { generateFilter } from './mock/filter';
 import { generatePoint } from './mock/point';
 
-import { sortPoints } from './utils/point';
+import { sortPoint } from './utils/point';
 import {RenderPosition, render, } from './utils/render';
 
 const COUNT_LIST = 10;
 
 const points = Array.from({ length: COUNT_LIST }, generatePoint);
-const sortedPoints = sortPoints(points);
+const sortedPoints = sortPoint(points);
 
 const tripMainElement = document.querySelector('.trip-main');
 

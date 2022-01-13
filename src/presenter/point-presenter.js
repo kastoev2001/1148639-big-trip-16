@@ -1,6 +1,7 @@
 import PointView from '../view/site-point-view';
 import EditPointView from '../view/site-edit-point-view';
 
+import { deepClone } from '../utils/commonds';
 import {remove, render, RenderPosition, replace} from '../utils/render';
 
 const Mode = {
@@ -34,9 +35,9 @@ export default class PointPresenter {
     this.#pointComponent = new PointView(point);
     this.#editPointComponent = new EditPointView(point);
 
-    this.#pointComponent.setPointClickHandler(this.#arrowPointClickHandler);
+    this.#pointComponent.setPointExpandClickHandler(this.#pointExpandClickHandler);
     this.#pointComponent.setFavoriteClickHandler(this.#favoriteClickHandler);
-    this.#editPointComponent.setPointFormClickHandler(this.#arrowPointFormClickHandler);
+    this.#editPointComponent.setPointRollupClickHandler(this.#pointRollupClickHandler);
     this.#editPointComponent.setPointFormSubmitHandler(this.#pointFormSubmitHandler);
 
     if (prevPointComponent === null || prevEditPointComponent === null) {
@@ -75,6 +76,7 @@ export default class PointPresenter {
   }
 
   #replaceFormToPoint = () => {
+    this.#editPointComponent.reset(this.#point);
     replace(this.#pointComponent, this.#editPointComponent);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
     this.#mode = Mode.DEFAULT;
@@ -87,15 +89,19 @@ export default class PointPresenter {
     }
   }
 
-  #pointFormSubmitHandler = () => {
+  #pointFormSubmitHandler = (point) => {
+    this.#changeData({
+      ...deepClone(point),
+      dueDate: point.dueDate
+    });
     this.#replaceFormToPoint();
   }
 
-  #arrowPointClickHandler = () => {
+  #pointExpandClickHandler = () => {
     this.#replacePointToForm();
   }
 
-  #arrowPointFormClickHandler = () => {
+  #pointRollupClickHandler = () => {
     this.#replaceFormToPoint();
   }
 
