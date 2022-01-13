@@ -1,4 +1,4 @@
-import AbstractView from './site-abstract-view';
+import SmartView from './site-smart-view';
 import { nanoid } from 'nanoid';
 
 import { types, cities } from '../const';
@@ -176,7 +176,7 @@ const createEditPointTemplate = function (point = {}) {
   );
 };
 
-export default class EditPointView extends AbstractView {
+export default class EditPointView extends SmartView {
 	#point = null;
 	
   constructor(point = BLANK_POINT) {
