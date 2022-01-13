@@ -50,23 +50,11 @@ export default class TripEventsPresenter {
       case SortType.PRICE_DOWN:
         this.#sortedPoints = sortPrice(this.#sortedPoints);
         break;
-      default:
+      case SortType.DEFAULT:
         this.#sortedPoints = this.#sourcedSortedPoints;
     }
 
     this.#currentSortType = sortType;
-  }
-
-  #handleSortTypeChange  = (sortType) => {
-
-    if (this.#currentSortType === sortType) {
-      return;
-    }
-
-    this.#sortPoints(sortType);
-    this.#clearPointList();
-    this.#renderPointList();
-
   }
 
   resetPointsAll = () => {
@@ -132,4 +120,17 @@ export default class TripEventsPresenter {
     render(this.#tripEventsContainer, this.#sortingComponent, RenderPosition.BEFORE_END);
     this.#sortingComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
   }
+
+	#handleSortTypeChange  = (sortType) => {
+
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#sortPoints(sortType);
+    this.#clearPointList();
+    this.#renderPointList();
+
+  }
+	
 }

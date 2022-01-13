@@ -1,9 +1,12 @@
 import SmartView from './site-smart-view';
+import flatpickr from 'flatpickr';
 
 import { deepClone } from '../utils/commonds';
 import { nanoid } from 'nanoid';
-
 import { types, cities } from '../const';
+
+import '/node_modules/flatpickr/dist/flatpickr.min.css';
+
 const createEditPointDescriptionTemplate = function (description, pics, isDescription) {
   return (
     `${isDescription
