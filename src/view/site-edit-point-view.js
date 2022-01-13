@@ -1,10 +1,12 @@
 import SmartView from './site-smart-view';
+
+import { deepClone } from '../utils/commonds';
 import { nanoid } from 'nanoid';
 
 import { types, cities } from '../const';
-const createEditPointDescriptionTemplate = function (description, pics) {
+const createEditPointDescriptionTemplate = function (description, pics, isDescription) {
   return (
-    `${description
+    `${isDescription
       ? `<section class="event__section  event__section--destination">
 		<h3 class="event__section-title  event__section-title--destination">Destination</h3>
 		<p class="event__destination-description">${description}</p>
@@ -18,10 +20,10 @@ const createEditPointDescriptionTemplate = function (description, pics) {
   );
 };
 
-const createEditPointServicesTemplate = function (services) {
+const createEditPointServicesTemplate = function (services, isServices) {
 
   return (
-    `${services
+    `${isServices
       ? `<section class="event__section  event__section--offers">
 	<h3 class="event__section-title  event__section-title--offers">Offers</h3>
 	<div class="event__available-offers">
@@ -94,7 +96,9 @@ const BLANK_POINT = {
 const createEditPointTemplate = function (point = {}) {
   const {
     type,
+		isServices,
     city,
+		isDescription,
     price,
     dueDate
   } = point;
@@ -108,8 +112,8 @@ const createEditPointTemplate = function (point = {}) {
   const startDate = dueDate.startDate.format('DD/MM/YY hh:mm');
   const endDate = dueDate.endDate.format('DD/MM/YY hh:mm');
 
-  const servicesTemplate = createEditPointServicesTemplate(services);
-  const descriptionTemplate = createEditPointDescriptionTemplate(description, pics);
+  const servicesTemplate = createEditPointServicesTemplate(services, isServices);
+  const descriptionTemplate = createEditPointDescriptionTemplate(description, pics, isDescription);
 	const typesEvent = createTypesEvent(type.name);
 	const cityList = createCityList(citiesList);
 
@@ -177,16 +181,66 @@ const createEditPointTemplate = function (point = {}) {
 };
 
 export default class EditPointView extends SmartView {
-	#point = null;
-	
   constructor(point = BLANK_POINT) {
     super();
-    this.#point = point;
+    this._date = EditPointView.parcePointToDate(point)
+
+		this.#setInnderHandlers();
   }
 
   get template() {
-    return createEditPointTemplate(this.#point);
+    return createEditPointTemplate(this._date);
   }
+
+	reset = (point) => {
+		this.updateDate({
+			...deepClone(point),
+			dueDate: {...point.dueDate}
+		})
+	}
+
+	#setInnderHandlers = () => {
+		const typesEventElement = this.element.querySelector('.event__type-group');
+		const cityDestination = this.element.querySelector('.event__input--destination');
+
+		typesEventElement.addEventListener('click', this.#typesEventClickHandler);
+		cityDestination.addEventListener('input', this.#cityDestinationInputHandler);
+	}
+	
+	#typesEventClickHandler = (evt) => {
+		
+		if (evt.target.tagName !== 'INPUT') {
+			return;
+		}
+		let inputElement = evt.target;
+
+		const type = types.find((type) => type.name.toLowerCase() === inputElement.value.toLowerCase());
+		this.updateDate({
+			...deepClone(this._date),
+			type,
+			isServices: type.services !== null,
+			dueDate: {...this._date.dueDate}
+		})
+	}
+
+	#cityDestinationInputHandler = (evt) => {
+		evt.preventDefault();
+		const inputElement = evt.target;
+
+		inputElement.value = cities.some((city) => city.name === inputElement.value)
+		  ? inputElement.value
+			: '';
+
+		if (inputElement.value === '') {
+			return;
+		}
+
+		const city = cities.find((city) => city.name === inputElement.value);
+
+			this.updateDate({
+				city
+			})
+	}
 
   setPointRollupClickHandler = (callback) => {
     this._callback.pointRollupClick = callback;
@@ -213,6 +267,25 @@ export default class EditPointView extends SmartView {
   #pointFormSubmitHandler = (evt) => {
     evt.preventDefault();
 
-    this._callback.pointFormSubmit();
+    this._callback.pointFormSubmit(EditPointView.parceDateToPoint(this._date));
   }
+
+	static parcePointToDate = (point) => ({
+		...deepClone(point),
+		dueDate: {...point.dueDate},
+		isServices: point.type.services !== null,
+		isDescription: point.city !== null
+	});
+
+	static parceDateToPoint = (date) => {
+		const point = {
+			...deepClone(date),
+			dueDate: {...date.dueDate}
+		};
+
+		delete point.isServices;
+		delete point.isDescription;
+
+		return point;
+	};
 }
