@@ -1,9 +1,14 @@
 import SmartView from './site-smart-view';
+import flatpickr from 'flatpickr';
+import dayjs from 'dayjs';
 
 import { deepClone } from '../utils/commonds';
 import { nanoid } from 'nanoid';
-
 import { types, cities } from '../const';
+import { isDateLess } from '../utils/point';
+
+import '/node_modules/flatpickr/dist/flatpickr.min.css';
+
 const createEditPointDescriptionTemplate = function (description, pics, isDescription) {
   return (
     `${isDescription
@@ -175,21 +180,61 @@ const createEditPointTemplate = function (point = {}) {
 };
 
 export default class EditPointView extends SmartView {
+  #datepickers = [];
 
   constructor(point = BLANK_POINT) {
     super();
     this._date = EditPointView.parcePointToDate(point);
 
     this.#setInnderHandlers();
+    this.#setDatepicker();
   }
 
   get template() {
     return createEditPointTemplate(this._date);
   }
 
+  removeElement = () => {
+    super.removeElement();
+
+    if (this.#datepickers !== []) {
+      this.#datepickers.forEach((datepicker) => datepicker.destroy());
+      this.#datepickers = [];
+    }
+  }
+
   reset = (point) => this.updateDate(
     EditPointView.parcePointToDate(point)
   );
+
+  restoreHandlers = () => {
+    this.#setInnderHandlers();
+    this.#setDatepicker();
+    this.setPointRollupClickHandler(this._callback.pointRollupClick);
+    this.setPointFormSubmitHandler(this._callback.pointFormSubmit);
+  }
+
+  #setDatepicker = () => {
+    this.#datepickers.push(flatpickr(
+      this.element.querySelector('#event-start-time-1'),
+      {
+        enableTime: true,
+        'time_24hr': true,
+        dateFormat: 'd/m/Y H:i',
+        defaultDate: this._date.dueDate.startDate.toString(),
+        onClose: this.#startDateCloseHandler
+      }
+    ),flatpickr(
+      this.element.querySelector('#event-end-time-1'),
+      {
+        enableTime: true,
+        'time_24hr': true,
+        dateFormat: 'd/m/Y H:i',
+        minDate: this._date.dueDate.startDate.toString(),
+        defaultDate: this._date.dueDate.endDate.toString(),
+        onClose: this.#endDateCloseHandler
+      }));
+  }
 
   #setInnderHandlers = () => {
     const typesEventElement = this.element.querySelector('.event__type-group');
@@ -197,12 +242,6 @@ export default class EditPointView extends SmartView {
 
     typesEventElement.addEventListener('click', this.#typesEventClickHandler);
     cityDestination.addEventListener('input', this.#cityDestinationInputHandler);
-  }
-
-  restoreHandlers = () => {
-    this.#setInnderHandlers();
-    this.setPointRollupClickHandler(this._callback.pointRollupClick);
-    this.setPointFormSubmitHandler(this._callback.pointFormSubmit);
   }
 
   #typesEventClickHandler = (evt) => {
@@ -266,6 +305,25 @@ export default class EditPointView extends SmartView {
     evt.preventDefault();
 
     this._callback.pointFormSubmit(EditPointView.parceDateToPoint(this._date));
+  }
+
+  #startDateCloseHandler = ([userDate]) => {
+    this.updateDate({
+      dueDate: {
+        startDate: dayjs(userDate),
+        endDate: isDateLess(dayjs(userDate), this._date.dueDate.endDate) ? dayjs(userDate).hour(0).minute(0).second(0) : this._date.dueDate.endDate
+      }
+    });
+  }
+
+  #endDateCloseHandler = ([userDate]) => {
+    this.updateDate({
+      dueDate: {
+        ...this._date.dueDate,
+        endDate: dayjs(userDate)
+      }
+    });
+
   }
 
   static parcePointToDate = (point) => ({

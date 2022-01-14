@@ -93,6 +93,7 @@ export const generateServices = function () {
 export const isFuture = (dueDate) => dueDate && dayjs().isBefore(dueDate, 'D');
 export const isPast = (dueDate) => dueDate && dayjs().isAfter(dueDate, 'D');
 export const isPointExpiringToday = (dueDate) => dueDate && dayjs(dueDate).isSame(dayjs(), 'D');
+export const isDateLess = (startDate, endDate) => startDate.isAfter(endDate);
 
 export const sortPoint = (data) => [...data].sort((a, b) => b.dueDate.startDate - a.dueDate.startDate);
 export const sortPrice = (data) => [...data].sort((a, b) => getOverallPrice(b.price, b.type.services) - getOverallPrice(a.price, a.type.services));
