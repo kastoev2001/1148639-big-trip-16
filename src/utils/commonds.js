@@ -16,3 +16,5 @@ export const updateItem = (items, update) => {
     ...items.slice(0, index), update, ...items.slice(index + 1),
   ];
 };
+
+export const deepClone = (element) => JSON.parse(JSON.stringify(element));

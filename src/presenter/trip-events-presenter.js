@@ -6,7 +6,7 @@ import PointPresenter from './point-presenter';
 import ObserverEvent from '../pattern/pattern-observer';
 
 import { render, RenderPosition } from '../utils/render';
-import { sortPoints, sortPrices, sortTimes } from '../utils/point';
+import { sortPoint, sortPrice, sortTime } from '../utils/point';
 import { updateItem } from '../utils/commonds';
 import { SortType } from '../const';
 
@@ -35,7 +35,7 @@ export default class TripEventsPresenter {
 
   init = (pointList) => {
     this.#pointList = [...pointList];
-    this.#sortedPoints = sortPoints(this.#pointList);
+    this.#sortedPoints = sortPoint(this.#pointList);
 
     this.#sourcedSortedPoints = [...this.#sortedPoints];
 
@@ -45,10 +45,10 @@ export default class TripEventsPresenter {
   #sortPoints = (sortType) => {
     switch(sortType) {
       case SortType.TIME_DOWN:
-        this.#sortedPoints = sortTimes(this.#sortedPoints);
+        this.#sortedPoints = sortTime(this.#sortedPoints);
         break;
       case SortType.PRICE_DOWN:
-        this.#sortedPoints = sortPrices(this.#sortedPoints);
+        this.#sortedPoints = sortPrice(this.#sortedPoints);
         break;
       default:
         this.#sortedPoints = this.#sourcedSortedPoints;
@@ -81,7 +81,7 @@ export default class TripEventsPresenter {
 
   #handlePointChenge = (updatePoint) => {
     this.#pointList = updateItem(this.#pointList, updatePoint);
-    this.#sortedPoints = sortPoints(this.#pointList);
+    this.#sortedPoints = sortPoint(this.#pointList);
 
     this.#pointsInited.get(updatePoint.id).init(updatePoint);
   }
