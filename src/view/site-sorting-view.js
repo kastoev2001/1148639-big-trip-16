@@ -43,8 +43,11 @@ export default class SortingView extends AbstractView {
   }
 
   #sortTypeChengeHandler = (evt) => {
-    if (evt.target.tagName !== 'LABEL') {
-      evt.preventDefault();
+		const chengedType = Object.values(SortType).some((sortType) => sortType === evt.target.dataset.sortType)
+		? evt.target.dataset.sortType
+		: '';
+
+		if (evt.target.tagName !== 'LABEL' || chengedType === '') {
       return;
     }
 

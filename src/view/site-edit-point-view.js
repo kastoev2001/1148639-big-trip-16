@@ -2,12 +2,12 @@ import SmartView from './site-smart-view';
 import flatpickr from 'flatpickr';
 import dayjs from 'dayjs';
 
-import { deepClone } from '../utils/commonds';
+import { deepPoint } from '../utils/commonds';
 import { nanoid } from 'nanoid';
 import { types, cities } from '../const';
 import { isDateLess } from '../utils/point';
 
-import '/node_modules/flatpickr/dist/flatpickr.min.css';
+import 'flatpickr/dist/flatpickr.min.css';
 
 const createEditPointDescriptionTemplate = function (description, pics, isDescription) {
   return (
@@ -253,10 +253,9 @@ export default class EditPointView extends SmartView {
 
     const type = types.find((fella) => fella.name.toLowerCase() === inputElement.value.toLowerCase());
     this.updateDate({
-      ...deepClone(this._date),
+      ...deepPoint(this._date),
       type,
       isServices: type.services !== null,
-      dueDate: {...this._date.dueDate}
     });
   }
 
@@ -327,16 +326,14 @@ export default class EditPointView extends SmartView {
   }
 
   static parcePointToDate = (point) => ({
-    ...deepClone(point),
-    dueDate: {...point.dueDate},
+    ...deepPoint(point),
     isServices: point.type.services !== null,
     isDescription: point.city !== null
   });
 
   static parceDateToPoint = (date) => {
     const point = {
-      ...deepClone(date),
-      dueDate: {...date.dueDate}
+      ...deepPoint(date)
     };
 
     delete point.isServices;
