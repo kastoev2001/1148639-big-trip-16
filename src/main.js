@@ -2,7 +2,7 @@ import MenuView from './view/site-menu-view';
 import FilterView from './view/site-filter-view';
 import JointTripView from './view/site-joint-trip-view';
 import TripEventsPresenter from './presenter/trip-events-presenter';
-
+import PointsModel from './model/points-model';
 import { generateFilter } from './mock/filter';
 import { generatePoint } from './mock/point';
 
@@ -13,6 +13,10 @@ const COUNT_LIST = 10;
 
 const points = Array.from({ length: COUNT_LIST }, generatePoint);
 const sortedPoints = sortPoint(points);
+
+const pointsModel = new PointsModel();
+
+pointsModel.points = points;
 
 const tripMainElement = document.querySelector('.trip-main');
 
@@ -29,8 +33,8 @@ const filters = generateFilter(points);
 
 render(tripControlsFiltersElements, new FilterView(filters), RenderPosition.BEFORE_END);
 
-const tripEvents = document.querySelector('.trip-events');
+const tripEventsElement = document.querySelector('.trip-events');
 
-const tripEventPresenter = new TripEventsPresenter(tripEvents);
+const tripEventPresenter = new TripEventsPresenter(tripEventsElement, pointsModel);
 
-tripEventPresenter.init(points);
+tripEventPresenter.init();

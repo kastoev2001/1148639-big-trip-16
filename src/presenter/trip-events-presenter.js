@@ -3,7 +3,7 @@ import EventListView from '../view/site-event-list-view';
 import NoPointView from '../view/site-no-points-view';
 import PointPresenter from './point-presenter';
 
-import ObserverEvent from '../pattern/pattern-observer';
+import AbstractObservable from '../utils/pattern/abstract-observable';
 
 import { render, RenderPosition } from '../utils/render';
 import { sortPoint, sortPrice, sortTime } from '../utils/point';
@@ -58,13 +58,13 @@ export default class TripEventsPresenter {
   }
 
   resetPointsAll = () => {
-    const pointWatcher = new ObserverEvent();
+    const pointWatcher = new AbstractObservable();
 
     this.#pointsInited.forEach((presenter) => {
-      pointWatcher.subscribe(presenter.resetPoint);
+      pointWatcher.addObserver(presenter.resetPoint);
     });
 
-    pointWatcher.broadcast();
+    pointWatcher._notify();
   }
 
   #handlePointChenge = (updatePoint) => {
