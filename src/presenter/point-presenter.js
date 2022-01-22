@@ -1,8 +1,9 @@
 import PointView from '../view/site-point-view';
 import EditPointView from '../view/site-edit-point-view';
 
-import { deepClone } from '../utils/commonds';
+import { deepClone, deepPoint } from '../utils/commonds';
 import {remove, render, RenderPosition, replace} from '../utils/render';
+import { UpdateType, UserAction } from '../const';
 
 const Mode = {
   DEFAULT: 'DAFAULT',
@@ -90,10 +91,11 @@ export default class PointPresenter {
   }
 
   #pointFormSubmitHandler = (point) => {
-    this.#changeData({
-      ...deepClone(point),
-      dueDate: point.dueDate
-    });
+    this.#changeData(
+			UserAction.UPDATE_POINT,
+			UpdateType.MINOR,
+			deepPoint(point)
+		);
     this.#replaceFormToPoint();
   }
 

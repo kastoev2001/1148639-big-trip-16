@@ -6,13 +6,13 @@ import PointsModel from './model/points-model';
 import { generateFilter } from './mock/filter';
 import { generatePoint } from './mock/point';
 
-import { sortPoint } from './utils/point';
+import { sortPoints } from './utils/point';
 import {RenderPosition, render, } from './utils/render';
 
 const COUNT_LIST = 10;
 
 const points = Array.from({ length: COUNT_LIST }, generatePoint);
-const sortedPoints = sortPoint(points);
+const sortedPoints = sortPoints(points);
 
 const pointsModel = new PointsModel();
 

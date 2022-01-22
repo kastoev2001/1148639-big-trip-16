@@ -300,6 +300,20 @@ export default class EditPointView extends SmartView {
     pointForm.addEventListener('submit', this.#pointFormSubmitHandler);
   }
 
+	setsetDeleteFormClickHandler = (callback) => {
+		this._callback.setDeleteFormClickHandler = callback;
+
+		let deleteElement = this.element.querySelector('.event__reset-btn');
+
+		deleteElement.addEventListener('click', this.#setDeleteFormClickHandler);
+	}
+
+	#setDeleteFormClickHandler = (evt) => {
+		evt.preventDefault();
+
+		this._callback.setDeleteFormClickHandler(EditPointView.parceDateToPoint(this._date));
+	}
+	
   #pointFormSubmitHandler = (evt) => {
     evt.preventDefault();
 
@@ -328,7 +342,7 @@ export default class EditPointView extends SmartView {
   static parcePointToDate = (point) => ({
     ...deepPoint(point),
     isServices: point.type.services !== null,
-    isDescription: point.city !== null
+    isDescription: point.city.description !== null
   });
 
   static parceDateToPoint = (date) => {

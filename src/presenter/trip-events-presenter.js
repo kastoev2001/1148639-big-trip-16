@@ -5,10 +5,11 @@ import PointPresenter from './point-presenter';
 
 import AbstractObservable from '../utils/pattern/abstract-observable';
 
-import { render, RenderPosition } from '../utils/render';
-import { sortPoint, sortPrice, sortTime } from '../utils/point';
 import { updateItem } from '../utils/commonds';
-import { SortType } from '../const';
+import { render, RenderPosition } from '../utils/render';
+import { sortPoints, sortPrices, sortTimes } from '../utils/point';
+import { copyArrayOfObjects } from '../utils/commonds';
+import { SortType, UserAction, UpdateType } from '../const';
 
 const EmptyFiter = {
   EVERYTHING: 'Click New Event to create your first point',
@@ -18,44 +19,44 @@ const EmptyFiter = {
 
 export default class TripEventsPresenter {
   #tripEventsContainer = null;
+	#pointsModel = null;
 
   #sortingComponent = new SortingView();
   #eventListComponent = new EventListView();
   #noPointComponent = new NoPointView(EmptyFiter.EVERYTHING);
 
-  #pointList = [];
-  #sortedPoints = [];
   #pointsInited = new Map();
   #currentSortType = SortType.DEFAULT;
-  #sourcedSortedPoints = [];
 
-  constructor(tripEventsContainer) {
+  constructor(tripEventsContainer, pointsModel) {
     this.#tripEventsContainer = tripEventsContainer;
+
+		this.#pointsModel = pointsModel;
+
+		this.#pointsModel.addObserver(this.#handleModelEvent);
   }
 
-  init = (pointList) => {
-    this.#pointList = [...pointList];
-    this.#sortedPoints = sortPoint(this.#pointList);
-
-    this.#sourcedSortedPoints = [...this.#sortedPoints];
-
+  init = () => {
+		
     this.#renderTripEvents();
   }
 
-  #sortPoints = (sortType) => {
-    switch(sortType) {
-      case SortType.TIME_DOWN:
-        this.#sortedPoints = sortTime(this.#sortedPoints);
-        break;
-      case SortType.PRICE_DOWN:
-        this.#sortedPoints = sortPrice(this.#sortedPoints);
-        break;
-      case SortType.DEFAULT:
-        this.#sortedPoints = this.#sourcedSortedPoints;
-    }
+	get points() {
 
-    this.#currentSortType = sortType;
-  }
+		const points = copyArrayOfObjects(this.#pointsModel.points);
+
+		switch (this.#currentSortType) {
+			case SortType.DEFAULT:
+				return sortPoints(points);
+			case SortType.TIME_DOWN:
+				return sortTimes(points);
+			case SortType.PRICE_DOWN:
+				return sortPrices(points);
+		}
+		
+		return points;
+		
+	}
 
   resetPointsAll = () => {
     const pointWatcher = new AbstractObservable();
@@ -67,12 +68,22 @@ export default class TripEventsPresenter {
     pointWatcher._notify();
   }
 
-  #handlePointChenge = (updatePoint) => {
-    this.#pointList = updateItem(this.#pointList, updatePoint);
-    this.#sortedPoints = sortPoint(this.#pointList);
-
-    this.#pointsInited.get(updatePoint.id).init(updatePoint);
+  #handleViewAction = (actionType, updateType, update) => {
+		switch (actionType) {
+			case UserAction.UPDATE_POINT:
+				this.#pointsModel.updatePoint(updateType, update);
+				break;
+		}
   }
+
+	#handleModelEvent = (updateType) => {
+		switch (updateType) {
+			case UpdateType.MINOR:
+				this.#clearPointList();
+				this.#renderPoints();
+		}
+	}
+	
 
   #handleModeChange = () => {
     this.#pointsInited.forEach((presenter) => presenter.resetPoint());
@@ -84,14 +95,14 @@ export default class TripEventsPresenter {
   }
 
   #renderPoint = (point) => {
-    const pointPresenter = new PointPresenter(this.#eventListComponent, this.#handlePointChenge, this.#handleModeChange);
+    const pointPresenter = new PointPresenter(this.#eventListComponent, this.#handleViewAction, this.#handleModeChange);
     pointPresenter.init(point);
 
     this.#pointsInited.set(point.id, pointPresenter);
   }
 
   #renderPoints = () => {
-    this.#sortedPoints.forEach((point) => {
+    this.points.forEach((point) => {
       this.#renderPoint(point);
     });
   }
@@ -102,7 +113,7 @@ export default class TripEventsPresenter {
   }
 
   #renderTripEvents = () => {
-    if (this.#pointList.length === 0) {
+    if (this.points.length === 0) {
 
       this.#renderNoPoint();
 
@@ -127,7 +138,7 @@ export default class TripEventsPresenter {
       return;
     }
 
-    this.#sortPoints(sortType);
+    this.#currentSortType = sortType;
     this.#clearPointList();
     this.#renderPointList();
 
