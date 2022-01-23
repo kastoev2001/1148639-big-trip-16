@@ -14,7 +14,7 @@ export default class PointsModel extends AbstractObservable{
 
 	updatePoint = (updateType, update) => {
 		const points = copyArrayOfObjects(this.#points);
-		const index = this.points.findIndex((point) => point.id === update.id);
+		const index = points.findIndex((point) => point.id === update.id);
 
 			if (index === -1) {
 				throw new Error('Can\'t update unexisting point');
@@ -28,10 +28,10 @@ export default class PointsModel extends AbstractObservable{
 
 		this._notify(updateType);
 	}
-
-		deletePoint = (updateType, update) => {
+	
+	deletePoint = (updateType, update) => {
 		const points = copyArrayOfObjects(this.#points);
-		const index = this.#points.findIndex((point) => point.id === update.id);
+		const index = points.findIndex((point) => point.id === update.id);
 
 		if (index === -1) {
 			throw new Error('Can\'t delete undexisting point');
@@ -40,6 +40,18 @@ export default class PointsModel extends AbstractObservable{
 		this.#points = [
 			...points.slice(0, index),
 			...points.slice(index + 1)
+		];
+
+		console.log(this.#points)
+
+		this._notify(updateType);
+	}
+
+	addPoint = (updateType, update) => {
+		const points = copyArrayOfObjects(this.#points);
+		this.#points = [
+			update,
+			...points
 		];
 
 		this._notify(updateType);

@@ -104,7 +104,7 @@ export default class PointPresenter {
 		this.#changeData(
 			UserAction.DELETE_POINT,
 			UpdateType.MINOR,
-			point
+			deepPoint(point)
 		)
 	}
 

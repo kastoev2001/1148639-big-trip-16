@@ -77,7 +77,6 @@ const createCityListDestination = (cityList) => (cityList
 );
 
 const BLANK_POINT = {
-  id: nanoid(),
   type: {
     name: 'Taxi',
     services: null

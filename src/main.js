@@ -42,3 +42,13 @@ const tripEventPresenter = new TripEventsPresenter(tripEventsElement, pointsMode
 
 filterPresenter.init();
 tripEventPresenter.init();
+
+const newPointElement = document.querySelector('.trip-main__event-add-btn');
+const newPointClickHandler = (evt) => {
+  evt.preventDefault();
+	tripEventPresenter.createPoint();
+	filterPresenter.init();
+	newPointElement.disabled = true;
+}
+
+newPointElement.addEventListener('click', newPointClickHandler);

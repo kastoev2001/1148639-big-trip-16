@@ -1,6 +1,7 @@
 import SortingView from '../view/site-sorting-view';
 import EventListView from '../view/site-event-list-view';
 import NoPointView from '../view/site-no-points-view';
+import PointNewPresenter from './point-new-presenter';
 import PointPresenter from './point-presenter';
 
 import AbstractObservable from '../utils/pattern/abstract-observable';
@@ -27,12 +28,15 @@ export default class TripEventsPresenter {
   #noPointComponent = null;
 
   #pointsInited = new Map();
+	#pointNewPresenter = null;
   #currentSortType = SortType.DEFAULT;
 
   constructor(tripEventsContainer, pointsModel, filterModel) {
     this.#tripEventsContainer = tripEventsContainer;
 		this.#pointsModel = pointsModel;
 		this.#filterModel = filterModel;
+
+		this.#pointNewPresenter = new PointNewPresenter(this.#eventListComponent, this.#handleViewAction);
 
 		this.#pointsModel.addObserver(this.#handleModelEvent);
 		this.#filterModel.addObserver(this.#handleModelEvent);
@@ -42,6 +46,12 @@ export default class TripEventsPresenter {
 		
     this.#renderTripEvents();
   }
+
+	createPoint = () => {
+		this.#currentSortType = SortType.DEFAULT;
+		this.#filterModel.setFilter(UpdateType.MINOR, FilterType.EVERYTHING);
+		this.#pointNewPresenter.init()
+	}
 
 	get points() {
 		const currentFilterType = this.#filterModel.filter;
@@ -78,6 +88,10 @@ export default class TripEventsPresenter {
 				break;
 			case UserAction.DELETE_POINT:
 				this.#pointsModel.deletePoint(updateType, update);
+				break;
+				case UserAction.ADD_POINT:
+				this.#pointsModel.addPoint(updateType, update);
+				break;
 		}
   }
 
@@ -91,6 +105,7 @@ export default class TripEventsPresenter {
 	}
 	
 	#clearTripEvents = ({resetSortType = false} = {}) => {
+		this.#pointNewPresenter.destroy();
 		this.#pointsInited.forEach((presenter) => presenter.destroy());
     this.#pointsInited.clear();
 
@@ -104,12 +119,8 @@ export default class TripEventsPresenter {
 	}
 
   #handleModeChange = () => {
+		this.#pointNewPresenter.destroy();
     this.#pointsInited.forEach((presenter) => presenter.resetPoint());
-  }
-
-  #clearPointList = () => {
-    this.#pointsInited.forEach((presenter) => presenter.destroy());
-    this.#pointsInited.clear();
   }
 
   #renderPoint = (point) => {
