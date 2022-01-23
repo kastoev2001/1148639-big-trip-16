@@ -18,6 +18,12 @@ export const UpdateType = {
 	MAJOR: 'mojor'
 }
 
+export const FilterType = {
+	EVERYTHING: 'everything',
+	FUTURE: 'future',
+	PAST: 'past'
+}
+
 export const types = [
   {
     name: 'Taxi',

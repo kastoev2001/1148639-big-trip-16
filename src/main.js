@@ -1,9 +1,12 @@
 import MenuView from './view/site-menu-view';
-import FilterView from './view/site-filter-view';
 import JointTripView from './view/site-joint-trip-view';
+
 import TripEventsPresenter from './presenter/trip-events-presenter';
+import FilterPresenter from './presenter/filter-presenter';
+
 import PointsModel from './model/points-model';
-import { generateFilter } from './mock/filter';
+import FilterModel from './model/filter-model';
+
 import { generatePoint } from './mock/point';
 
 import { sortPoints } from './utils/point';
@@ -18,23 +21,24 @@ const pointsModel = new PointsModel();
 
 pointsModel.points = points;
 
-const tripMainElement = document.querySelector('.trip-main');
+const filterModel = new FilterModel();
 
-const tripControlsNavigationElement = tripMainElement.querySelector('.trip-controls__navigation');
-const tripControlsFiltersElements = tripMainElement.querySelector('.trip-controls__filters');
+const mainElement = document.querySelector('.trip-main');
+
+const navigationElement = mainElement.querySelector('.trip-controls__navigation');
+
 
 const MenuComponent = new MenuView();
 const JointTripComponent = new JointTripView(sortedPoints);
 
-render(tripControlsNavigationElement, MenuComponent, RenderPosition.BEFORE_END);
+render(navigationElement, MenuComponent, RenderPosition.BEFORE_END);
 render(MenuComponent, JointTripComponent, RenderPosition.BEFORE_END);
 
-const filters = generateFilter(points);
-
-render(tripControlsFiltersElements, new FilterView(filters), RenderPosition.BEFORE_END);
-
+const filtersElement = mainElement.querySelector('.trip-controls__filters');
 const tripEventsElement = document.querySelector('.trip-events');
 
+const filterPresenter = new FilterPresenter(filtersElement, filterModel);
 const tripEventPresenter = new TripEventsPresenter(tripEventsElement, pointsModel);
 
+filterPresenter.init();
 tripEventPresenter.init();
