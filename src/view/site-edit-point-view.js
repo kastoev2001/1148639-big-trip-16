@@ -303,7 +303,7 @@ export default class EditPointView extends SmartView {
     pointForm.addEventListener('submit', this.#pointFormSubmitHandler);
   }
 
-	setsetDeleteFormClickHandler = (callback) => {
+	setDeleteFormClickHandler = (callback) => {
 		this._callback.setDeleteFormClickHandler = callback;
 
 		let deleteElement = this.element.querySelector('.event__reset-btn');
