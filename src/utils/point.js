@@ -90,6 +90,7 @@ export const generateServices = function () {
 
   return services[randomIndex];
 };
+export const isInterval = (dueDate) => dueDate && dayjs().isAfter(dueDate.startDate, 'D') && dayjs().isBefore(dueDate.endDate, 'D')
 export const isFuture = (dueDate) => dueDate && dayjs().isBefore(dueDate, 'D');
 export const isPast = (dueDate) => dueDate && dayjs().isAfter(dueDate, 'D');
 export const isPointExpiringToday = (dueDate) => dueDate && dayjs(dueDate).isSame(dayjs(), 'D');

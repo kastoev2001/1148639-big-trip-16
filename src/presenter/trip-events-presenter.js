@@ -5,35 +5,37 @@ import PointPresenter from './point-presenter';
 
 import AbstractObservable from '../utils/pattern/abstract-observable';
 
-import { updateItem } from '../utils/commonds';
-import { render, RenderPosition } from '../utils/render';
+import { remove, render, RenderPosition } from '../utils/render';
 import { sortPoints, sortPrices, sortTimes } from '../utils/point';
 import { copyArrayOfObjects } from '../utils/commonds';
-import { SortType, UserAction, UpdateType } from '../const';
+import { filter } from '../utils/filter';
+import { SortType, UserAction, UpdateType, FilterType } from '../const';
 
 const EmptyFiter = {
-  EVERYTHING: 'Click New Event to create your first point',
-  FUTURE: 'There are no future events now',
-  PAST: 'There are no past events now'
+  [FilterType.EVERYTHING]: 'Click New Event to create your first point',
+  [FilterType.FUTURE]: 'There are no future events now',
+  [FilterType.PAST]: 'There are no past events now'
 };
 
 export default class TripEventsPresenter {
   #tripEventsContainer = null;
 	#pointsModel = null;
+	#filterModel = null;
 
-  #sortingComponent = new SortingView();
+  #sortingComponent = null;
   #eventListComponent = new EventListView();
-  #noPointComponent = new NoPointView(EmptyFiter.EVERYTHING);
+  #noPointComponent = null;
 
   #pointsInited = new Map();
   #currentSortType = SortType.DEFAULT;
 
-  constructor(tripEventsContainer, pointsModel) {
+  constructor(tripEventsContainer, pointsModel, filterModel) {
     this.#tripEventsContainer = tripEventsContainer;
-
 		this.#pointsModel = pointsModel;
+		this.#filterModel = filterModel;
 
 		this.#pointsModel.addObserver(this.#handleModelEvent);
+		this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   init = () => {
@@ -42,16 +44,17 @@ export default class TripEventsPresenter {
   }
 
 	get points() {
-
+		const currentFilterType = this.#filterModel.filter;
 		const points = copyArrayOfObjects(this.#pointsModel.points);
+		const filteredPoitns = filter[currentFilterType](points)
 
 		switch (this.#currentSortType) {
 			case SortType.DEFAULT:
-				return sortPoints(points);
+				return sortPoints(filteredPoitns);
 			case SortType.TIME_DOWN:
-				return sortTimes(points);
+				return sortTimes(filteredPoitns);
 			case SortType.PRICE_DOWN:
-				return sortPrices(points);
+				return sortPrices(filteredPoitns);
 		}
 		
 		return points;
@@ -79,11 +82,24 @@ export default class TripEventsPresenter {
 	#handleModelEvent = (updateType) => {
 		switch (updateType) {
 			case UpdateType.MINOR:
-				this.#clearPointList();
-				this.#renderPoints();
+				this.#clearTripEvents({resetSortType: true});
+				this.#renderTripEvents();
+
 		}
 	}
 	
+	#clearTripEvents = ({resetSortType = false} = {}) => {
+		this.#pointsInited.forEach((presenter) => presenter.destroy());
+    this.#pointsInited.clear();
+
+		if (this.#noPointComponent) {
+      remove(this.#noPointComponent);
+    }
+		if (resetSortType) {
+			this.#currentSortType = SortType.DEFAULT;
+			remove(this.#sortingComponent);
+	}
+	}
 
   #handleModeChange = () => {
     this.#pointsInited.forEach((presenter) => presenter.resetPoint());
@@ -124,10 +140,14 @@ export default class TripEventsPresenter {
   }
 
   #renderNoPoint = () => {
+		this.#noPointComponent = new NoPointView(EmptyFiter[this.#filterModel.filter]);
+
     render(this.#tripEventsContainer, this.#noPointComponent, RenderPosition.BEFORE_END);
   }
 
   #renderSort = () => {
+		this.#sortingComponent = new SortingView();
+
     render(this.#tripEventsContainer, this.#sortingComponent, RenderPosition.BEFORE_END);
     this.#sortingComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
   }
@@ -139,7 +159,7 @@ export default class TripEventsPresenter {
     }
 
     this.#currentSortType = sortType;
-    this.#clearPointList();
+    this.#clearTripEvents();
     this.#renderPointList();
 
   }

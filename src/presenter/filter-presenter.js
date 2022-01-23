@@ -53,7 +53,7 @@ export default class FilterPresenter {
 			return;
 		}
 
-		this.#filterModel.setFilter(filterType);
+		this.#filterModel.setFilter(UpdateType.MINOR,filterType);
 	}
 
 }

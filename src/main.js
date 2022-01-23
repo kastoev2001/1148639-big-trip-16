@@ -12,7 +12,7 @@ import { generatePoint } from './mock/point';
 import { sortPoints } from './utils/point';
 import {RenderPosition, render, } from './utils/render';
 
-const COUNT_LIST = 10;
+const COUNT_LIST = 5;
 
 const points = Array.from({ length: COUNT_LIST }, generatePoint);
 const sortedPoints = sortPoints(points);
@@ -38,7 +38,7 @@ const filtersElement = mainElement.querySelector('.trip-controls__filters');
 const tripEventsElement = document.querySelector('.trip-events');
 
 const filterPresenter = new FilterPresenter(filtersElement, filterModel);
-const tripEventPresenter = new TripEventsPresenter(tripEventsElement, pointsModel);
+const tripEventPresenter = new TripEventsPresenter(tripEventsElement, pointsModel, filterModel);
 
 filterPresenter.init();
 tripEventPresenter.init();

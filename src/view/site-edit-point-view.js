@@ -87,8 +87,11 @@ const BLANK_POINT = {
     description: null,
     pics: null
   },
-  price: null,
-  dueDate: null,
+  price: 0,
+  dueDate: {
+		startDate: dayjs(),
+		endDate: dayjs()
+	},
   isFavorite: false
 };
 
