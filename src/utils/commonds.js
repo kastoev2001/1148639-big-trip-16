@@ -17,7 +17,7 @@ export const updateItem = (items, update) => {
   ];
 };
 
-export const deepClone = (object) => (JSON.parse(JSON.stringify(object)))
+export const deepClone = (object) => (JSON.parse(JSON.stringify(object)));
 export const deepPoint = (point) => ({
   ...deepClone(point),
   dueDate: {...point.dueDate}

@@ -1,9 +1,9 @@
 import SmartView from './site-smart-view';
 import flatpickr from 'flatpickr';
 import dayjs from 'dayjs';
+import he from 'he';
 
 import { deepPoint } from '../utils/commonds';
-import { nanoid } from 'nanoid';
 import { types, cities } from '../const';
 import { isDateLess } from '../utils/point';
 
@@ -88,9 +88,9 @@ const BLANK_POINT = {
   },
   price: 0,
   dueDate: {
-		startDate: dayjs(),
-		endDate: dayjs()
-	},
+    startDate: dayjs(),
+    endDate: dayjs()
+  },
   isFavorite: false
 };
 
@@ -143,7 +143,7 @@ const createEditPointTemplate = function (point = {}) {
         <label class="event__label  event__type-output" for="event-destination-1">
           ${type.name}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city.name}" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(city.name)}" list="destination-list-1">
         
         <datalist id="destination-list-1">
         ${cityListDestination}
@@ -240,10 +240,13 @@ export default class EditPointView extends SmartView {
 
   #setInnderHandlers = () => {
     const typesEventElement = this.element.querySelector('.event__type-group');
-    const cityDestination = this.element.querySelector('.event__input--destination');
+    const cityElement = this.element.querySelector('.event__input--destination');
+    const priceElement = this.element.querySelector('.event__input--price');
 
     typesEventElement.addEventListener('click', this.#typesEventClickHandler);
-    cityDestination.addEventListener('input', this.#cityDestinationInputHandler);
+    cityElement.addEventListener('input', this.#cityInputHandler);
+    priceElement.addEventListener('input', this.#priceInputHandler);
+
   }
 
   #typesEventClickHandler = (evt) => {
@@ -261,7 +264,7 @@ export default class EditPointView extends SmartView {
     });
   }
 
-  #cityDestinationInputHandler = (evt) => {
+  #cityInputHandler = (evt) => {
     evt.preventDefault();
     const inputElement = evt.target;
 
@@ -278,6 +281,20 @@ export default class EditPointView extends SmartView {
     this.updateDate({
       city
     });
+  }
+
+  #priceInputHandler = (evt) => {
+    evt.preventDefault();
+    const inputElement = evt.target;
+    const isValue = /^\d+$|^$/.test(evt.target.value);
+
+    inputElement.value = isValue
+      ? inputElement.value
+      : inputElement.value.substring(0, inputElement.value.length - 1);
+
+    this.updateDate({
+      price: Number(inputElement.value)
+    }, true);
   }
 
   setPointRollupClickHandler = (callback) => {
@@ -302,20 +319,20 @@ export default class EditPointView extends SmartView {
     pointForm.addEventListener('submit', this.#pointFormSubmitHandler);
   }
 
-	setDeleteFormClickHandler = (callback) => {
-		this._callback.setDeleteFormClickHandler = callback;
+  setDeleteFormClickHandler = (callback) => {
+    this._callback.setDeleteFormClickHandler = callback;
 
-		let deleteElement = this.element.querySelector('.event__reset-btn');
+    const deleteElement = this.element.querySelector('.event__reset-btn');
 
-		deleteElement.addEventListener('click', this.#setDeleteFormClickHandler);
-	}
+    deleteElement.addEventListener('click', this.#setDeleteFormClickHandler);
+  }
 
-	#setDeleteFormClickHandler = (evt) => {
-		evt.preventDefault();
+  #setDeleteFormClickHandler = (evt) => {
+    evt.preventDefault();
 
-		this._callback.setDeleteFormClickHandler(EditPointView.parceDateToPoint(this._date));
-	}
-	
+    this._callback.setDeleteFormClickHandler(EditPointView.parceDateToPoint(this._date));
+  }
+
   #pointFormSubmitHandler = (evt) => {
     evt.preventDefault();
 

@@ -7,22 +7,22 @@ export const SortType = {
 };
 
 export const UserAction = {
-	UPDATE_POINT: 'update_point',
-	ADD_POINT: 'add_point',
-	DELETE_POINT: 'delete_point'
-}
+  UPDATE_POINT: 'update_point',
+  ADD_POINT: 'add_point',
+  DELETE_POINT: 'delete_point'
+};
 
 export const UpdateType = {
-	PATCH: 'patch',
-	MINOR: 'minor',
-	MAJOR: 'mojor'
-}
+  PATCH: 'patch',
+  MINOR: 'minor',
+  MAJOR: 'mojor'
+};
 
 export const FilterType = {
-	EVERYTHING: 'everything',
-	FUTURE: 'future',
-	PAST: 'past'
-}
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PAST: 'past'
+};
 
 export const types = [
   {

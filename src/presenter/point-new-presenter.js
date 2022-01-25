@@ -3,7 +3,7 @@ import EditPointView from '../view/site-edit-point-view';
 import { nanoid } from 'nanoid';
 
 import { deepPoint } from '../utils/commonds';
-import {remove, render, RenderPosition, replace} from '../utils/render';
+import {remove, render, RenderPosition} from '../utils/render';
 
 import { UserAction, UpdateType } from '../const';
 
@@ -32,17 +32,17 @@ export default class PointPresenter {
     render(this.#pointListComponent, this.#editPointComponent, RenderPosition.AFTER_BEGIN);
 
     document.addEventListener('keydown', this.#escKeyDownHandler);
-    
+
   }
 
   destroy = () => {
     if (this.#editPointComponent === null) {
       return;
-    } 
+    }
 
-		const newPointElement = document.querySelector('.trip-main__event-add-btn');
-		
-		newPointElement.disabled = false;
+    const newPointElement = document.querySelector('.trip-main__event-add-btn');
+
+    newPointElement.disabled = false;
 
     remove(this.#editPointComponent);
     this.#editPointComponent = null;
@@ -66,7 +66,7 @@ export default class PointPresenter {
       UserAction.ADD_POINT,
       UpdateType.MINOR,
       {id: nanoid(), ...deepPoint(update)}
-      );
+    );
     this.destroy();
   }
 
