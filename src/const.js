@@ -1,5 +1,29 @@
 import { generatePics, generateServices } from './utils/point';
 
+export const SortType = {
+  DEFAULT: 'default',
+  TIME_DOWN: 'time',
+  PRICE_DOWN: 'price'
+};
+
+export const UserAction = {
+  UPDATE_POINT: 'update_point',
+  ADD_POINT: 'add_point',
+  DELETE_POINT: 'delete_point'
+};
+
+export const UpdateType = {
+  PATCH: 'patch',
+  MINOR: 'minor',
+  MAJOR: 'mojor'
+};
+
+export const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PAST: 'past'
+};
+
 export const types = [
   {
     name: 'Taxi',
@@ -39,12 +63,6 @@ export const types = [
   },
 ];
 
-export const SortType = {
-  DEFAULT: 'default',
-  TIME_DOWN: 'time',
-  PRICE_DOWN: 'price'
-};
-
 export const cities = [{
   name: 'Amsterdam',
   description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -59,8 +77,8 @@ export const cities = [{
   pics: generatePics(),
 },{
   name: 'Obninsk',
-  description: 'Fusce tristique felis at fermentum pharetra.',
-  pics: generatePics(),
+  description: null,
+  pics: null,
 },{
   name: 'New-York',
   description: 'Cras aliquet varius magna, non porta ligula feugiat eget.',

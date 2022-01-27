@@ -1,13 +1,13 @@
 import SmartView from './site-smart-view';
 import flatpickr from 'flatpickr';
 import dayjs from 'dayjs';
+import he from 'he';
 
-import { deepClone } from '../utils/commonds';
-import { nanoid } from 'nanoid';
+import { deepPoint } from '../utils/commonds';
 import { types, cities } from '../const';
 import { isDateLess } from '../utils/point';
 
-import '/node_modules/flatpickr/dist/flatpickr.min.css';
+import 'flatpickr/dist/flatpickr.min.css';
 
 const createEditPointDescriptionTemplate = function (description, pics, isDescription) {
   return (
@@ -77,7 +77,6 @@ const createCityListDestination = (cityList) => (cityList
 );
 
 const BLANK_POINT = {
-  id: nanoid(),
   type: {
     name: 'Taxi',
     services: null
@@ -87,8 +86,11 @@ const BLANK_POINT = {
     description: null,
     pics: null
   },
-  price: null,
-  dueDate: null,
+  price: 0,
+  dueDate: {
+    startDate: dayjs(),
+    endDate: dayjs()
+  },
   isFavorite: false
 };
 
@@ -141,7 +143,7 @@ const createEditPointTemplate = function (point = {}) {
         <label class="event__label  event__type-output" for="event-destination-1">
           ${type.name}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city.name}" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(city.name)}" list="destination-list-1">
         
         <datalist id="destination-list-1">
         ${cityListDestination}
@@ -238,10 +240,13 @@ export default class EditPointView extends SmartView {
 
   #setInnderHandlers = () => {
     const typesEventElement = this.element.querySelector('.event__type-group');
-    const cityDestination = this.element.querySelector('.event__input--destination');
+    const cityElement = this.element.querySelector('.event__input--destination');
+    const priceElement = this.element.querySelector('.event__input--price');
 
     typesEventElement.addEventListener('click', this.#typesEventClickHandler);
-    cityDestination.addEventListener('input', this.#cityDestinationInputHandler);
+    cityElement.addEventListener('input', this.#cityInputHandler);
+    priceElement.addEventListener('input', this.#priceInputHandler);
+
   }
 
   #typesEventClickHandler = (evt) => {
@@ -253,14 +258,13 @@ export default class EditPointView extends SmartView {
 
     const type = types.find((fella) => fella.name.toLowerCase() === inputElement.value.toLowerCase());
     this.updateDate({
-      ...deepClone(this._date),
+      ...deepPoint(this._date),
       type,
       isServices: type.services !== null,
-      dueDate: {...this._date.dueDate}
     });
   }
 
-  #cityDestinationInputHandler = (evt) => {
+  #cityInputHandler = (evt) => {
     evt.preventDefault();
     const inputElement = evt.target;
 
@@ -277,6 +281,20 @@ export default class EditPointView extends SmartView {
     this.updateDate({
       city
     });
+  }
+
+  #priceInputHandler = (evt) => {
+    evt.preventDefault();
+    const inputElement = evt.target;
+    const isValue = /^\d+$|^$/.test(evt.target.value);
+
+    inputElement.value = isValue
+      ? inputElement.value
+      : inputElement.value.substring(0, inputElement.value.length - 1);
+
+    this.updateDate({
+      price: Number(inputElement.value)
+    }, true);
   }
 
   setPointRollupClickHandler = (callback) => {
@@ -299,6 +317,20 @@ export default class EditPointView extends SmartView {
     const pointForm = this.element.querySelector('form');
 
     pointForm.addEventListener('submit', this.#pointFormSubmitHandler);
+  }
+
+  setDeleteFormClickHandler = (callback) => {
+    this._callback.setDeleteFormClickHandler = callback;
+
+    const deleteElement = this.element.querySelector('.event__reset-btn');
+
+    deleteElement.addEventListener('click', this.#setDeleteFormClickHandler);
+  }
+
+  #setDeleteFormClickHandler = (evt) => {
+    evt.preventDefault();
+
+    this._callback.setDeleteFormClickHandler(EditPointView.parceDateToPoint(this._date));
   }
 
   #pointFormSubmitHandler = (evt) => {
@@ -327,16 +359,14 @@ export default class EditPointView extends SmartView {
   }
 
   static parcePointToDate = (point) => ({
-    ...deepClone(point),
-    dueDate: {...point.dueDate},
+    ...deepPoint(point),
     isServices: point.type.services !== null,
-    isDescription: point.city !== null
+    isDescription: point.city.description !== null
   });
 
   static parceDateToPoint = (date) => {
     const point = {
-      ...deepClone(date),
-      dueDate: {...date.dueDate}
+      ...deepPoint(date)
     };
 
     delete point.isServices;

@@ -1,8 +1,9 @@
 import PointView from '../view/site-point-view';
 import EditPointView from '../view/site-edit-point-view';
 
-import { deepClone } from '../utils/commonds';
+import { deepPoint } from '../utils/commonds';
 import {remove, render, RenderPosition, replace} from '../utils/render';
+import { UpdateType, UserAction } from '../const';
 
 const Mode = {
   DEFAULT: 'DAFAULT',
@@ -39,6 +40,7 @@ export default class PointPresenter {
     this.#pointComponent.setFavoriteClickHandler(this.#favoriteClickHandler);
     this.#editPointComponent.setPointRollupClickHandler(this.#pointRollupClickHandler);
     this.#editPointComponent.setPointFormSubmitHandler(this.#pointFormSubmitHandler);
+    this.#editPointComponent.setDeleteFormClickHandler(this.#deleteFormClickHandler);
 
     if (prevPointComponent === null || prevEditPointComponent === null) {
       render(this.#pointListComponent, this.#pointComponent, RenderPosition.BEFORE_END);
@@ -90,11 +92,20 @@ export default class PointPresenter {
   }
 
   #pointFormSubmitHandler = (point) => {
-    this.#changeData({
-      ...deepClone(point),
-      dueDate: point.dueDate
-    });
+    this.#changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      deepPoint(point)
+    );
     this.#replaceFormToPoint();
+  }
+
+  #deleteFormClickHandler = (point) => {
+    this.#changeData(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      deepPoint(point)
+    );
   }
 
   #pointExpandClickHandler = () => {

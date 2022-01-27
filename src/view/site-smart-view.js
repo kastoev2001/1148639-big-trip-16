@@ -1,6 +1,6 @@
 import AbstractView from './site-abstract-view';
 
-import { deepClone } from '../utils/commonds';
+import { deepPoint } from '../utils/commonds';
 
 export default class SmartView extends AbstractView {
   _date = null;
@@ -11,8 +11,7 @@ export default class SmartView extends AbstractView {
     }
 
     this._date = {
-      ...deepClone(this._date),
-      dueDate: {...this._date.dueDate},
+      ...deepPoint(this._date),
       ...update};
     if (onlyDateUpdate) {
       return;

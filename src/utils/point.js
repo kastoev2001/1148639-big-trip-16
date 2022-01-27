@@ -26,7 +26,7 @@ export const getDateDiff = (endDate, startDate) => {
   const minuteDiff = (endDate.diff(startDate, 'minute') % 60);
 
 
-  const dateDiff =	dayjs(`${currentDate.year()}-${currentDate.month()}-${dayDiff} ${hourDiff}:${minuteDiff}`);
+  const dateDiff =  dayjs(`${currentDate.year()}-${currentDate.month()}-${dayDiff} ${hourDiff}:${minuteDiff}`);
 
   if (dateDiff.date() > 1) {
     return `${dateDiff.subtract(1, 'day').format('DD')}Д ${dateDiff.format('hh')}Ч ${dateDiff.format('mm')}М`;
@@ -90,12 +90,13 @@ export const generateServices = function () {
 
   return services[randomIndex];
 };
+export const isInterval = (dueDate) => dueDate && dayjs().isAfter(dueDate.startDate, 'D') && dayjs().isBefore(dueDate.endDate, 'D');
 export const isFuture = (dueDate) => dueDate && dayjs().isBefore(dueDate, 'D');
 export const isPast = (dueDate) => dueDate && dayjs().isAfter(dueDate, 'D');
 export const isPointExpiringToday = (dueDate) => dueDate && dayjs(dueDate).isSame(dayjs(), 'D');
 export const isDateLess = (startDate, endDate) => startDate.isAfter(endDate);
 
-export const sortPoint = (data) => [...data].sort((a, b) => b.dueDate.startDate - a.dueDate.startDate);
-export const sortPrice = (data) => [...data].sort((a, b) => getOverallPrice(b.price, b.type.services) - getOverallPrice(a.price, a.type.services));
-export const sortTime = (data) => [...data].sort((a, b) =>	b.dueDate.endDate.diff(b.dueDate.startDate, 'minute') - a.dueDate.endDate.diff(a.dueDate.startDate, 'minute'));
+export const sortPoints = (data) => [...data].sort((a, b) => b.dueDate.startDate - a.dueDate.startDate);
+export const sortPrices = (data) => [...data].sort((a, b) => getOverallPrice(b.price, b.type.services) - getOverallPrice(a.price, a.type.services));
+export const sortTimes = (data) => [...data].sort((a, b) =>  b.dueDate.endDate.diff(b.dueDate.startDate, 'minute') - a.dueDate.endDate.diff(a.dueDate.startDate, 'minute'));
 
