@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import he from 'he';
 
 import { deepPoint } from '../utils/commonds';
-import { types, cities } from '../const';
+import { Types, Cities } from '../const';
 import { isDateLess } from '../utils/point';
 
 import 'flatpickr/dist/flatpickr.min.css';
@@ -57,7 +57,7 @@ const createEditPointServicesTemplate = function (services, isServices) {
   );
 };
 
-const createTypesEvent = (currentType) => (types
+const createTypesEvent = (currentType) => (Types
   .map((type) => {
     const checked = type.name.toLowerCase() === currentType.toLowerCase()
       ? 'checked'
@@ -107,7 +107,7 @@ const createEditPointTemplate = function (point = {}) {
   const services = type.services;
   const description = city.description;
   const pics = city.pics;
-  const cityList = cities.map((element) => element.name);
+  const cityList = Cities.map((element) => element.name);
 
 
   const startDate = dueDate.startDate.format('DD/MM/YY hh:mm');
@@ -256,7 +256,7 @@ export default class EditPointView extends SmartView {
     }
     const inputElement = evt.target;
 
-    const type = types.find((fella) => fella.name.toLowerCase() === inputElement.value.toLowerCase());
+    const type = Types.find((fella) => fella.name.toLowerCase() === inputElement.value.toLowerCase());
     this.updateDate({
       ...deepPoint(this._date),
       type,
@@ -268,7 +268,7 @@ export default class EditPointView extends SmartView {
     evt.preventDefault();
     const inputElement = evt.target;
 
-    inputElement.value = cities.some((element) => element.name === inputElement.value)
+    inputElement.value = Cities.some((element) => element.name === inputElement.value)
       ? inputElement.value
       : '';
 
@@ -276,7 +276,7 @@ export default class EditPointView extends SmartView {
       return;
     }
 
-    const city = cities.find((element) => element.name === inputElement.value);
+    const city = Cities.find((element) => element.name === inputElement.value);
 
     this.updateDate({
       city

@@ -24,7 +24,12 @@ export const FilterType = {
   PAST: 'past'
 };
 
-export const types = [
+export const MenuItem = {
+  TABLE: 'table',
+  STATS: 'stats'
+};
+
+export const Types = [
   {
     name: 'Taxi',
     services: generateServices()
@@ -63,7 +68,7 @@ export const types = [
   },
 ];
 
-export const cities = [{
+export const Cities = [{
   name: 'Amsterdam',
   description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   pics: generatePics(),

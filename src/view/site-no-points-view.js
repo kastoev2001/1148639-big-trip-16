@@ -1,6 +1,6 @@
 import AbstractView from './site-abstract-view';
 
-const getNoPointsTemplate = function (text) {
+const createNoPointsTemplate = function (text) {
   return (
     `<p class="trip-events__msg">${text}"</p>`
   );
@@ -15,6 +15,6 @@ export default class NoPointsWiew extends AbstractView{
   }
 
   get template() {
-    return getNoPointsTemplate(this.#text);
+    return createNoPointsTemplate(this.#text);
   }
 }

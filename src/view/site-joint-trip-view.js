@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import AbstractView from './site-abstract-view';
 
 const getOverallPraceTrip = (points) => {
@@ -18,7 +17,7 @@ const getOverallPraceTrip = (points) => {
   return overallPraceTrip;
 };
 
-const getNotPassedPath = function (points) {
+const createNotPassedPath = function (points) {
 
   const sities = points
     .map((point) => point.city.name)
@@ -39,26 +38,21 @@ const getNotPassedPath = function (points) {
   );
 };
 
-const getStartAndEndTrip = function (points) {
-  let endDatePoint;
-  let startDatePoint;
+const createStartAndEndTrip = function (points) {
+  const endDate = points[0].dueDate.startDate;
+  const startDate = points[points.length - 1].dueDate.startDate;
 
-  if (points.length !== 0) {
-    endDatePoint = dayjs(points[0].dueDate.startDate).format('MMM D');
-    startDatePoint = dayjs(points[0].dueDate.startDate).format('MMM') !== dayjs(points[points.length - 1].dueDate.startDate).format('MMM')
-      ? dayjs(points[points.length - 1].dueDate.startDate).format('MMM D')
-      : dayjs(points[points.length - 1].dueDate.startDate).format('D');
+  if (startDate.month() === endDate.month()) {
+    return `<p class="trip-info__dates">${startDate.format('MMM D')} — ${endDate.format('D')}</p>`;
+  } else {
+    return `<p class="trip-info__dates">${startDate.format('MMM D')} — ${endDate.format('MMM D')}</p>`;
   }
-
-  return (
-    `<p class="trip-info__dates"> ${points.length !== 0 ? `${endDatePoint} — ${startDatePoint}` : ''}</p>`
-  );
 };
 
 const createJointTripTemplate = function (points) {
 
-  const notpassedPath = getNotPassedPath(points);
-  const startAndendTrip = getStartAndEndTrip(points);
+  const notpassedPath = createNotPassedPath(points);
+  const startAndendTrip = createStartAndEndTrip(points);
   const overallPraceTrip = getOverallPraceTrip(points);
 
 
