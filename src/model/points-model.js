@@ -1,11 +1,11 @@
-import { copyArrayOfObjects } from '../utils/commonds';
+import { cloneArrayOfObjects } from '../utils/commonds';
 import AbstractObservable from '../utils/pattern/abstract-observable';
 
 export default class PointsModel extends AbstractObservable{
   #points = null;
 
   set points(points) {
-    this.#points = [...copyArrayOfObjects(points)];
+    this.#points = [...cloneArrayOfObjects(points)];
   }
 
   get points() {
@@ -13,7 +13,7 @@ export default class PointsModel extends AbstractObservable{
   }
 
   updatePoint = (updateType, update) => {
-    const points = copyArrayOfObjects(this.#points);
+    const points = cloneArrayOfObjects(this.#points);
     const index = points.findIndex((point) => point.id === update.id);
 
     if (index === -1) {
@@ -30,7 +30,7 @@ export default class PointsModel extends AbstractObservable{
   }
 
   deletePoint = (updateType, update) => {
-    const points = copyArrayOfObjects(this.#points);
+    const points = cloneArrayOfObjects(this.#points);
     const index = points.findIndex((point) => point.id === update.id);
 
     if (index === -1) {
@@ -46,7 +46,7 @@ export default class PointsModel extends AbstractObservable{
   }
 
   addPoint = (updateType, update) => {
-    const points = copyArrayOfObjects(this.#points);
+    const points = cloneArrayOfObjects(this.#points);
     this.#points = [
       update,
       ...points

@@ -8,7 +8,7 @@ import AbstractObservable from '../utils/pattern/abstract-observable';
 
 import { remove, render, RenderPosition } from '../utils/render';
 import { sortPoints, sortPrices, sortTimes } from '../utils/point';
-import { copyArrayOfObjects } from '../utils/commonds';
+import { cloneArrayOfObjects } from '../utils/commonds';
 import { filter } from '../utils/filter';
 import { SortType, UserAction, UpdateType, FilterType } from '../const';
 
@@ -37,14 +37,20 @@ export default class TripEventsPresenter {
     this.#filterModel = filterModel;
 
     this.#pointNewPresenter = new PointNewPresenter(this.#eventListComponent, this.#handleViewAction);
-
-    this.#pointsModel.addObserver(this.#handleModelEvent);
-    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   init = () => {
+    this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
 
     this.#renderTripEvents();
+  }
+
+  destroy = () => {
+    this.#clearTripEvents({resetSortType: true});
+
+    this.#pointsModel.removeObserver(this.#handleModelEvent);
+    this.#filterModel.removeObserver(this.#handleModelEvent);
   }
 
   createPoint = () => {
@@ -55,7 +61,7 @@ export default class TripEventsPresenter {
 
   get points() {
     const currentFilterType = this.#filterModel.filter;
-    const points = copyArrayOfObjects(this.#pointsModel.points);
+    const points = cloneArrayOfObjects(this.#pointsModel.points);
     const filteredPoitns = filter[currentFilterType](points);
 
     switch (this.#currentSortType) {
@@ -82,6 +88,11 @@ export default class TripEventsPresenter {
   }
 
   #handleViewAction = (actionType, updateType, update) => {
+
+    if (updateType === null) {
+      return;
+    }
+
     switch (actionType) {
       case UserAction.UPDATE_POINT:
         this.#pointsModel.updatePoint(updateType, update);

@@ -1,13 +1,13 @@
 
 import dayjs from 'dayjs';
 import { getRandomInteger, deepClone } from '../utils/commonds';
-import {types, cities} from '../const';
+import {Types, Cities} from '../const';
 import { nanoid } from 'nanoid';
 
 const generateType = function () {
-  const randomIndex = getRandomInteger(0, types.length - 1);
+  const randomIndex = getRandomInteger(0, Types.length - 1);
 
-  const type = deepClone(types[randomIndex]);
+  const type = deepClone(Types[randomIndex]);
 
   if (type.services) {
     type.services.forEach((service) => {
@@ -19,9 +19,9 @@ const generateType = function () {
 
 const generateCity = function () {
 
-  const randomIndex = getRandomInteger(0, cities.length - 1);
+  const randomIndex = getRandomInteger(0, Cities.length - 1);
 
-  return cities[randomIndex];
+  return Cities[randomIndex];
 };
 
 const generateDate = function () {

@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import AbstractView from './site-abstract-view';
 
 const getOverallPraceTrip = (points) => {

@@ -48,12 +48,20 @@ export default class FilterPresenter {
     remove(prevFilterComponent);
   }
 
+  destroy = () => {
+    remove(this.#filterComponent);
+    this.#filterComponent = null;
+
+    this.#filterModel.setFilter(null, FilterType.EVERYTHING);
+
+  }
+
   #filterTypeChangeHandler = (filterType) => {
     if (this.#filterModel.filter === filterType) {
       return;
     }
 
-    this.#filterModel.setFilter(UpdateType.MINOR,filterType);
+    this.#filterModel.setFilter(UpdateType.MINOR, filterType);
   }
 
 }
