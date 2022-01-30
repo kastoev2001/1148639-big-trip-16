@@ -18,23 +18,18 @@ export const getOverallPrice = (price, services) => {
   }
 };
 
-export const getDateDiff = (endDate, startDate) => {
-  const currentDate = dayjs();
+export const getDateDiff = (dateDiff) => {
+  const day = Math.floor(dateDiff / 60 / 24);
+  const hour = Math.floor(dateDiff / 60) % 24;
+  const minute = dateDiff % 60;
 
-  const dayDiff = endDate.diff(startDate, 'day') + 1;
-  const hourDiff = (endDate.diff(startDate, 'hour') % 24);
-  const minuteDiff = (endDate.diff(startDate, 'minute') % 60);
-
-
-  const dateDiff =  dayjs(`${currentDate.year()}-${currentDate.month()}-${dayDiff} ${hourDiff}:${minuteDiff}`);
-
-  if (dateDiff.date() > 1) {
-    return `${dateDiff.subtract(1, 'day').format('DD')}Д ${dateDiff.format('hh')}Ч ${dateDiff.format('mm')}М`;
-  } else if (dateDiff.hour() !== 0) {
-    return `${dateDiff.format('hh')}Ч ${dateDiff.format('mm')}М`;
-  } else {
-    return `${dateDiff.format('mm')}M`;
+  if (day !== 1) {
+    return `${day}Д ${hour}Ч ${minute}М`;
+  } else if (hour !== 0) {
+    return `${hour}Ч ${minute}М`;
   }
+
+  return `${minute}M`;
 };
 
 

@@ -45,7 +45,8 @@ export const createPointTemplate = function (point) {
 
   const date = startDate.format('MMM D');
 
-  const dateDiff = getDateDiff(endDate, startDate);
+  const dateDiffInMinute = endDate.diff(startDate, 'minute');
+  const dateDiff = getDateDiff(dateDiffInMinute);
 
   const fovoritesClassName = isFavorite
     ? 'event__favorite-btn--active'
