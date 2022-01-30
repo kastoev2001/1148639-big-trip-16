@@ -4,7 +4,7 @@ const createMenuTemplate = function () {
   return (
     `<nav class="trip-controls__trip-tabs  trip-tabs">
   <a class="trip-tabs__btn  trip-tabs__btn--active" data-menu-item="${MenuItem.TABLE}" href="#">Table</a>
-  <a class="trip-tabs__btn"data-menu-item="${MenuItem.STATS}" href="#">Stats</a>
+  <a class="trip-tabs__btn" data-menu-item="${MenuItem.STATS}" href="#">Stats</a>
 </nav>`
   );
 };

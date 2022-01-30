@@ -74,7 +74,7 @@ const  switchInStats = () => {
   filterPresenter.destroy();
   tripEventPresenter.destroy();
   tripEventsElement.classList.add(TRIP_EVENTS_HIDDEN);
-  statisticsComponent = new StatisticsView();
+  statisticsComponent = new StatisticsView(pointsModel.points);
   render(bodyContainerElement, statisticsComponent, RenderPosition.BEFORE_END);
 };
 

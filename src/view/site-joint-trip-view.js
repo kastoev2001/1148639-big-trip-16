@@ -39,8 +39,8 @@ const createNotPassedPath = function (points) {
 };
 
 const createStartAndEndTrip = function (points) {
-  let endDate = points[0].dueDate.startDate;
-  let startDate = points[points.length - 1].dueDate.startDate;
+  const endDate = points[0].dueDate.startDate;
+  const startDate = points[points.length - 1].dueDate.startDate;
 
   if (startDate.month() === endDate.month()) {
     return `<p class="trip-info__dates">${startDate.format('MMM D')} — ${endDate.format('D')}</p>`;
