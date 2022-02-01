@@ -7,37 +7,36 @@ import FilterPresenter from './presenter/filter-presenter';
 
 import PointsModel from './model/points-model';
 import FilterModel from './model/filter-model';
+import DestinationsModel from './model/destinations-model';
+import ServicesModel from './model/services-model';
 
-import { generatePoint } from './mock/point';
+import Service from './servic';
 
 import { sortPoints } from './utils/point';
 import {RenderPosition, render, remove} from './utils/render';
 
 import { MenuItem } from './const';
 
-const COUNT_LIST = 5;
+const AUTHORIZATION = 'Basic lsjk3nd2af';
+const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
+
+const service = new Service(END_POINT, AUTHORIZATION);
+
 const TRIP_EVENTS_HIDDEN = 'trip-events--hidden';
 const TRIP_TABS_ACTIVE = 'trip-tabs__btn--active';
 
-const points = Array.from({ length: COUNT_LIST }, generatePoint);
-const sortedPoints = sortPoints(points);
 
-const pointsModel = new PointsModel();
 const filterModel = new FilterModel();
-
-pointsModel.points = points;
+const pointsModel = new PointsModel(service);
+const destinationsModel = new DestinationsModel(service);
+const servicesModel = new ServicesModel(service);
 
 
 const mainElement = document.querySelector('.trip-main');
 const navigationElement = mainElement.querySelector('.trip-controls__navigation');
 const filtersElement = mainElement.querySelector('.trip-controls__filters');
 
-
-const jointTripComponent = new JointTripView(sortedPoints);
 const menuComponent = new MenuView();
-
-
-render(navigationElement, menuComponent, RenderPosition.BEFORE_END);
 
 const tableElement = menuComponent.element.querySelector(`[data-menu-item=${MenuItem.TABLE}]`);
 const statsElement = menuComponent.element.querySelector(`[data-menu-item=${MenuItem.STATS}]`);
@@ -48,7 +47,7 @@ const tripEventsElement = bodyContainerElement.querySelector('.trip-events');
 let statisticsComponent = null;
 
 const filterPresenter = new FilterPresenter(filtersElement, filterModel);
-const tripEventPresenter = new TripEventsPresenter(tripEventsElement, pointsModel, filterModel);
+const tripEventPresenter = new TripEventsPresenter(tripEventsElement, pointsModel, filterModel, destinationsModel, servicesModel);
 
 const switchInTable = () => {
 
@@ -91,11 +90,6 @@ const menuClickHalder = (menuItem) => {
 
 menuComponent.setMenuClickHandler(menuClickHalder);
 
-render(mainElement, jointTripComponent, RenderPosition.AFTER_BEGIN);
-
-filterPresenter.init();
-tripEventPresenter.init();
-
 const newPointElement = document.querySelector('.trip-main__event-add-btn');
 const newPointClickHandler = (evt) => {
   evt.preventDefault();
@@ -113,4 +107,22 @@ const newPointClickHandler = (evt) => {
   newPointElement.disabled = true;
 };
 
+newPointElement.disabled = true;
+
 newPointElement.addEventListener('click', newPointClickHandler);
+
+
+tripEventPresenter.init();
+
+pointsModel.init(destinationsModel, servicesModel).finally(() => {
+  const sortedPoints = sortPoints(pointsModel.points);
+
+  const jointTripComponent = new JointTripView(sortedPoints);
+
+  newPointElement.disabled = false;
+
+  render(mainElement, jointTripComponent, RenderPosition.AFTER_BEGIN);
+  render(navigationElement, menuComponent, RenderPosition.BEFORE_END);
+
+  filterPresenter.init();
+});

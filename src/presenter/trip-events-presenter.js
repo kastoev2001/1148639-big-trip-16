@@ -1,6 +1,7 @@
 import SortingView from '../view/site-sorting-view';
 import EventListView from '../view/site-event-list-view';
 import NoPointView from '../view/site-no-points-view';
+import LoadingView from '../view/site-loading-view';
 import PointNewPresenter from './point-new-presenter';
 import PointPresenter from './point-presenter';
 
@@ -22,19 +23,25 @@ export default class TripEventsPresenter {
   #tripEventsContainer = null;
   #pointsModel = null;
   #filterModel = null;
+  #destinationsModel = null;
+  #servicesModel = null;
 
   #sortingComponent = null;
   #eventListComponent = new EventListView();
   #noPointComponent = null;
+  #LoadingComponent = new LoadingView();
 
   #pointsInited = new Map();
   #pointNewPresenter = null;
   #currentSortType = SortType.DEFAULT;
+  #isLoading = true;
 
-  constructor(tripEventsContainer, pointsModel, filterModel) {
+  constructor(tripEventsContainer, pointsModel, filterModel, destinationsModel, servicesModel) {
     this.#tripEventsContainer = tripEventsContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
+    this.#destinationsModel = destinationsModel;
+    this.#servicesModel = servicesModel;
 
     this.#pointNewPresenter = new PointNewPresenter(this.#eventListComponent, this.#handleViewAction);
   }
@@ -111,7 +118,12 @@ export default class TripEventsPresenter {
       case UpdateType.MINOR:
         this.#clearTripEvents({resetSortType: true});
         this.#renderTripEvents();
-
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#LoadingComponent);
+        this.#renderTripEvents();
+        break;
     }
   }
 
@@ -135,7 +147,7 @@ export default class TripEventsPresenter {
   }
 
   #renderPoint = (point) => {
-    const pointPresenter = new PointPresenter(this.#eventListComponent, this.#handleViewAction, this.#handleModeChange);
+    const pointPresenter = new PointPresenter(this.#eventListComponent, this.#handleViewAction, this.#handleModeChange, this.#destinationsModel, this.#servicesModel);
     pointPresenter.init(point);
 
     this.#pointsInited.set(point.id, pointPresenter);
@@ -153,6 +165,11 @@ export default class TripEventsPresenter {
   }
 
   #renderTripEvents = () => {
+    if (this.#isLoading) {
+      render(this.#tripEventsContainer, this.#LoadingComponent, RenderPosition.BEFORE_END);
+      return;
+    }
+
     if (this.points.length === 0) {
 
       this.#renderNoPoint();

@@ -2,21 +2,15 @@ import AbstractView from './site-abstract-view';
 import { getDateDiff } from '../utils/point';
 import { getOverallPrice } from '../utils/point';
 
-const createServicesTemplate = function (descriptionServices) {
-  return descriptionServices.map((descriptionService) => {
+const createServicesTemplate = function (services) {
+  return services.map((service) => {
 
-    const isChecked = descriptionService.isChecked;
-
-    if (!isChecked) {
-      return null;
-    }
-
-    const service = descriptionService.service;
-    const price = descriptionService.price;
+    const serviceTitle = service.service;
+    const price = service.price;
 
 
     return `<li class="event__offer">
-    <span class="event__offer-title">${service}</span>
+    <span class="event__offer-title">${serviceTitle}</span>
       &plus;&euro;&nbsp;
     <span class="event__offer-price">${price}</span>
     </li>`;
@@ -28,12 +22,12 @@ const createServicesTemplate = function (descriptionServices) {
 export const createPointTemplate = function (point) {
   const {
     type,
-    city,
+    destination,
     dueDate,
     price,
     isFavorite
   } = point;
-  const service = type.services;
+  const services = type.services;
 
   const { startDate, endDate } = dueDate;
 
@@ -52,7 +46,7 @@ export const createPointTemplate = function (point) {
     ? 'event__favorite-btn--active'
     : '';
 
-  const overallPrice = getOverallPrice(price, service);
+  const overallPrice = getOverallPrice(price, services);
 
   return (
     `<li class="trip-events__item">
@@ -61,7 +55,7 @@ export const createPointTemplate = function (point) {
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type.name}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${type.name} ${city.name}</h3>
+      <h3 class="event__title">${type.name} ${destination.name}</h3>
       <div class="event__schedule"> 
       <p class="event__time">
         <time class="event__start-time" datetime="2019-03-18T10:30">${startDateHour}:${startDateMinute}</time>
@@ -75,8 +69,8 @@ export const createPointTemplate = function (point) {
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
-  ${service !== null
-      ? createServicesTemplate(service)
+  ${services !== null
+      ? createServicesTemplate(services)
       : '<li class="event__offer"></li>'}
   </ul>
   <button class="event__favorite-btn ${fovoritesClassName}" type="button">
