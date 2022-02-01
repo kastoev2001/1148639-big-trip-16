@@ -38,12 +38,13 @@ export default class TripEventsPresenter {
 
   constructor(tripEventsContainer, pointsModel, filterModel, destinationsModel, servicesModel) {
     this.#tripEventsContainer = tripEventsContainer;
+
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
     this.#destinationsModel = destinationsModel;
     this.#servicesModel = servicesModel;
 
-    this.#pointNewPresenter = new PointNewPresenter(this.#eventListComponent, this.#handleViewAction);
+    this.#pointNewPresenter = new PointNewPresenter(this.#eventListComponent, this.#handleViewAction, this.#destinationsModel, this.#servicesModel);
   }
 
   init = () => {

@@ -105,7 +105,6 @@ export default class PointPresenter {
       UpdateType.MINOR,
       deepPoint(point)
     );
-    this.#replaceFormToPoint();
   }
 
   #deleteFormClickHandler = (point) => {

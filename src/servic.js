@@ -1,6 +1,8 @@
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
 };
 
 export default class Service {
@@ -31,13 +33,35 @@ export default class Service {
     const response = await this.#load({
       url: `points/${point.id}`,
       method: Method.PUT,
-      body: JSON.stringify(this.#adaptedToServer(point)),
+      body: JSON.stringify(this.#adaptToServer(point)),
       headers: new Headers({'Content-Type': 'application/json'})
     });
 
     const parsedResponse = await Service.parseResponse(response);
 
     return parsedResponse;
+  }
+
+  addPoint = async (point) => {
+    const response = await this.#load({
+      url: 'points',
+      method: Method.POST,
+      body: JSON.stringify(this.#adaptToServer(point)),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    });
+
+    const parsedResponse = await Service.parseResponse(response);
+
+    return parsedResponse;
+  }
+
+  deletePoint = async (point) => {
+    const response = await this.#load({
+      url: `points/${point.id}`,
+      method: Method.DELETE,
+    });
+
+    return response;
   }
 
   #load = async ({
@@ -69,16 +93,24 @@ export default class Service {
     }
   }
 
-  #adaptedToServer = (point) => ({
-    id: point.id,
-    type: point.type.name,
-    'base_price': point.price,
-    'date_from': point.dueDate.startDate !== null ? point.dueDate.startDate.toDate().toISOString() : null,
-    'date_to': point.dueDate.endDate !== null ? point.dueDate.endDate.toDate().toISOString() : null,
-    destination: point.destination,
-    'is_favorite': point.isFavorite,
-    offers: point.type.services !== null ? point.type.services : []
-  })
+  #adaptToServer = (point) => {
+    const adaptedPoint = {
+      ...point,
+      type: point.type.name,
+      'base_price': point.price,
+      'date_from': point.dueDate.startDate !== null ? point.dueDate.startDate.toDate().toISOString() : null,
+      'date_to': point.dueDate.endDate !== null ? point.dueDate.endDate.toDate().toISOString() : null,
+      'is_favorite': point.isFavorite,
+      offers: point.type.services !== null ? point.type.services : []
+    };
+
+    delete adaptedPoint.price;
+    delete adaptedPoint.dueDate;
+    delete adaptedPoint.isFavorite;
+    delete adaptedPoint.services;
+
+    return adaptedPoint;
+  }
 
   static catchError = (err) => {
     throw err;

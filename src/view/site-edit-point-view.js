@@ -77,24 +77,6 @@ const createListCitiesDestination = (destinationList) => (destinationList
   .join('')
 );
 
-const BLANK_POINT = {
-  type: {
-    name: 'Taxi',
-    services: null
-  },
-  destination: {
-    name: 'Amsterdam',
-    description: null,
-    pictures: null
-  },
-  price: 0,
-  dueDate: {
-    startDate: dayjs(),
-    endDate: dayjs()
-  },
-  isFavorite: false
-};
-
 const createEditPointTemplate = function (point = {}, allDestinations, allServices) {
   const {
     type,
@@ -188,7 +170,7 @@ export default class EditPointView extends SmartView {
   #allDestinations = null;
   #datepickers = [];
 
-  constructor(point = BLANK_POINT, allDestinations, allServices) {
+  constructor(point, allDestinations, allServices) {
     super();
     this._date = EditPointView.parcePointToDate(point);
     this.#allDestinations = allDestinations;
