@@ -18,20 +18,18 @@ const getOverallPraceTrip = (points) => {
 };
 
 const createNotPassedPath = function (points) {
+  let sities;
+  if (points.length > 3) {
+    const firstCity = points[0].destination.name;
+    const lastCity = points[points.length - 1].destination.name;
 
-  const sities = points
-    .map((point) => point.city.name)
-    .filter((city, i, arr) => {
-      const instantElement = city;
-      const nextElement = arr[i + 1];
-
-      if (instantElement !== nextElement) {
-        return instantElement;
-      }
-
-    })
-    .join(' — ');
-
+    sities = `${firstCity} — ... — ${lastCity}`;
+  } else {
+    sities = points
+      .map((point) => point.destination.name)
+      .filter((city, i, arr) => city !== arr[i + 1])
+      .join(' — ');
+  }
 
   return (
     `<h1 class="trip-info__title">${points ? sities : ''}</h1>`
