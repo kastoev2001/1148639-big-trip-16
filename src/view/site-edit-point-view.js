@@ -4,12 +4,11 @@ import dayjs from 'dayjs';
 import he from 'he';
 
 import { deepPoint } from '../utils/commonds';
-import { Types, Cities } from '../const';
 import { isDateLess } from '../utils/point';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
-const createEditPointDescriptionTemplate = function (description, pics, isDescription) {
+const createEditPointDescriptionTemplate = function (description, pictures, isDescription) {
   return (
     `${isDescription
       ? `<section class="event__section  event__section--destination">
@@ -17,7 +16,7 @@ const createEditPointDescriptionTemplate = function (description, pics, isDescri
     <p class="event__destination-description">${description}</p>
     ${`<div class="event__photos-container">
       <div class="event__photos-tape">
-      ${pics.map((link) => `<img class="event__photo" src="${link}" alt="Event photo">`).join('')}
+      ${pictures.map((pics) => `<img class="event__photo" src="${pics.src}" alt="${pics.description}">`).join('')}
       </div>
       </div>`}
       </section>`
@@ -25,25 +24,27 @@ const createEditPointDescriptionTemplate = function (description, pics, isDescri
   );
 };
 
-const createEditPointServicesTemplate = function (services, isServices) {
+const createEditPointServicesTemplate = function (findedservices, isServices, selectedServices) {
 
   return (
     `${isServices
       ? `<section class="event__section  event__section--offers">
   <h3 class="event__section-title  event__section-title--offers">Offers</h3>
   <div class="event__available-offers">
-    ${services.map((servicesElements) => {
+    ${findedservices.services.map((service) => {
 
-      const serviceId = servicesElements.id;
-      const service = servicesElements.service;
-      const price = servicesElements.price;
-      const isChecked = servicesElements.isChecked;
+      const serviceId = service.id;
+      const serviceTitle = service.service;
+      const price = service.price;
+      const isChecked = selectedServices !== null
+        ? selectedServices.some((selectedService) => selectedService.service === serviceTitle)
+        : false;
 
       return (
         `<div class="event__offer-selector">
            <input class="event__offer-checkbox  visually-hidden" id="${serviceId}" type="checkbox" name="event-offer-comfort" ${isChecked ? 'checked' : ''}>
            <label class="event__offer-label" for="${serviceId}">
-           <span class="event__offer-title">${service}</span>
+           <span class="event__offer-title">${serviceTitle}</span>
            &plus;&euro;&nbsp;
            <span class="event__offer-price">${price}</span>
          </label>
@@ -57,7 +58,7 @@ const createEditPointServicesTemplate = function (services, isServices) {
   );
 };
 
-const createTypesEvent = (currentType) => (Types
+const createTypesEvent = (currentType, allServices) => (allServices
   .map((type) => {
     const checked = type.name.toLowerCase() === currentType.toLowerCase()
       ? 'checked'
@@ -71,7 +72,7 @@ const createTypesEvent = (currentType) => (Types
   })
   .join(''));
 
-const createCityListDestination = (cityList) => (cityList
+const createDestinationListDestination = (destinationList) => (destinationList
   .map((city) => (`<option value="${city}"></option>`))
   .join('')
 );
@@ -81,10 +82,10 @@ const BLANK_POINT = {
     name: 'Taxi',
     services: null
   },
-  city: {
+  destination: {
     name: 'Amsterdam',
     description: null,
-    pics: null
+    pictures: null
   },
   price: 0,
   dueDate: {
@@ -94,29 +95,30 @@ const BLANK_POINT = {
   isFavorite: false
 };
 
-const createEditPointTemplate = function (point = {}) {
+const createEditPointTemplate = function (point = {}, allDestinations, allServices) {
   const {
     type,
-    isServices,
-    city,
+    destination,
     isDescription,
     price,
     dueDate
   } = point;
 
-  const services = type.services;
-  const description = city.description;
-  const pics = city.pics;
-  const cityList = Cities.map((element) => element.name);
+  const selectedServices = type.services;
+  const findedservices = allServices.find((service) => type.name.toUpperCase() === service.name.toUpperCase());
+  const isServices = findedservices.services !== null;
+  const description = destination.description;
+  const pictures = destination.pictures;
+  const destinationList = allDestinations.map((element) => element.name);
 
 
   const startDate = dueDate.startDate.format('DD/MM/YY hh:mm');
   const endDate = dueDate.endDate.format('DD/MM/YY hh:mm');
 
-  const servicesTemplate = createEditPointServicesTemplate(services, isServices);
-  const descriptionTemplate = createEditPointDescriptionTemplate(description, pics, isDescription);
-  const typesEvent = createTypesEvent(type.name);
-  const cityListDestination = createCityListDestination(cityList);
+  const servicesTemplate = createEditPointServicesTemplate(findedservices, isServices, selectedServices);
+  const descriptionTemplate = createEditPointDescriptionTemplate(description, pictures, isDescription);
+  const typesEvent = createTypesEvent(type.name, allServices);
+  const destinationListDestination = createDestinationListDestination(destinationList);
 
   return (
     `<li class="trip-events__item">
@@ -143,10 +145,10 @@ const createEditPointTemplate = function (point = {}) {
         <label class="event__label  event__type-output" for="event-destination-1">
           ${type.name}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(city.name)}" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destination.name)}" list="destination-list-1">
         
         <datalist id="destination-list-1">
-        ${cityListDestination}
+        ${destinationListDestination}
         </datalist>
       </div>
 
@@ -182,18 +184,22 @@ const createEditPointTemplate = function (point = {}) {
 };
 
 export default class EditPointView extends SmartView {
+  #allServices = null;
+  #allDestinations = null;
   #datepickers = [];
 
-  constructor(point = BLANK_POINT) {
+  constructor(point = BLANK_POINT, allDestinations, allServices) {
     super();
     this._date = EditPointView.parcePointToDate(point);
+    this.#allDestinations = allDestinations;
+    this.#allServices = allServices;
 
     this.#setInnderHandlers();
     this.#setDatepicker();
   }
 
   get template() {
-    return createEditPointTemplate(this._date);
+    return createEditPointTemplate(this._date, this.#allDestinations, this.#allServices);
   }
 
   removeElement = () => {
@@ -240,11 +246,11 @@ export default class EditPointView extends SmartView {
 
   #setInnderHandlers = () => {
     const typesEventElement = this.element.querySelector('.event__type-group');
-    const cityElement = this.element.querySelector('.event__input--destination');
+    const destinationElement = this.element.querySelector('.event__input--destination');
     const priceElement = this.element.querySelector('.event__input--price');
 
     typesEventElement.addEventListener('click', this.#typesEventClickHandler);
-    cityElement.addEventListener('input', this.#cityInputHandler);
+    destinationElement.addEventListener('input', this.#destinationInputHandler);
     priceElement.addEventListener('input', this.#priceInputHandler);
 
   }
@@ -256,19 +262,22 @@ export default class EditPointView extends SmartView {
     }
     const inputElement = evt.target;
 
-    const type = Types.find((fella) => fella.name.toLowerCase() === inputElement.value.toLowerCase());
+    const type = this.#allServices.find((fella) => fella.name.toLowerCase() === inputElement.value.toLowerCase());
     this.updateDate({
       ...deepPoint(this._date),
-      type,
-      isServices: type.services !== null,
+      type: {
+        name: type.name,
+        services: null
+      },
+      isServices: false,
     });
   }
 
-  #cityInputHandler = (evt) => {
+  #destinationInputHandler = (evt) => {
     evt.preventDefault();
     const inputElement = evt.target;
 
-    inputElement.value = Cities.some((element) => element.name === inputElement.value)
+    inputElement.value = this.#allDestinations.some((destination) => destination.name === inputElement.value)
       ? inputElement.value
       : '';
 
@@ -276,10 +285,10 @@ export default class EditPointView extends SmartView {
       return;
     }
 
-    const city = Cities.find((element) => element.name === inputElement.value);
+    const destination = this.#allDestinations.find((element) => element.name === inputElement.value);
 
     this.updateDate({
-      city
+      destination
     });
   }
 
@@ -361,7 +370,7 @@ export default class EditPointView extends SmartView {
   static parcePointToDate = (point) => ({
     ...deepPoint(point),
     isServices: point.type.services !== null,
-    isDescription: point.city.description !== null
+    isDescription: point.destination.description !== null
   });
 
   static parceDateToPoint = (date) => {

@@ -1,11 +1,29 @@
 import { cloneArrayOfObjects } from '../utils/commonds';
 import AbstractObservable from '../utils/pattern/abstract-observable';
 
-export default class PointsModel extends AbstractObservable{
-  #points = null;
+import dayjs from 'dayjs';
+import { UpdateType } from '../const';
 
-  set points(points) {
-    this.#points = [...cloneArrayOfObjects(points)];
+export default class PointsModel extends AbstractObservable{
+  #points = [];
+  #apiService = null;
+
+  constructor(apiService) {
+    super();
+    this.#apiService = apiService;
+  }
+
+  init = async (destinationsModel, servicesModel) => {
+    await destinationsModel.init();
+    await servicesModel.init();
+    try {
+      const points = await this.#apiService.points;
+      this.#points = points.map(this.#adaptToClient);
+    } catch (err) {
+      this.#points = [];
+    }
+
+    this._notify(UpdateType.INIT);
   }
 
   get points() {
@@ -53,5 +71,32 @@ export default class PointsModel extends AbstractObservable{
     ];
 
     this._notify(updateType);
+  }
+
+  #adaptToClient = (point) => {
+    const type = {
+      name: point.type,
+      services: [...point.offers.map((offer) => ({
+        ...offer,
+        service: offer.title
+      }))]
+    };
+
+    const adaptedPoint = {
+      id: point.id,
+      dueDate: {
+        startDate: dayjs(point['date_from']),
+        endDate: dayjs(point['date_to'])
+      },
+      type,
+      price: point['base_price'],
+      destination: {
+        ...point.destination,
+      },
+      isFavorite: point['is_favorite']
+    };
+
+
+    return adaptedPoint;
   }
 }
