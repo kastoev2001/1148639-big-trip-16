@@ -1,7 +1,7 @@
 import AbstractView from './site-abstract-view';
 
 const createLoadingTemplate = () => (
-  `<p class="trip-events__msg">Loading...</p>`
+  '<p class="trip-events__msg">Loading...</p>'
 );
 
 export default class LoadingView extends AbstractView {

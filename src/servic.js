@@ -3,7 +3,7 @@ const Method = {
   PUT: 'PUT',
 };
 
-export default class ApiService {
+export default class Service {
   #endPoint = null;
   #authorization = null;
 
@@ -14,17 +14,30 @@ export default class ApiService {
 
   get points() {
     return this.#load({url: 'points'})
-      .then(ApiService.parseResponse);
+      .then(Service.parseResponse);
   }
 
   get services() {
     return this.#load({url: 'offers'})
-      .then(ApiService.parseResponse);
+      .then(Service.parseResponse);
   }
 
   get destinations() {
     return this.#load({url: 'destinations'})
-      .then(ApiService.parseResponse);
+      .then(Service.parseResponse);
+  }
+
+  updatePoint = async (point) => {
+    const response = await this.#load({
+      url: `points/${point.id}`,
+      method: Method.PUT,
+      body: JSON.stringify(this.#adaptedToServer(point)),
+      headers: new Headers({'Content-Type': 'application/json'})
+    });
+
+    const parsedResponse = await Service.parseResponse(response);
+
+    return parsedResponse;
   }
 
   #load = async ({
@@ -41,10 +54,10 @@ export default class ApiService {
     );
 
     try {
-      ApiService.checkStatus(response);
+      Service.checkStatus(response);
       return response;
     } catch (err) {
-      ApiService.catchError(err);
+      Service.catchError(err);
     }
   }
 

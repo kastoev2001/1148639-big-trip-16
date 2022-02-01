@@ -19,9 +19,9 @@ export const getDateDiff = (dateDiff) => {
   const hour = Math.floor(dateDiff / 60) % 24;
   const minute = dateDiff % 60;
 
-  if (day !== 0) {
+  if (day > 0) {
     return `${day}Д ${hour}Ч ${minute}М`;
-  } else if (hour !== 0) {
+  } else if (hour > 0) {
     return `${hour}Ч ${minute}М`;
   }
 

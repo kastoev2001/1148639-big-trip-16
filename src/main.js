@@ -10,7 +10,7 @@ import FilterModel from './model/filter-model';
 import DestinationsModel from './model/destinations-model';
 import ServicesModel from './model/services-model';
 
-import ApiService from './api-servic';
+import Service from './servic';
 
 import { sortPoints } from './utils/point';
 import {RenderPosition, render, remove} from './utils/render';
@@ -20,16 +20,16 @@ import { MenuItem } from './const';
 const AUTHORIZATION = 'Basic lsjk3nd2af';
 const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
 
-const apiService = new ApiService(END_POINT, AUTHORIZATION);
+const service = new Service(END_POINT, AUTHORIZATION);
 
 const TRIP_EVENTS_HIDDEN = 'trip-events--hidden';
 const TRIP_TABS_ACTIVE = 'trip-tabs__btn--active';
 
 
 const filterModel = new FilterModel();
-const pointsModel = new PointsModel(apiService);
-const destinationsModel = new DestinationsModel(apiService);
-const servicesModel = new ServicesModel(apiService);
+const pointsModel = new PointsModel(service);
+const destinationsModel = new DestinationsModel(service);
+const servicesModel = new ServicesModel(service);
 
 
 const mainElement = document.querySelector('.trip-main');

@@ -72,7 +72,7 @@ const createTypesEvent = (currentType, allServices) => (allServices
   })
   .join(''));
 
-const createDestinationListDestination = (destinationList) => (destinationList
+const createListCitiesDestination = (destinationList) => (destinationList
   .map((city) => (`<option value="${city}"></option>`))
   .join('')
 );
@@ -107,18 +107,18 @@ const createEditPointTemplate = function (point = {}, allDestinations, allServic
   const selectedServices = type.services;
   const findedservices = allServices.find((service) => type.name.toUpperCase() === service.name.toUpperCase());
   const isServices = findedservices.services !== null;
-  const description = destination.description;
-  const pictures = destination.pictures;
-  const destinationList = allDestinations.map((element) => element.name);
+  const currentDescription = destination.description;
+  const currentPictures = destination.pictures;
+  const listCities = allDestinations.map((element) => element.name);
 
 
   const startDate = dueDate.startDate.format('DD/MM/YY hh:mm');
   const endDate = dueDate.endDate.format('DD/MM/YY hh:mm');
 
   const servicesTemplate = createEditPointServicesTemplate(findedservices, isServices, selectedServices);
-  const descriptionTemplate = createEditPointDescriptionTemplate(description, pictures, isDescription);
+  const descriptionTemplate = createEditPointDescriptionTemplate(currentDescription, currentPictures, isDescription);
   const typesEvent = createTypesEvent(type.name, allServices);
-  const destinationListDestination = createDestinationListDestination(destinationList);
+  const listCitiesDestination = createListCitiesDestination(listCities);
 
   return (
     `<li class="trip-events__item">
@@ -148,7 +148,7 @@ const createEditPointTemplate = function (point = {}, allDestinations, allServic
         <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destination.name)}" list="destination-list-1">
         
         <datalist id="destination-list-1">
-        ${destinationListDestination}
+        ${listCitiesDestination}
         </datalist>
       </div>
 
@@ -285,10 +285,10 @@ export default class EditPointView extends SmartView {
       return;
     }
 
-    const destination = this.#allDestinations.find((element) => element.name === inputElement.value);
+    const findedDestination = this.#allDestinations.find((destination) => destination.name === inputElement.value);
 
     this.updateDate({
-      destination
+      destination: findedDestination
     });
   }
 

@@ -1,9 +1,9 @@
 export default class DestinationsModel {
   #destinations = [];
-  #apiService = null;
+  #service = null;
 
-  constructor(apiService) {
-    this.#apiService = apiService;
+  constructor(service) {
+    this.#service = service;
   }
 
   get destinations() {
@@ -12,7 +12,7 @@ export default class DestinationsModel {
 
   init = async () => {
     try {
-      const destinations = await this.#apiService.destinations;
+      const destinations = await this.#service.destinations;
 
       this.#destinations = destinations;
     } catch(err) {

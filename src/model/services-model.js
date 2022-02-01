@@ -1,9 +1,9 @@
 export default class ServicesModel {
   #services = [];
-  #apiService = null;
+  #service = null;
 
-  constructor(apiService) {
-    this.#apiService = apiService;
+  constructor(service) {
+    this.#service = service;
   }
 
   get services() {
@@ -12,7 +12,7 @@ export default class ServicesModel {
 
   init = async () => {
     try {
-      const services = await this.#apiService.services;
+      const services = await this.#service.services;
       this.#services = services.map(this.#adaptToClient);
     } catch(err) {
       this.#services = [];
@@ -22,10 +22,10 @@ export default class ServicesModel {
   #adaptToClient = (service) => {
     const adaptedService = {
       name: service.type,
-      services: service.offers.length !== 0 ? [...service.offers.map((offer) => ({
+      services: service.offers.length !== 0 ? service.offers.map((offer) => ({
         id: offer.id,
         service: offer.title,
-        price: offer.price}))] : null
+        price: offer.price})) : null
     };
 
     delete adaptedService['title'];

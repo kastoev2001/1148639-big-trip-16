@@ -6,18 +6,18 @@ import { UpdateType } from '../const';
 
 export default class PointsModel extends AbstractObservable{
   #points = [];
-  #apiService = null;
+  #service = null;
 
-  constructor(apiService) {
+  constructor(service) {
     super();
-    this.#apiService = apiService;
+    this.#service = service;
   }
 
   init = async (destinationsModel, servicesModel) => {
     await destinationsModel.init();
     await servicesModel.init();
     try {
-      const points = await this.#apiService.points;
+      const points = await this.#service.points;
       this.#points = points.map(this.#adaptToClient);
     } catch (err) {
       this.#points = [];
@@ -30,7 +30,7 @@ export default class PointsModel extends AbstractObservable{
     return this.#points;
   }
 
-  updatePoint = (updateType, update) => {
+  updatePoint = async (updateType, update) => {
     const points = cloneArrayOfObjects(this.#points);
     const index = points.findIndex((point) => point.id === update.id);
 
@@ -38,13 +38,20 @@ export default class PointsModel extends AbstractObservable{
       throw new Error('Can\'t update unexisting point');
     }
 
-    this.#points = [
-      ...points.slice(0, index),
-      update,
-      ...points.slice(index + 1)
-    ];
+    try {
+      const response = await this.#service.updatePoint(update);
+      const adaptedPoint = this.#adaptToClient(response);
 
-    this._notify(updateType);
+      this.#points = [
+        ...points.slice(0, index),
+        adaptedPoint,
+        ...points.slice(index + 1)
+      ];
+
+      this._notify(updateType);
+    } catch (err) {
+      throw new Error('Can\t update point');
+    }
   }
 
   deletePoint = (updateType, update) => {
@@ -76,10 +83,10 @@ export default class PointsModel extends AbstractObservable{
   #adaptToClient = (point) => {
     const type = {
       name: point.type,
-      services: [...point.offers.map((offer) => ({
+      services: point.offers.map((offer) => ({
         ...offer,
         service: offer.title
-      }))]
+      }))
     };
 
     const adaptedPoint = {

@@ -27,15 +27,7 @@ const createNotPassedPath = function (points) {
   } else {
     sities = points
       .map((point) => point.destination.name)
-      .filter((city, i, arr) => {
-        const instantElement = city;
-        const nextElement = arr[i + 1];
-
-        if (instantElement !== nextElement) {
-          return instantElement;
-        }
-
-      })
+      .filter((city, i, arr) => city !== arr[i + 1])
       .join(' — ');
   }
 
