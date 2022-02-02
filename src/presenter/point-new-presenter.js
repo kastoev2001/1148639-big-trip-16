@@ -1,5 +1,4 @@
 import EditPointView from '../view/site-edit-point-view';
-
 import dayjs from 'dayjs';
 
 import { deepPoint } from '../utils/commonds';
@@ -7,15 +6,26 @@ import {remove, render, RenderPosition} from '../utils/render';
 
 import { UserAction, UpdateType } from '../const';
 
+const Destination = {
+  NAME: 'Chamonix',
+  DESTINATION: 'Chamonix, in a middle of Europe, middle-eastern paradise, famous for its crowded street markets with the best street food in Asia.',
+  PICTURES: [
+    {src: 'http://picsum.photos/300/200?r=0.5442767253004888', description: 'Chamonix zoo'},
+    {src: 'http://picsum.photos/300/200?r=0.9459422561320008', description: 'Chamonix city centre'},
+    {src: 'http://picsum.photos/300/200?r=0.14330792188576758', description: 'Chamonix park'},
+    {src: 'http://picsum.photos/300/200?r=0.05754116582269897', description: 'Chamonix central station'}
+  ]
+};
+
 const BLANK_POINT = {
   type: {
     name: 'taxi',
     services: []
   },
   destination: {
-    name: '',
-    description: null,
-    pictures: null
+    name: Destination.NAME,
+    description: Destination.DESTINATION,
+    pictures: Destination.PICTURES
   },
   price: 0,
   dueDate: {
@@ -25,7 +35,7 @@ const BLANK_POINT = {
   isFavorite: false
 };
 
-export default class PointPresenter {
+export default class PointNewPresenter {
   #pointListComponent = null
   #changeData = null
 
@@ -49,14 +59,7 @@ export default class PointPresenter {
 
     const services = this.#servicesModel.services;
     const destinations = this.#destinationsModel.destinations;
-    const point = {
-      ...BLANK_POINT,
-      type: {
-        ...BLANK_POINT.type,
-        name: services[0].name
-      },
-      destination: {...destinations[0]}
-    };
+    const point = BLANK_POINT;
 
     this.#editPointComponent = new EditPointView(point, destinations, services);
 
@@ -83,6 +86,25 @@ export default class PointPresenter {
     this.#editPointComponent = null;
 
     document.removeEventListener('keydown', this.#escKeyDownHandler);
+  }
+
+  setSaving = () => {
+    this.#editPointComponent.updateDate({
+      isDisabled: true,
+      isSaving: true
+    });
+  }
+
+  setAborting = () => {
+    const resetFormState = () => {
+      this.#editPointComponent.updateDate({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    this.#editPointComponent.shake(resetFormState);
   }
 
   #escKeyDownHandler = (evt) => {

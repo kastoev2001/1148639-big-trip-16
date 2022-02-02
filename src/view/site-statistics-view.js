@@ -39,7 +39,9 @@ const Color = {
   BLACK: '#000000'
 };
 
-const getcountTimesPoints = (types, points) => {
+const getTypesPoints = (points) => points.map((point) => point.type.name.toUpperCase()).filter((type, i, arr) => arr.indexOf(type) === i);
+
+const getDates = (types, points) => {
   const typesPoints = types
     .map((type) => points.filter((point) => point.type.name.toUpperCase() === type));
 
@@ -56,16 +58,22 @@ const getcountTimesPoints = (types, points) => {
   return dates;
 };
 
-const getTypesPoints = (points) => points.map((point) => point.type.name.toUpperCase()).filter((type, i, arr) => arr.indexOf(type) === i);
+const geTypesCount = (types, points) => (types
+  .map((type) => points.filter((point) => point.type.name.toUpperCase() === type))
+  .map((typesPoints) => typesPoints.reduce((a) => a + 1, 0))
+);
+
+const getPrices = (types, points) => (types
+  .map((type) => points.filter((point) => point.type.name.toUpperCase() === type))
+  .map((typesPoints) => typesPoints.reduce((a, b) => a + b.price, 0))
+);
+
 
 const renderMoneyChart = (moneyCtx, points) => {
   const types = getTypesPoints(points);
+  const prices = getPrices(types, points);
 
-  const countPricesTypesPoints = types
-    .map((type) => points.filter((point) => point.type.name.toUpperCase() === type))
-    .map((typesPoints) => typesPoints.reduce((a, b) => a + b.price,0));
-
-  moneyCtx.height =  `${BAR_HEIGHT * types.length}`;
+  moneyCtx.height = `${BAR_HEIGHT * types.length}`;
 
   return new Chart(moneyCtx, {
     plugins: [ChartDataLabels],
@@ -73,7 +81,7 @@ const renderMoneyChart = (moneyCtx, points) => {
     data: {
       labels: types,
       datasets: [{
-        data: countPricesTypesPoints,
+        data: prices,
         backgroundColor: Color.WHITE,
         hoverBackgroundColor: Color.WHITE,
         anchor: Anchor.DATASETS,
@@ -137,10 +145,7 @@ const renderMoneyChart = (moneyCtx, points) => {
 const renderTypeChart = (typeCtx, points) => {
 
   const types = getTypesPoints(points);
-
-  const countTypesPoints = types
-    .map((type) => points.filter((point) => point.type.name.toUpperCase() === type))
-    .map((typesPoints) => typesPoints.reduce((a) => a + 1,0));
+  const countTypesPoints = geTypesCount(types, points);
 
   typeCtx.height = `${BAR_HEIGHT * types.length}`;
 
@@ -215,7 +220,7 @@ const renderTimeChart = (timeCtx, points) => {
 
   const types = getTypesPoints(points);
 
-  const countTimePoints = getcountTimesPoints(types, points);
+  const dates = getDates(types, points);
 
   timeCtx.height = `${BAR_HEIGHT * types.length}`;
 
@@ -225,7 +230,7 @@ const renderTimeChart = (timeCtx, points) => {
     data: {
       labels: types,
       datasets: [{
-        data: countTimePoints,
+        data: dates,
         backgroundColor: Color.WHITE,
         hoverBackgroundColor: Color.WHITE,
         anchor: Anchor.DATASETS,

@@ -2,7 +2,7 @@ import AbstractView from './site-abstract-view';
 
 const createNoPointsTemplate = function (text) {
   return (
-    `<p class="trip-events__msg">${text}"</p>`
+    `<p class="trip-events__msg">${text}</p>`
   );
 };
 
