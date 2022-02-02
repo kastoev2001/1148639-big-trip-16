@@ -11,7 +11,7 @@ import { remove, render, RenderPosition } from '../utils/render';
 import { sortPoints, sortPrices, sortTimes } from '../utils/point';
 import { cloneArrayOfObjects } from '../utils/commonds';
 import { filter } from '../utils/filter';
-import { SortType, UserAction, UpdateType, FilterType } from '../const';
+import { SortType, UserAction, UpdateType, FilterType, ViewState } from '../const';
 
 const EmptyFiter = {
   [FilterType.EVERYTHING]: 'Click New Event to create your first point',
@@ -38,7 +38,6 @@ export default class TripEventsPresenter {
 
   constructor(tripEventsContainer, pointsModel, filterModel, destinationsModel, servicesModel) {
     this.#tripEventsContainer = tripEventsContainer;
-
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
     this.#destinationsModel = destinationsModel;
@@ -95,7 +94,7 @@ export default class TripEventsPresenter {
     pointWatcher._notify();
   }
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
 
     if (updateType === null) {
       return;
@@ -103,19 +102,37 @@ export default class TripEventsPresenter {
 
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this.#pointsModel.updatePoint(updateType, update);
+        this.#pointsInited.get(update.id).setViewState(ViewState.SAVING);
+        try {
+          await  this.#pointsModel.updatePoint(updateType, update);
+        } catch (err) {
+          this.#pointsInited.get(update.id).setViewState(ViewState.ABORTING);
+        }
         break;
       case UserAction.DELETE_POINT:
-        this.#pointsModel.deletePoint(updateType, update);
+        this.#pointsInited.get(update.id).setViewState(ViewState.DELETING);
+        try {
+          await this.#pointsModel.deletePoint(updateType, update);
+        } catch (err) {
+          this.#pointsInited.get(update.id).setViewState(ViewState.ABORTING);
+        }
         break;
       case UserAction.ADD_POINT:
-        this.#pointsModel.addPoint(updateType, update);
+        this.#pointNewPresenter.setSaving();
+        try {
+          await  this.#pointsModel.addPoint(updateType, update);
+        } catch (err) {
+          this.#pointNewPresenter.setAborting();
+        }
         break;
     }
   }
 
-  #handleModelEvent = (updateType) => {
+  #handleModelEvent = (updateType, data) => {
     switch (updateType) {
+      case UpdateType.PATCH:
+        this.#pointsInited.get(data.id).init(data);
+        break;
       case UpdateType.MINOR:
         this.#clearTripEvents({resetSortType: true});
         this.#renderTripEvents();

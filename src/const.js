@@ -26,3 +26,9 @@ export const MenuItem = {
   TABLE: 'table',
   STATS: 'stats'
 };
+
+export const ViewState = {
+  SAVING: 'saving',
+  DELETING: 'deleting',
+  ABORTING: 'aborting'
+};

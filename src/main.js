@@ -14,68 +14,68 @@ import Service from './servic';
 
 import { sortPoints } from './utils/point';
 import {RenderPosition, render, remove} from './utils/render';
-
 import { MenuItem } from './const';
 
 const AUTHORIZATION = 'Basic lsjk3nd2af';
 const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
 
-const service = new Service(END_POINT, AUTHORIZATION);
-
-const TRIP_EVENTS_HIDDEN = 'trip-events--hidden';
-const TRIP_TABS_ACTIVE = 'trip-tabs__btn--active';
-
-
-const filterModel = new FilterModel();
-const pointsModel = new PointsModel(service);
-const destinationsModel = new DestinationsModel(service);
-const servicesModel = new ServicesModel(service);
-
+const CLASS_TRIP_EVENTS_HIDDEN = 'trip-events--hidden';
+const CLASS_TRIP_TABS_ACTIVE = 'trip-tabs__btn--active';
 
 const mainElement = document.querySelector('.trip-main');
 const navigationElement = mainElement.querySelector('.trip-controls__navigation');
 const filtersElement = mainElement.querySelector('.trip-controls__filters');
+
+const mainBodyElement = document.querySelector('.page-main .page-body__container');
+const eventsTripsElement = mainBodyElement.querySelector('.trip-events');
+
+const newPointElement = document.querySelector('.trip-main__event-add-btn');
 
 const menuComponent = new MenuView();
 
 const tableElement = menuComponent.element.querySelector(`[data-menu-item=${MenuItem.TABLE}]`);
 const statsElement = menuComponent.element.querySelector(`[data-menu-item=${MenuItem.STATS}]`);
 
-const bodyContainerElement = document.querySelector('.page-main .page-body__container');
-const tripEventsElement = bodyContainerElement.querySelector('.trip-events');
-
 let statisticsComponent = null;
 
+const service = new Service(END_POINT, AUTHORIZATION);
+
+const filterModel = new FilterModel();
+const pointsModel = new PointsModel(service);
+const destinationsModel = new DestinationsModel(service);
+const servicesModel = new ServicesModel(service);
+
 const filterPresenter = new FilterPresenter(filtersElement, filterModel);
-const tripEventPresenter = new TripEventsPresenter(tripEventsElement, pointsModel, filterModel, destinationsModel, servicesModel);
+const tripEventPresenter = new TripEventsPresenter(eventsTripsElement, pointsModel, filterModel, destinationsModel, servicesModel);
 
 const switchInTable = () => {
 
-  if (tableElement.classList.contains(TRIP_TABS_ACTIVE)) {
+  if (tableElement.classList.contains(CLASS_TRIP_TABS_ACTIVE)) {
     return;
   }
 
-  tripEventsElement.classList.remove(TRIP_EVENTS_HIDDEN);
-  tableElement.classList.add(TRIP_TABS_ACTIVE);
-  statsElement.classList.remove(TRIP_TABS_ACTIVE);
+  eventsTripsElement.classList.remove(CLASS_TRIP_EVENTS_HIDDEN);
+  tableElement.classList.add(CLASS_TRIP_TABS_ACTIVE);
+  statsElement.classList.remove(CLASS_TRIP_TABS_ACTIVE);
   remove(statisticsComponent);
   filterPresenter.init();
   tripEventPresenter.init();
 };
 
 const  switchInStats = () => {
-  if (statsElement.classList.contains(TRIP_TABS_ACTIVE)) {
+  if (statsElement.classList.contains(CLASS_TRIP_TABS_ACTIVE)) {
     return;
   }
 
-  tableElement.classList.remove(TRIP_TABS_ACTIVE);
-  statsElement.classList.add(TRIP_TABS_ACTIVE);
+  tableElement.classList.remove(CLASS_TRIP_TABS_ACTIVE);
+  statsElement.classList.add(CLASS_TRIP_TABS_ACTIVE);
   filterPresenter.destroy();
   tripEventPresenter.destroy();
-  tripEventsElement.classList.add(TRIP_EVENTS_HIDDEN);
+  eventsTripsElement.classList.add(CLASS_TRIP_EVENTS_HIDDEN);
   statisticsComponent = new StatisticsView(pointsModel.points);
-  render(bodyContainerElement, statisticsComponent, RenderPosition.BEFORE_END);
+  render(mainBodyElement, statisticsComponent, RenderPosition.BEFORE_END);
 };
+
 
 const menuClickHalder = (menuItem) => {
   switch(menuItem) {
@@ -90,10 +90,9 @@ const menuClickHalder = (menuItem) => {
 
 menuComponent.setMenuClickHandler(menuClickHalder);
 
-const newPointElement = document.querySelector('.trip-main__event-add-btn');
 const newPointClickHandler = (evt) => {
   evt.preventDefault();
-  if (statsElement.classList.contains(TRIP_TABS_ACTIVE)) {
+  if (statsElement.classList.contains(CLASS_TRIP_TABS_ACTIVE)) {
     switchInTable();
 
     tripEventPresenter.createPoint();
@@ -110,7 +109,6 @@ const newPointClickHandler = (evt) => {
 newPointElement.disabled = true;
 
 newPointElement.addEventListener('click', newPointClickHandler);
-
 
 tripEventPresenter.init();
 

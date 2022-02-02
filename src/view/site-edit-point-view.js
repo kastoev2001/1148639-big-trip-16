@@ -24,7 +24,7 @@ const createEditPointDescriptionTemplate = function (description, pictures, isDe
   );
 };
 
-const createEditPointServicesTemplate = function (findedservices, isServices, selectedServices) {
+const createEditPointServicesTemplate = function (findedservices, isServices, selectedServices, isDisabled) {
 
   return (
     `${isServices
@@ -42,7 +42,12 @@ const createEditPointServicesTemplate = function (findedservices, isServices, se
 
       return (
         `<div class="event__offer-selector">
-           <input class="event__offer-checkbox  visually-hidden" id="${serviceId}" type="checkbox" name="event-offer-comfort" ${isChecked ? 'checked' : ''}>
+           <input
+           class="event__offer-checkbox  visually-hidden"
+           id="${serviceId}" type="checkbox"
+           name="event-offer-comfort"
+           ${isChecked ? 'checked' : ''}
+           ${isDisabled ? 'disabled' : ''}>
            <label class="event__offer-label" for="${serviceId}">
            <span class="event__offer-title">${serviceTitle}</span>
            &plus;&euro;&nbsp;
@@ -72,7 +77,7 @@ const createTypesEvent = (currentType, allServices) => (allServices
   })
   .join(''));
 
-const createListCitiesDestination = (destinationList) => (destinationList
+const createDestinationListDestination = (destinationList) => (destinationList
   .map((city) => (`<option value="${city}"></option>`))
   .join('')
 );
@@ -82,6 +87,9 @@ const createEditPointTemplate = function (point = {}, allDestinations, allServic
     type,
     destination,
     isDescription,
+    isDeleting,
+    isSaving,
+    isDisabled,
     price,
     dueDate
   } = point;
@@ -89,18 +97,18 @@ const createEditPointTemplate = function (point = {}, allDestinations, allServic
   const selectedServices = type.services;
   const findedservices = allServices.find((service) => type.name.toUpperCase() === service.name.toUpperCase());
   const isServices = findedservices.services !== null;
-  const currentDescription = destination.description;
-  const currentPictures = destination.pictures;
-  const listCities = allDestinations.map((element) => element.name);
+  const description = destination.description;
+  const pictures = destination.pictures;
+  const destinationList = allDestinations.map((element) => element.name);
 
 
   const startDate = dueDate.startDate.format('DD/MM/YY hh:mm');
   const endDate = dueDate.endDate.format('DD/MM/YY hh:mm');
 
-  const servicesTemplate = createEditPointServicesTemplate(findedservices, isServices, selectedServices);
-  const descriptionTemplate = createEditPointDescriptionTemplate(currentDescription, currentPictures, isDescription);
+  const servicesTemplate = createEditPointServicesTemplate(findedservices, isServices, selectedServices, isDisabled);
+  const descriptionTemplate = createEditPointDescriptionTemplate(description, pictures, isDescription);
   const typesEvent = createTypesEvent(type.name, allServices);
-  const listCitiesDestination = createListCitiesDestination(listCities);
+  const destinationListDestination = createDestinationListDestination(destinationList);
 
   return (
     `<li class="trip-events__item">
@@ -111,7 +119,7 @@ const createEditPointTemplate = function (point = {}, allDestinations, allServic
           <span class="visually-hidden">Choose event type</span>
           <img class="event__type-icon" width="17" height="17" src="img/icons/${type.name}.png" alt="Event type icon">
         </label>
-        <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+        <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" ${isDisabled ? 'disabled' : ''}>
 
         <div class="event__type-list">
           <fieldset class="event__type-group">
@@ -127,19 +135,19 @@ const createEditPointTemplate = function (point = {}, allDestinations, allServic
         <label class="event__label  event__type-output" for="event-destination-1">
           ${type.name}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destination.name)}" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destination.name)}" ${isDisabled ? 'disabled' : ''} list="destination-list-1">
         
         <datalist id="destination-list-1">
-        ${listCitiesDestination}
+        ${destinationListDestination}
         </datalist>
       </div>
 
       <div class="event__field-group  event__field-group--time">
         <label class="visually-hidden" for="event-start-time-1">From</label>
-        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDate}">
+        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDate}" ${isDisabled ? 'disabled' : ''}>
         &mdash;
         <label class="visually-hidden" for="event-end-time-1">To</label>
-        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDate}">
+        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDate}" ${isDisabled ? 'disabled' : ''}
       </div>
 
       <div class="event__field-group  event__field-group--price">
@@ -147,11 +155,15 @@ const createEditPointTemplate = function (point = {}, allDestinations, allServic
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+        <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}" ${isDisabled ? 'disabled' : ''}>
       </div>
 
-      <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">Delete</button>
+      <button class="event__save-btn  btn  btn--blue"
+      ${isDisabled ? 'disabled' : ''}
+       type="submit">${isSaving ? 'Saving...' : 'Save'}</button>
+      <button class="event__reset-btn" type="reset"
+      ${isDisabled ? 'disabled' : ''}>
+      ${isDeleting ? 'Deleting...' : 'Delete'}</button>
       <button class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>
       </button>
@@ -172,9 +184,10 @@ export default class EditPointView extends SmartView {
 
   constructor(point, allDestinations, allServices) {
     super();
-    this._date = EditPointView.parcePointToDate(point);
+
     this.#allDestinations = allDestinations;
     this.#allServices = allServices;
+    this._date = EditPointView.parcePointToDate(point);
 
     this.#setInnderHandlers();
     this.#setDatepicker();
@@ -187,10 +200,7 @@ export default class EditPointView extends SmartView {
   removeElement = () => {
     super.removeElement();
 
-    if (this.#datepickers !== []) {
-      this.#datepickers.forEach((datepicker) => datepicker.destroy());
-      this.#datepickers = [];
-    }
+    this.#destroyDatepickers();
   }
 
   reset = (point) => this.updateDate(
@@ -202,9 +212,14 @@ export default class EditPointView extends SmartView {
     this.#setDatepicker();
     this.setPointRollupClickHandler(this._callback.pointRollupClick);
     this.setPointFormSubmitHandler(this._callback.pointFormSubmit);
+    this.setDeleteFormClickHandler(this._callback.deleteFormClick);
   }
 
   #setDatepicker = () => {
+    if  (this._date.isDisabled) {
+      return;
+    }
+
     this.#datepickers.push(flatpickr(
       this.element.querySelector('#event-start-time-1'),
       {
@@ -224,6 +239,15 @@ export default class EditPointView extends SmartView {
         defaultDate: this._date.dueDate.endDate.toString(),
         onClose: this.#endDateCloseHandler
       }));
+  }
+
+  #destroyDatepickers = () => {
+    if (this.#datepickers.length === 0) {
+      return;
+    }
+
+    this.#datepickers.forEach((datepicker) => datepicker.destroy());
+    this.#datepickers = [];
   }
 
   #setInnderHandlers = () => {
@@ -289,6 +313,10 @@ export default class EditPointView extends SmartView {
   }
 
   setPointRollupClickHandler = (callback) => {
+    if  (this._date.isDisabled) {
+      return;
+    }
+
     this._callback.pointRollupClick = callback;
 
     const pointRollupElement = this.element.querySelector('.event__rollup-btn');
@@ -311,17 +339,18 @@ export default class EditPointView extends SmartView {
   }
 
   setDeleteFormClickHandler = (callback) => {
-    this._callback.setDeleteFormClickHandler = callback;
+
+    this._callback.deleteFormClick = callback;
 
     const deleteElement = this.element.querySelector('.event__reset-btn');
 
-    deleteElement.addEventListener('click', this.#setDeleteFormClickHandler);
+    deleteElement.addEventListener('click', this.#deleteFormClickHandler);
   }
 
-  #setDeleteFormClickHandler = (evt) => {
+  #deleteFormClickHandler = (evt) => {
     evt.preventDefault();
 
-    this._callback.setDeleteFormClickHandler(EditPointView.parceDateToPoint(this._date));
+    this._callback.deleteFormClick(EditPointView.parceDateToPoint(this._date));
   }
 
   #pointFormSubmitHandler = (evt) => {
@@ -352,7 +381,10 @@ export default class EditPointView extends SmartView {
   static parcePointToDate = (point) => ({
     ...deepPoint(point),
     isServices: point.type.services !== null,
-    isDescription: point.destination.description !== null
+    isDescription: point.destination.description !== null,
+    isSaving: false,
+    isDeleting: false,
+    isDisabled: false
   });
 
   static parceDateToPoint = (date) => {
