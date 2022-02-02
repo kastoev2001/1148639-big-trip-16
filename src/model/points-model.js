@@ -48,13 +48,30 @@ export default class PointsModel extends AbstractObservable{
         ...points.slice(index + 1)
       ];
 
-      this._notify(updateType);
+      this._notify(updateType, adaptedPoint);
     } catch (err) {
       throw new Error('Can\t update point');
     }
   }
 
-  deletePoint = (updateType, update) => {
+  addPoint = async (updateType, update) => {
+    const points = cloneArrayOfObjects(this.#points);
+    try {
+      const response = await this.#service.addPoint(update);
+      const newPoint = this.#adaptToClient(response);
+
+      this.#points = [
+        newPoint,
+        ...points
+      ];
+
+      this._notify(updateType);
+    } catch (err) {
+      throw new Error('Can\t add point');
+    }
+  }
+
+  deletePoint = async (updateType, update) => {
     const points = cloneArrayOfObjects(this.#points);
     const index = points.findIndex((point) => point.id === update.id);
 
@@ -62,19 +79,22 @@ export default class PointsModel extends AbstractObservable{
       throw new Error('Can\'t delete undexisting point');
     }
 
+    try {
+      await this.#service.deletePoint(update);
+
+      this.#points = [
+        ...points.slice(0, index),
+        ...points.slice(index + 1)
+      ];
+
+      this._notify(updateType);
+    } catch (err) {
+      throw new Error('Can\'t delete point');
+    }
+
     this.#points = [
       ...points.slice(0, index),
       ...points.slice(index + 1)
-    ];
-
-    this._notify(updateType);
-  }
-
-  addPoint = (updateType, update) => {
-    const points = cloneArrayOfObjects(this.#points);
-    this.#points = [
-      update,
-      ...points
     ];
 
     this._notify(updateType);
@@ -90,19 +110,21 @@ export default class PointsModel extends AbstractObservable{
     };
 
     const adaptedPoint = {
-      id: point.id,
+      ...point,
       dueDate: {
         startDate: dayjs(point['date_from']),
         endDate: dayjs(point['date_to'])
       },
       type,
       price: point['base_price'],
-      destination: {
-        ...point.destination,
-      },
       isFavorite: point['is_favorite']
     };
 
+    delete adaptedPoint['base_price'];
+    delete adaptedPoint['date_from'];
+    delete adaptedPoint['date_to'];
+    delete adaptedPoint['is_favorite'];
+    delete adaptedPoint['offers'];
 
     return adaptedPoint;
   }
