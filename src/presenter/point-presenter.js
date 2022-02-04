@@ -1,18 +1,18 @@
-import PointView from '../view/site-point-view';
-import EditPointView from '../view/site-edit-point-view';
+import PointView from '../view/point-view';
+import EditPointView from '../view/edit-point-view';
 
-import { deepPoint } from '../utils/commonds';
-import {remove, render, RenderPosition, replace} from '../utils/render';
-import { UpdateType, UserAction, ViewState } from '../const';
+import { deepPoint, } from '../utils/commonds';
+import {remove, render, RenderPosition, replace,} from '../utils/render';
+import { UpdateType, UserAction, ViewState, } from '../const';
 
 const Mode = {
   DEFAULT: 'DAFAULT',
-  EDITING: 'EDITING'
+  EDITING: 'EDITING',
 };
 
 export default class PointPresenter {
   #pointListComponent = null;
-  #changeData = null
+  #changeData = null;
   #changeMode = null;
 
   #destinationsModel = null;
@@ -50,7 +50,7 @@ export default class PointPresenter {
     this.#editPointComponent.setPointFormSubmitHandler(this.#pointFormSubmitHandler);
     this.#editPointComponent.setDeleteFormClickHandler(this.#deleteFormClickHandler);
 
-    if (prevPointComponent === null || prevEditPointComponent === null) {
+    if (!prevPointComponent || !prevEditPointComponent) {
       render(this.#pointListComponent, this.#pointComponent, RenderPosition.BEFORE_END);
       return;
     }
@@ -73,15 +73,11 @@ export default class PointPresenter {
   }
 
   setViewState = (viewState) => {
-    // if (this.#mode === Mode.DEFAULT) {
-    //   return;
-    // }
-
     const resetFormState = () => {
       this.#editPointComponent.updateDate({
         isSaving: false,
         isDeleting: false,
-        isDisabled: false
+        isDisabled: false,
       });
     };
 
@@ -89,13 +85,13 @@ export default class PointPresenter {
       case ViewState.SAVING:
         this.#editPointComponent.updateDate({
           isSaving: true,
-          isDisabled: true
+          isDisabled: true,
         });
         break;
       case ViewState.DELETING:
         this.#editPointComponent.updateDate({
           isDeleting: true,
-          isDisabled: true
+          isDisabled: true,
         });
         break;
       case ViewState.ABORTING:
@@ -136,7 +132,7 @@ export default class PointPresenter {
     this.#changeData(
       UserAction.UPDATE_POINT,
       UpdateType.MINOR,
-      deepPoint(point)
+      deepPoint(point),
     );
   }
 
@@ -144,7 +140,7 @@ export default class PointPresenter {
     this.#changeData(
       UserAction.DELETE_POINT,
       UpdateType.MINOR,
-      deepPoint(point)
+      deepPoint(point),
     );
   }
 
@@ -160,7 +156,7 @@ export default class PointPresenter {
     this.#changeData(
       UserAction.UPDATE_POINT,
       UpdateType.PATCH,
-      {...this.#point, isFavorite: !this.#point.isFavorite}
+      {...this.#point, isFavorite: !this.#point.isFavorite},
     );
   }
 }

@@ -1,19 +1,19 @@
-import EditPointView from '../view/site-edit-point-view';
+import EditPointView from '../view/edit-point-view';
 import dayjs from 'dayjs';
 
-import { deepPoint } from '../utils/commonds';
-import {remove, render, RenderPosition} from '../utils/render';
+import { deepPoint, } from '../utils/commonds';
+import { remove, render, RenderPosition, } from '../utils/render';
 
-import { UserAction, UpdateType } from '../const';
+import { UserAction, UpdateType, } from '../const';
 
 const Destination = {
   NAME: 'Chamonix',
   DESTINATION: 'Chamonix, in a middle of Europe, middle-eastern paradise, famous for its crowded street markets with the best street food in Asia.',
   PICTURES: [
-    {src: 'http://picsum.photos/300/200?r=0.5442767253004888', description: 'Chamonix zoo'},
-    {src: 'http://picsum.photos/300/200?r=0.9459422561320008', description: 'Chamonix city centre'},
-    {src: 'http://picsum.photos/300/200?r=0.14330792188576758', description: 'Chamonix park'},
-    {src: 'http://picsum.photos/300/200?r=0.05754116582269897', description: 'Chamonix central station'}
+    { src: 'http://picsum.photos/300/200?r=0.5442767253004888', description: 'Chamonix zoo' },
+    { src: 'http://picsum.photos/300/200?r=0.9459422561320008', description: 'Chamonix city centre' },
+    { src: 'http://picsum.photos/300/200?r=0.14330792188576758', description: 'Chamonix park' },
+    { src: 'http://picsum.photos/300/200?r=0.05754116582269897', description: 'Chamonix central station' },
   ]
 };
 
@@ -25,19 +25,19 @@ const BLANK_POINT = {
   destination: {
     name: Destination.NAME,
     description: Destination.DESTINATION,
-    pictures: Destination.PICTURES
+    pictures: Destination.PICTURES,
   },
   price: 0,
   dueDate: {
     startDate: dayjs(),
-    endDate: dayjs()
+    endDate: dayjs(),
   },
-  isFavorite: false
+  isFavorite: false,
 };
 
 export default class PointNewPresenter {
-  #pointListComponent = null
-  #changeData = null
+  #pointListComponent = null;
+  #changeData = null;
 
   #destinationsModel = null;
   #servicesModel = null;
@@ -74,7 +74,7 @@ export default class PointNewPresenter {
   }
 
   destroy = () => {
-    if (this.#editPointComponent === null) {
+    if (!this.#editPointComponent) {
       return;
     }
 
@@ -91,7 +91,7 @@ export default class PointNewPresenter {
   setSaving = () => {
     this.#editPointComponent.updateDate({
       isDisabled: true,
-      isSaving: true
+      isSaving: true,
     });
   }
 
@@ -100,7 +100,7 @@ export default class PointNewPresenter {
       this.#editPointComponent.updateDate({
         isDisabled: false,
         isSaving: false,
-        isDeleting: false
+        isDeleting: false,
       });
     };
 
@@ -122,7 +122,7 @@ export default class PointNewPresenter {
     this.#changeData(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      {...deepPoint(update)}
+      { ...deepPoint(update) },
     );
   }
 

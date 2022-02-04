@@ -1,34 +1,50 @@
-import FilterView from '../view/site-filter-view';
+import FilterView from '../view/filter-view';
 
-import { FilterType, UpdateType } from '../const';
-import { RenderPosition, render, replace, remove } from '../utils/render';
+import { FilterType, UpdateType, } from '../const';
+import { RenderPosition, render, replace, remove, } from '../utils/render';
+import { Filter } from '../utils/filter';
+import { cloneArrayOfObjects } from '../utils/commonds';
 
 export default class FilterPresenter {
   #filtersContainer = null;
+
   #filterModel = null;
+  #pointsModel = null;
 
   #filterComponent = null;
 
 
-  constructor(filtersContainer, filterModel) {
+  constructor(filtersContainer, filterModel, pointsModel) {
     this.#filtersContainer = filtersContainer;
+
     this.#filterModel = filterModel;
+    this.#pointsModel = pointsModel;
+
+    this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
+  }
+
+  get points() {
+    return cloneArrayOfObjects(this.#pointsModel.points);
   }
 
   get filters() {
+    const points = this.points;
     return [
       {
         type: FilterType.EVERYTHING,
-        name: 'Everything'
+        name: 'Everything',
       },
       {
         type: FilterType.FUTURE,
-        name: 'Future'
+        name: 'Future',
+        isPoints: Filter[FilterType.FUTURE](points).length === 0,
       },
       {
         type: FilterType.PAST,
-        name: 'Past'
-      }
+        name: 'Past',
+        isPoints: Filter[FilterType.PAST](points).length === 0,
+      },
     ];
   }
 
@@ -39,7 +55,7 @@ export default class FilterPresenter {
     this.#filterComponent = new FilterView(filters, this.#filterModel.filter);
     this.#filterComponent.setFilterTypeChangeHandler(this.#filterTypeChangeHandler);
 
-    if (prevFilterComponent === null) {
+    if (!prevFilterComponent) {
       render(this.#filtersContainer, this.#filterComponent, RenderPosition.BEFORE_END);
       return;
     }
@@ -52,8 +68,13 @@ export default class FilterPresenter {
     remove(this.#filterComponent);
     this.#filterComponent = null;
 
-    this.#filterModel.setFilter(null, FilterType.EVERYTHING);
+    this.#filterModel.setFilter(FilterType.EVERYTHING, FilterType.EVERYTHING);
 
+  }
+
+  #handleModelEvent = () => {
+
+    this.init();
   }
 
   #filterTypeChangeHandler = (filterType) => {
@@ -61,7 +82,7 @@ export default class FilterPresenter {
       return;
     }
 
-    this.#filterModel.setFilter(UpdateType.MINOR, filterType);
+    this.#filterModel.setFilter(filterType, UpdateType.MINOR);
   }
 
 }

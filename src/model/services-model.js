@@ -22,13 +22,8 @@ export default class ServicesModel {
   #adaptToClient = (service) => {
     const adaptedService = {
       name: service.type,
-      services: service.offers.length !== 0 ? service.offers.map((offer) => ({
-        id: offer.id,
-        service: offer.title,
-        price: offer.price})) : null
+      services: service.offers,
     };
-
-    delete adaptedService['title'];
 
     return adaptedService;
 

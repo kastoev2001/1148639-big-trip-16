@@ -1,24 +1,23 @@
-import AbstractView from './site-abstract-view';
+import AbstractView from './abstract-view';
 
-const createFiltersTemplate = function (filters, currentFilter) {
-  return filters.map((filter) => {
-    const {name, type} = filter;
-    return (
-      `<div class="trip-filters__filter">
+const createFiltersTemplate = (filters, currentFilter) => filters.map((filter) => {
+  const { name, type, isPoints } = filter;
+  return (
+    `<div class="trip-filters__filter">
     <input 
     id="${name}"
     class="trip-filters__filter-input
     visually-hidden" type="radio"
     name="trip-filter"
     ${type === currentFilter ? 'checked' : ''}
-    value="${type}">
+    value="${type}"
+    ${isPoints ? 'disabled' : ''}>
     <label class="trip-filters__filter-label" for="${name}">${name}</label>
   </div>`
-    );
-  }).join('');
-};
+  );
+}).join('');
 
-const createFilterTemplate = function  (fitlers, currentFilter) {
+const createFilterTemplate = (fitlers, currentFilter) => {
   const filtersTemplate = createFiltersTemplate(fitlers, currentFilter);
   return (
     `<form class="trip-filters" action="#" method="get">

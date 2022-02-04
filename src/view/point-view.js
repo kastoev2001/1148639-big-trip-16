@@ -1,11 +1,11 @@
-import AbstractView from './site-abstract-view';
+import AbstractView from './abstract-view';
 import { getDateDiff } from '../utils/point';
 import { getOverallPrice } from '../utils/point';
 
 const createServicesTemplate = function (services) {
   return services.map((service) => {
 
-    const serviceTitle = service.service;
+    const serviceTitle = service.title;
     const price = service.price;
 
 
@@ -28,7 +28,6 @@ export const createPointTemplate = function (point) {
     isFavorite
   } = point;
   const services = type.services;
-
   const { startDate, endDate } = dueDate;
 
   const startDateHour = startDate.format('hh');
@@ -47,6 +46,7 @@ export const createPointTemplate = function (point) {
     : '';
 
   const overallPrice = getOverallPrice(price, services);
+  const servicesTemplate = createServicesTemplate(services);
 
   return (
     `<li class="trip-events__item">
@@ -69,8 +69,8 @@ export const createPointTemplate = function (point) {
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
-  ${services !== null
-      ? createServicesTemplate(services)
+  ${services.length !== 0
+      ? servicesTemplate
       : '<li class="event__offer"></li>'}
   </ul>
   <button class="event__favorite-btn ${fovoritesClassName}" type="button">

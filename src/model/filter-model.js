@@ -1,15 +1,17 @@
 import AbstractObservable from '../utils/pattern/abstract-observable';
 import { FilterType } from '../const';
 
-export default class filterModel extends AbstractObservable {
+export default class FilterModel extends AbstractObservable {
   #filter = FilterType.EVERYTHING;
 
   get filter() {
     return this.#filter;
   }
 
-  setFilter = (updateType, filter) => {
+  setFilter = (filter, updateType = null) => {
     this.#filter = filter;
-    this._notify(updateType);
+    if (updateType) {
+      this._notify(updateType);
+    }
   }
 }

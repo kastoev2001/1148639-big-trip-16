@@ -1,42 +1,40 @@
-import AbstractView from './site-abstract-view';
+import AbstractView from './abstract-view';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import dayjs from 'dayjs';
 
-import { getDateDiff } from '../utils/point';
-import { cloneArrayOfObjects } from '../utils/commonds';
+import { getDateDiff, } from '../utils/point';
+import { cloneArrayOfObjects, } from '../utils/commonds';
 
+const PADDING_TICKS = 5;
+const BAR_HEIGHT = 55;
+const BAR_THICKNESS = 44;
+const ALING_DATALABELS = 'start';
+const POSITION_TITLE = 'left';
 
 const TypeStatistic = {
   MONEY: 'MONEY',
   TYPE: 'TYPE',
-  TIME: 'TIME'
+  TIME: 'TIME',
 };
-const BAR_HEIGHT = 55;
 const FontSize = {
   TITLE: 23,
   TICKS: 13,
-  DATALABELS: 13
+  DATALABELS: 13,
 };
-const PADDING_TICKS = 5;
-const POSITION_TITLE = 'left';
 const Anchor = {
   DATASETS: 'start',
-  DATALABELS: 'end'
-};
-const Align = {
-  DATALABELS: 'start'
+  DATALABELS: 'end',
 };
 const MinWidthBar = {
   [TypeStatistic.TYPE]: 50,
   [TypeStatistic.TIME]: 100,
-  [TypeStatistic.MONEY]: 50
+  [TypeStatistic.MONEY]: 50,
 };
-const BAR_THICKNESS = 44;
 
 const Color = {
   WHITE: '#ffffff',
-  BLACK: '#000000'
+  BLACK: '#000000',
 };
 
 const getTypesPoints = (points) => points.map((point) => point.type.name.toUpperCase()).filter((type, i, arr) => arr.indexOf(type) === i);
@@ -98,7 +96,7 @@ const renderMoneyChart = (moneyCtx, points) => {
           },
           color: Color.BLACK,
           anchor: Anchor.DATALABELS,
-          align: Align.DATALABELS,
+          align: ALING_DATALABELS,
           formatter: (date) => `${date}`,
         },
       },
@@ -172,7 +170,7 @@ const renderTypeChart = (typeCtx, points) => {
           },
           color: Color.BLACK,
           anchor: Anchor.DATALABELS,
-          align: Align.DATALABELS,
+          align: ALING_DATALABELS,
           formatter: (date) => `${date}x`,
         },
       },
@@ -247,7 +245,7 @@ const renderTimeChart = (timeCtx, points) => {
           },
           color: Color.BLACK,
           anchor: Anchor.DATALABELS,
-          align: Align.DATALABELS,
+          align: ALING_DATALABELS,
           formatter: getDateDiff,
         },
       },

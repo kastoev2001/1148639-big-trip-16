@@ -1,4 +1,5 @@
-import AbstractView from '../view/site-abstract-view';
+import AbstractView from '../view/abstract-view';
+
 export const RenderPosition = {
   BEFORE_BEGIN: 'beforebegin',
   AFTER_BEGIN: 'afterbegin',
@@ -32,7 +33,7 @@ export const render = (container, element, place) => {
 };
 
 export const replace = (newElement, oldElement) => {
-  if (newElement === null || oldElement === null) {
+  if (!newElement || !oldElement) {
     throw new Error('Can\'t replace unexisting elements');
   }
 
@@ -46,7 +47,7 @@ export const replace = (newElement, oldElement) => {
 
   const parent = oldChild.parentElement;
 
-  if (parent === null) {
+  if (!parent) {
     throw new Error('Parent element doesn\'t exist');
   }
 
@@ -54,7 +55,7 @@ export const replace = (newElement, oldElement) => {
 };
 
 export const remove = (component) => {
-  if (component === null) {
+  if (!component) {
     return;
   }
 
@@ -64,6 +65,7 @@ export const remove = (component) => {
 
 export const createElement = (template) => {
   const newElement = document.createElement('div');
+
   newElement.innerHTML = template;
 
   return newElement.firstChild;

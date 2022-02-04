@@ -1,10 +1,10 @@
-import { cloneArrayOfObjects } from '../utils/commonds';
+import { cloneArrayOfObjects, } from '../utils/commonds';
 import AbstractObservable from '../utils/pattern/abstract-observable';
 
 import dayjs from 'dayjs';
-import { UpdateType } from '../const';
+import { UpdateType, } from '../const';
 
-export default class PointsModel extends AbstractObservable{
+export default class PointsModel extends AbstractObservable {
   #points = [];
   #service = null;
 
@@ -45,7 +45,7 @@ export default class PointsModel extends AbstractObservable{
       this.#points = [
         ...points.slice(0, index),
         adaptedPoint,
-        ...points.slice(index + 1)
+        ...points.slice(index + 1),
       ];
 
       this._notify(updateType, adaptedPoint);
@@ -62,7 +62,7 @@ export default class PointsModel extends AbstractObservable{
 
       this.#points = [
         newPoint,
-        ...points
+        ...points,
       ];
 
       this._notify(updateType);
@@ -84,9 +84,8 @@ export default class PointsModel extends AbstractObservable{
 
       this.#points = [
         ...points.slice(0, index),
-        ...points.slice(index + 1)
+        ...points.slice(index + 1),
       ];
-
       this._notify(updateType);
     } catch (err) {
       throw new Error('Can\'t delete point');
@@ -94,30 +93,25 @@ export default class PointsModel extends AbstractObservable{
 
     this.#points = [
       ...points.slice(0, index),
-      ...points.slice(index + 1)
+      ...points.slice(index + 1),
     ];
 
     this._notify(updateType);
   }
 
   #adaptToClient = (point) => {
-    const type = {
-      name: point.type,
-      services: point.offers.map((offer) => ({
-        ...offer,
-        service: offer.title
-      }))
-    };
-
     const adaptedPoint = {
       ...point,
       dueDate: {
         startDate: dayjs(point['date_from']),
-        endDate: dayjs(point['date_to'])
+        endDate: dayjs(point['date_to']),
       },
-      type,
+      type: {
+        name: point.type,
+        services: point.offers,
+      },
       price: point['base_price'],
-      isFavorite: point['is_favorite']
+      isFavorite: point['is_favorite'],
     };
 
     delete adaptedPoint['base_price'];

@@ -2,16 +2,16 @@ import dayjs from 'dayjs';
 
 export const getOverallPrice = (price, services) => {
   let overallPrice = Number(price);
+
   if (services !== null) {
-    services.map((service) => {
-      if (service.isChecked) {
-        overallPrice += service.price;
-      }
-    });
+    for (const service of services) {
+      overallPrice += service.price;
+    }
+
     return overallPrice;
-  } else {
-    return price;
   }
+
+  return price;
 };
 
 export const getDateDiff = (dateDiff) => {
@@ -28,13 +28,13 @@ export const getDateDiff = (dateDiff) => {
   return `${minute}M`;
 };
 
-export const isInterval = (dueDate) => dueDate && dayjs().isAfter(dueDate.startDate, 'D') && dayjs().isBefore(dueDate.endDate, 'D');
-export const isFuture = (dueDate) => dueDate && dayjs().isBefore(dueDate, 'D');
-export const isPast = (dueDate) => dueDate && dayjs().isAfter(dueDate, 'D');
-export const isPointExpiringToday = (dueDate) => dueDate && dayjs(dueDate).isSame(dayjs(), 'D');
+export const isInterval = (dueDate) => dueDate && dayjs().isAfter(dueDate.startDate, 'minute') && dayjs().isBefore(dueDate.endDate, 'minute');
+export const isFuture = (dueDate) => dueDate && dayjs().isBefore(dueDate, 'minute');
+export const isPast = (dueDate) => dueDate && dayjs().isAfter(dueDate, 'minute');
+export const isPointExpiringToday = (dueDate) => dueDate && dayjs(dueDate).isSame(dayjs(), 'minute');
 export const isDateLess = (startDate, endDate) => startDate.isAfter(endDate);
 
-export const sortPoints = (data) => [...data].sort((a, b) => b.dueDate.startDate - a.dueDate.startDate);
+export const sortPoints = (data) => [...data].sort((a, b) => a.dueDate.startDate - b.dueDate.startDate);
 export const sortPrices = (data) => [...data].sort((a, b) => getOverallPrice(b.price, b.type.services) - getOverallPrice(a.price, a.type.services));
-export const sortTimes = (data) => [...data].sort((a, b) =>  b.dueDate.endDate.diff(b.dueDate.startDate, 'minute') - a.dueDate.endDate.diff(a.dueDate.startDate, 'minute'));
+export const sortTimes = (data) => [...data].sort((a, b) => b.dueDate.endDate.diff(b.dueDate.startDate, 'minute') - a.dueDate.endDate.diff(a.dueDate.startDate, 'minute'));
 

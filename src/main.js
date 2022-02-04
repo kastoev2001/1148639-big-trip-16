@@ -1,9 +1,9 @@
-import StatisticsView from './view/site-statistics-view';
-import MenuView from './view/site-menu-view';
-import JointTripView from './view/site-joint-trip-view';
+import StatisticsView from './view/statistics-view';
+import MenuView from './view/menu-view';
 
 import TripEventsPresenter from './presenter/trip-events-presenter';
 import FilterPresenter from './presenter/filter-presenter';
+import JointTripPresetner from './presenter/joint-prip-presetner';
 
 import PointsModel from './model/points-model';
 import FilterModel from './model/filter-model';
@@ -12,9 +12,8 @@ import ServicesModel from './model/services-model';
 
 import Service from './servic';
 
-import { sortPoints } from './utils/point';
-import {RenderPosition, render, remove} from './utils/render';
-import { MenuItem } from './const';
+import { RenderPosition, render, remove, } from './utils/render';
+import { MenuItem, } from './const';
 
 const AUTHORIZATION = 'Basic lsjk3nd2af';
 const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
@@ -45,7 +44,8 @@ const pointsModel = new PointsModel(service);
 const destinationsModel = new DestinationsModel(service);
 const servicesModel = new ServicesModel(service);
 
-const filterPresenter = new FilterPresenter(filtersElement, filterModel);
+const filterPresenter = new FilterPresenter(filtersElement, filterModel, pointsModel);
+const jointTripPresetner = new JointTripPresetner(mainElement, pointsModel);
 const tripEventPresenter = new TripEventsPresenter(eventsTripsElement, pointsModel, filterModel, destinationsModel, servicesModel);
 
 const switchInTable = () => {
@@ -62,7 +62,7 @@ const switchInTable = () => {
   tripEventPresenter.init();
 };
 
-const  switchInStats = () => {
+const switchInStats = () => {
   if (statsElement.classList.contains(CLASS_TRIP_TABS_ACTIVE)) {
     return;
   }
@@ -78,7 +78,7 @@ const  switchInStats = () => {
 
 
 const menuClickHalder = (menuItem) => {
-  switch(menuItem) {
+  switch (menuItem) {
     case MenuItem.TABLE:
       switchInTable();
       break;
@@ -113,14 +113,12 @@ newPointElement.addEventListener('click', newPointClickHandler);
 tripEventPresenter.init();
 
 pointsModel.init(destinationsModel, servicesModel).finally(() => {
-  const sortedPoints = sortPoints(pointsModel.points);
 
-  const jointTripComponent = new JointTripView(sortedPoints);
 
   newPointElement.disabled = false;
 
-  render(mainElement, jointTripComponent, RenderPosition.AFTER_BEGIN);
   render(navigationElement, menuComponent, RenderPosition.BEFORE_END);
 
+  jointTripPresetner.init();
   filterPresenter.init();
 });

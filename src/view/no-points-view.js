@@ -1,4 +1,4 @@
-import AbstractView from './site-abstract-view';
+import AbstractView from './abstract-view';
 
 const createNoPointsTemplate = function (text) {
   return (
@@ -6,7 +6,7 @@ const createNoPointsTemplate = function (text) {
   );
 };
 
-export default class NoPointsWiew extends AbstractView{
+export default class NoPointsWiew extends AbstractView {
   #text = null;
 
   constructor(text) {
