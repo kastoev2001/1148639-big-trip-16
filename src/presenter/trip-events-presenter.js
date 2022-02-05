@@ -70,7 +70,7 @@ export default class TripEventsPresenter {
 
   createPoint = () => {
     this.#currentSortType = SortType.DEFAULT;
-    this.#filterModel.set(FilterType.EVERYTHING, UpdateType.MINOR);
+    this.#filterModel.set(FilterType.EVERYTHING, UpdateType.MAJOR);
 
     if (this.#noPointComponent) {
       remove(this.#noPointComponent);
@@ -94,6 +94,7 @@ export default class TripEventsPresenter {
 
     switch (actionType) {
       case UserAction.UPDATE_POINT:
+        this.#pointsInited.get(update.id).setViewState(ViewState.SAVING);
         try {
           await this.#pointsModel.update(updateType, update);
         } catch (err) {
@@ -131,8 +132,21 @@ export default class TripEventsPresenter {
 
         break;
       case UpdateType.MINOR:
-        this.#clear({ resetSortType: true });
+        this.#clear();
 
+        if (this.points.length === 0) {
+          remove(this.#sortingComponent);
+
+          this.#renderNoPoint();
+
+          return;
+        }
+
+        this.#renderPointList();
+
+        break;
+      case UpdateType.MAJOR:
+        this.#clear({ resetSortType: true });
         this.#render();
 
         break;
@@ -205,9 +219,9 @@ export default class TripEventsPresenter {
   #renderNoPoint = () => {
     const prevNoPointComponent = this.#noPointComponent;
 
-    if (this.points.length === 0) {
-      this.#filterModel.set(FilterType.EVERYTHING);
-    }
+    // if (this.points.length === 0) {
+    //   this.#filterModel.set(FilterType.EVERYTHING);
+    // }
 
     this.#noPointComponent = new NoPointView(EmptyFiter[this.#filterModel.get]);
 
