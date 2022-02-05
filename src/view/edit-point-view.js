@@ -1,77 +1,80 @@
-import SmartView from './site-smart-view';
+import SmartView from './smart-view';
 import flatpickr from 'flatpickr';
 import dayjs from 'dayjs';
 import he from 'he';
 
-import { deepPoint } from '../utils/commonds';
-import { isDateLess } from '../utils/point';
+import { deepPoint, } from '../utils/commonds';
+import { isDateLess, } from '../utils/point';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
-const createEditPointDescriptionTemplate = function (description, pictures, isDescription) {
-  return (
-    `${isDescription
-      ? `<section class="event__section  event__section--destination">
-    <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-    <p class="event__destination-description">${description}</p>
-    ${`<div class="event__photos-container">
-      <div class="event__photos-tape">
-      ${pictures.map((pics) => `<img class="event__photo" src="${pics.src}" alt="${pics.description}">`).join('')}
-      </div>
-      </div>`}
-      </section>`
-      : ''}`
-  );
-};
+const createEditPointDescriptionTemplate = (description, pictures, isDescription) => (
+  `${isDescription
+    ? `<section class="event__section  event__section--destination">
+  <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+  <p class="event__destination-description">${description}</p>
+  ${`<div class="event__photos-container">
+    <div class="event__photos-tape">
+    ${pictures.map((pics) => `<img class="event__photo" src="${pics.src}" alt="${pics.description}">`).join('')}
+    </div>
+    </div>`}
+    </section>`
+    : ''}`
+);
 
-const createEditPointServicesTemplate = function (findedservices, isServices, selectedServices, isDisabled) {
-
-  return (
-    `${isServices
-      ? `<section class="event__section  event__section--offers">
+const createEditPointServicesTemplate = (findedservices, isServices, selectedServices, isDisabled) => (
+  `${isServices
+    ? `<section class="event__section  event__section--offers">
   <h3 class="event__section-title  event__section-title--offers">Offers</h3>
   <div class="event__available-offers">
-    ${findedservices.services.map((service) => {
+  ${findedservices.services.map((service) => {
+    const serviceId = service.id;
+    const title = service.title;
+    const price = service.price;
+    const isChecked = selectedServices !== null
+      ? selectedServices.some((selectedService) => selectedService.id === serviceId)
+      : false;
 
-      const serviceId = service.id;
-      const serviceTitle = service.service;
-      const price = service.price;
-      const isChecked = selectedServices !== null
-        ? selectedServices.some((selectedService) => selectedService.service === serviceTitle)
-        : false;
-
-      return (
-        `<div class="event__offer-selector">
-           <input
-           class="event__offer-checkbox  visually-hidden"
-           id="${serviceId}" type="checkbox"
-           name="event-offer-comfort"
-           ${isChecked ? 'checked' : ''}
-           ${isDisabled ? 'disabled' : ''}>
-           <label class="event__offer-label" for="${serviceId}">
-           <span class="event__offer-title">${serviceTitle}</span>
-           &plus;&euro;&nbsp;
-           <span class="event__offer-price">${price}</span>
-         </label>
-       </div>`
-      );
-    })
-      .join('')}
-  </div>
+    return (
+      `<div class="event__offer-selector">
+        <input
+        class="event__offer-checkbox  visually-hidden"
+        id="${serviceId}" type="checkbox"
+        name="event-offer-comfort"
+        ${isChecked ? 'checked' : ''}
+        ${isDisabled ? 'disabled' : ''}>
+        <label class="event__offer-label" for="${serviceId}">
+        <span class="event__offer-title">${title}</span>
+          &plus;&euro;&nbsp;
+          <span class="event__offer-price">${price}</span>
+        </label>
+      </div>`
+    );
+  })
+    .join('')}
+    </div>
   </section>`
-      : ''}`
-  );
-};
+    : ''}`
+);
 
 const createTypesEvent = (currentType, allServices) => (allServices
   .map((type) => {
-    const checked = type.name.toLowerCase() === currentType.toLowerCase()
+    const name = type.name[0].toUpperCase() + type.name.slice(1);
+    const checked = type.name === currentType
       ? 'checked'
       : '';
+
     return (
       `<div class="event__type-item">
-        <input id="event-type-${type.name.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" ${checked} value="${type.name.toLowerCase()}">
-        <label class="event__type-label  event__type-label--${type.name.toLowerCase()}" for="event-type-${type.name.toLowerCase()}-1">${type.name}</label>
+        <input 
+        id="event-type-${type.name.toLowerCase()}-1"
+        class="event__type-input  visually-hidden"
+        type="radio"
+        name="event-type"
+        ${checked}
+        value="${type.name.toLowerCase()}">
+        <label class="event__type-label  event__type-label--${type.name.toLowerCase()}"
+        for="event-type-${type.name.toLowerCase()}-1">${name}</label>
       </div>`
     );
   })
@@ -82,7 +85,7 @@ const createDestinationListDestination = (destinationList) => (destinationList
   .join('')
 );
 
-const createEditPointTemplate = function (point = {}, allDestinations, allServices) {
+const createEditPointTemplate = (point = {}, allDestinations, allServices) => {
   const {
     type,
     destination,
@@ -91,16 +94,16 @@ const createEditPointTemplate = function (point = {}, allDestinations, allServic
     isSaving,
     isDisabled,
     price,
-    dueDate
+    dueDate,
   } = point;
-
   const selectedServices = type.services;
   const findedservices = allServices.find((service) => type.name.toUpperCase() === service.name.toUpperCase());
-  const isServices = findedservices.services !== null;
+  const isServices = findedservices
+    ? findedservices.services.length > 0
+    : false;
   const description = destination.description;
   const pictures = destination.pictures;
-  const destinationList = allDestinations.map((element) => element.name);
-
+  const destinationList = allDestinations.map((city) => city.name);
 
   const startDate = dueDate.startDate.format('DD/MM/YY hh:mm');
   const endDate = dueDate.endDate.format('DD/MM/YY hh:mm');
@@ -178,8 +181,8 @@ const createEditPointTemplate = function (point = {}, allDestinations, allServic
 };
 
 export default class EditPointView extends SmartView {
-  #allServices = null;
-  #allDestinations = null;
+  #allServices = [];
+  #allDestinations = [];
   #datepickers = [];
 
   constructor(point, allDestinations, allServices) {
@@ -197,48 +200,14 @@ export default class EditPointView extends SmartView {
     return createEditPointTemplate(this._date, this.#allDestinations, this.#allServices);
   }
 
-  removeElement = () => {
-    super.removeElement();
-
-    this.#destroyDatepickers();
-  }
-
   reset = (point) => this.updateDate(
     EditPointView.parcePointToDate(point)
   );
 
-  restoreHandlers = () => {
-    this.#setInnderHandlers();
-    this.#setDatepicker();
-    this.setPointRollupClickHandler(this._callback.pointRollupClick);
-    this.setPointFormSubmitHandler(this._callback.pointFormSubmit);
-    this.setDeleteFormClickHandler(this._callback.deleteFormClick);
-  }
+  removeElement = () => {
+    super.removeElement();
 
-  #setDatepicker = () => {
-    if  (this._date.isDisabled) {
-      return;
-    }
-
-    this.#datepickers.push(flatpickr(
-      this.element.querySelector('#event-start-time-1'),
-      {
-        enableTime: true,
-        'time_24hr': true,
-        dateFormat: 'd/m/Y H:i',
-        defaultDate: this._date.dueDate.startDate.toString(),
-        onClose: this.#startDateCloseHandler
-      }
-    ),flatpickr(
-      this.element.querySelector('#event-end-time-1'),
-      {
-        enableTime: true,
-        'time_24hr': true,
-        dateFormat: 'd/m/Y H:i',
-        minDate: this._date.dueDate.startDate.toString(),
-        defaultDate: this._date.dueDate.endDate.toString(),
-        onClose: this.#endDateCloseHandler
-      }));
+    this.#destroyDatepickers();
   }
 
   #destroyDatepickers = () => {
@@ -250,30 +219,153 @@ export default class EditPointView extends SmartView {
     this.#datepickers = [];
   }
 
+  restoreHandlers = () => {
+    this.#setInnderHandlers();
+    this.#setDatepicker();
+    this.setRollupClickHandler(this._callback.pointRollupClick);
+    this.setFormSubmitHandler(this._callback.pointFormSubmit);
+    this.setDeleteFormClickHandler(this._callback.deleteFormClick);
+  }
+
   #setInnderHandlers = () => {
     const typesEventElement = this.element.querySelector('.event__type-group');
     const destinationElement = this.element.querySelector('.event__input--destination');
     const priceElement = this.element.querySelector('.event__input--price');
+    const servicesElement = this.element.querySelector('.event__available-offers');
 
     typesEventElement.addEventListener('click', this.#typesEventClickHandler);
     destinationElement.addEventListener('input', this.#destinationInputHandler);
     priceElement.addEventListener('input', this.#priceInputHandler);
 
+    if (servicesElement) {
+      servicesElement.addEventListener('click', this.#serviceToggleEvent);
+    }
+  }
+
+  setRollupClickHandler = (callback) => {
+    if (this._date.isDisabled) {
+      return;
+    }
+
+    const pointRollupElement = this.element.querySelector('.event__rollup-btn');
+
+    this._callback.pointRollupClick = callback;
+
+    pointRollupElement.addEventListener('click', this.#rollupClickHandler);
+  }
+
+  #rollupClickHandler = (evt) => {
+    evt.preventDefault();
+
+    this._callback.pointRollupClick();
+  }
+
+  setFormSubmitHandler = (callback) => {
+    const pointForm = this.element.querySelector('form');
+
+    this._callback.pointFormSubmit = callback;
+
+    pointForm.addEventListener('submit', this.#formSubmitHandler);
+  }
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+
+    this._callback.pointFormSubmit(EditPointView.parceDateToPoint(this._date));
+  }
+
+  setDeleteFormClickHandler = (callback) => {
+    const deleteElement = this.element.querySelector('.event__reset-btn');
+
+    this._callback.deleteFormClick = callback;
+
+    deleteElement.addEventListener('click', this.#deleteFormClickHandler);
+  }
+
+  #deleteFormClickHandler = (evt) => {
+    evt.preventDefault();
+
+    this._callback.deleteFormClick(EditPointView.parceDateToPoint(this._date));
+  }
+
+  #serviceToggleEvent = (evt) => {
+    const inputElement = evt.target;
+
+    if (inputElement.tagName !== 'INPUT') {
+      return;
+    }
+
+    const selectedType = this._date.type;
+    const serviceId = Number(inputElement.id);
+    const index = selectedType.services.findIndex((service) => service.id === serviceId);
+
+    if (index >= 0) {
+      this.updateDate({
+        type: {
+          name: selectedType.name,
+          services: [
+            ...selectedType.services.slice(0, index),
+            ...selectedType.services.slice(index + 1),
+          ],
+        },
+      });
+
+      return;
+    }
+
+    const findedType = this.#allServices.find((service) => selectedType.name === service.name);
+    const selectedService = findedType.services.find((service) => service.id === serviceId);
+
+    this.updateDate({
+      type: {
+        name: selectedType.name,
+        services: [
+          ...selectedType.services,
+          selectedService,
+        ],
+      },
+    });
+  }
+
+  #setDatepicker = () => {
+    if (this._date.isDisabled) {
+      return;
+    }
+
+    this.#datepickers.push(flatpickr(
+      this.element.querySelector('#event-start-time-1'),
+      {
+        enableTime: true,
+        'time_24hr': true,
+        dateFormat: 'd/m/Y H:i',
+        defaultDate: this._date.dueDate.startDate.toString(),
+        onClose: this.#startDateCloseHandler,
+      }
+    ), flatpickr(
+      this.element.querySelector('#event-end-time-1'),
+      {
+        enableTime: true,
+        'time_24hr': true,
+        dateFormat: 'd/m/Y H:i',
+        minDate: this._date.dueDate.startDate.toString(),
+        defaultDate: this._date.dueDate.endDate.toString(),
+        onClose: this.#endDateCloseHandler,
+      }));
   }
 
   #typesEventClickHandler = (evt) => {
-
     if (evt.target.tagName !== 'INPUT') {
       return;
     }
-    const inputElement = evt.target;
 
+    const inputElement = evt.target;
     const type = this.#allServices.find((fella) => fella.name.toLowerCase() === inputElement.value.toLowerCase());
+
     this.updateDate({
       ...deepPoint(this._date),
       type: {
         name: type.name,
-        services: null
+        services: [],
       },
       isServices: false,
     });
@@ -281,6 +373,7 @@ export default class EditPointView extends SmartView {
 
   #destinationInputHandler = (evt) => {
     evt.preventDefault();
+
     const inputElement = evt.target;
 
     inputElement.value = this.#allDestinations.some((destination) => destination.name === inputElement.value)
@@ -294,12 +387,13 @@ export default class EditPointView extends SmartView {
     const findedDestination = this.#allDestinations.find((destination) => destination.name === inputElement.value);
 
     this.updateDate({
-      destination: findedDestination
+      destination: findedDestination,
     });
   }
 
   #priceInputHandler = (evt) => {
     evt.preventDefault();
+
     const inputElement = evt.target;
     const isValue = /^\d+$|^$/.test(evt.target.value);
 
@@ -308,63 +402,16 @@ export default class EditPointView extends SmartView {
       : inputElement.value.substring(0, inputElement.value.length - 1);
 
     this.updateDate({
-      price: Number(inputElement.value)
+      price: Number(inputElement.value),
     }, true);
-  }
-
-  setPointRollupClickHandler = (callback) => {
-    if  (this._date.isDisabled) {
-      return;
-    }
-
-    this._callback.pointRollupClick = callback;
-
-    const pointRollupElement = this.element.querySelector('.event__rollup-btn');
-
-    pointRollupElement.addEventListener('click', this.#pointRollupClickHandler);
-  }
-
-  #pointRollupClickHandler = (evt) => {
-    evt.preventDefault();
-
-    this._callback.pointRollupClick();
-  }
-
-  setPointFormSubmitHandler = (callback) => {
-    this._callback.pointFormSubmit = callback;
-
-    const pointForm = this.element.querySelector('form');
-
-    pointForm.addEventListener('submit', this.#pointFormSubmitHandler);
-  }
-
-  setDeleteFormClickHandler = (callback) => {
-
-    this._callback.deleteFormClick = callback;
-
-    const deleteElement = this.element.querySelector('.event__reset-btn');
-
-    deleteElement.addEventListener('click', this.#deleteFormClickHandler);
-  }
-
-  #deleteFormClickHandler = (evt) => {
-    evt.preventDefault();
-
-    this._callback.deleteFormClick(EditPointView.parceDateToPoint(this._date));
-  }
-
-  #pointFormSubmitHandler = (evt) => {
-    evt.preventDefault();
-
-    this._callback.pointFormSubmit(EditPointView.parceDateToPoint(this._date));
   }
 
   #startDateCloseHandler = ([userDate]) => {
     this.updateDate({
       dueDate: {
         startDate: dayjs(userDate),
-        endDate: isDateLess(dayjs(userDate), this._date.dueDate.endDate) ? dayjs(userDate).hour(0).minute(0).second(0) : this._date.dueDate.endDate
-      }
+        endDate: isDateLess(dayjs(userDate), this._date.dueDate.endDate) ? dayjs(userDate).hour(0).minute(0).second(0) : this._date.dueDate.endDate,
+      },
     });
   }
 
@@ -372,28 +419,29 @@ export default class EditPointView extends SmartView {
     this.updateDate({
       dueDate: {
         ...this._date.dueDate,
-        endDate: dayjs(userDate)
-      }
+        endDate: dayjs(userDate),
+      },
     });
-
   }
 
   static parcePointToDate = (point) => ({
     ...deepPoint(point),
-    isServices: point.type.services !== null,
     isDescription: point.destination.description !== null,
     isSaving: false,
     isDeleting: false,
-    isDisabled: false
+    isDisabled: false,
   });
 
   static parceDateToPoint = (date) => {
     const point = {
-      ...deepPoint(date)
+      ...deepPoint(date),
     };
 
-    delete point.isServices;
     delete point.isDescription;
+    delete point.isSaving;
+    delete point.isDeleting;
+    delete point.isDisabled;
+
 
     return point;
   };
