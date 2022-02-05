@@ -45,14 +45,14 @@ const createEditPointServicesTemplate = (findedservices, isServices, selectedSer
         ${isDisabled ? 'disabled' : ''}>
         <label class="event__offer-label" for="${serviceId}">
         <span class="event__offer-title">${title}</span>
-        &plus;&euro;&nbsp;
-        <span class="event__offer-price">${price}</span>
-       </label>
-     </div>`
+          &plus;&euro;&nbsp;
+          <span class="event__offer-price">${price}</span>
+        </label>
+      </div>`
     );
   })
     .join('')}
-  </div>
+    </div>
   </section>`
     : ''}`
 );
@@ -96,7 +96,6 @@ const createEditPointTemplate = (point = {}, allDestinations, allServices) => {
     price,
     dueDate,
   } = point;
-
   const selectedServices = type.services;
   const findedservices = allServices.find((service) => type.name.toUpperCase() === service.name.toUpperCase());
   const isServices = findedservices
@@ -105,7 +104,6 @@ const createEditPointTemplate = (point = {}, allDestinations, allServices) => {
   const description = destination.description;
   const pictures = destination.pictures;
   const destinationList = allDestinations.map((city) => city.name);
-
 
   const startDate = dueDate.startDate.format('DD/MM/YY hh:mm');
   const endDate = dueDate.endDate.format('DD/MM/YY hh:mm');
@@ -202,21 +200,30 @@ export default class EditPointView extends SmartView {
     return createEditPointTemplate(this._date, this.#allDestinations, this.#allServices);
   }
 
+  reset = (point) => this.updateDate(
+    EditPointView.parcePointToDate(point)
+  );
+
   removeElement = () => {
     super.removeElement();
 
     this.#destroyDatepickers();
   }
 
-  reset = (point) => this.updateDate(
-    EditPointView.parcePointToDate(point)
-  );
+  #destroyDatepickers = () => {
+    if (this.#datepickers.length === 0) {
+      return;
+    }
+
+    this.#datepickers.forEach((datepicker) => datepicker.destroy());
+    this.#datepickers = [];
+  }
 
   restoreHandlers = () => {
     this.#setInnderHandlers();
     this.#setDatepicker();
-    this.setPointRollupClickHandler(this._callback.pointRollupClick);
-    this.setPointFormSubmitHandler(this._callback.pointFormSubmit);
+    this.setRollupClickHandler(this._callback.pointRollupClick);
+    this.setFormSubmitHandler(this._callback.pointFormSubmit);
     this.setDeleteFormClickHandler(this._callback.deleteFormClick);
   }
 
@@ -235,13 +242,60 @@ export default class EditPointView extends SmartView {
     }
   }
 
+  setRollupClickHandler = (callback) => {
+    if (this._date.isDisabled) {
+      return;
+    }
+
+    const pointRollupElement = this.element.querySelector('.event__rollup-btn');
+
+    this._callback.pointRollupClick = callback;
+
+    pointRollupElement.addEventListener('click', this.#rollupClickHandler);
+  }
+
+  #rollupClickHandler = (evt) => {
+    evt.preventDefault();
+
+    this._callback.pointRollupClick();
+  }
+
+  setFormSubmitHandler = (callback) => {
+    const pointForm = this.element.querySelector('form');
+
+    this._callback.pointFormSubmit = callback;
+
+    pointForm.addEventListener('submit', this.#formSubmitHandler);
+  }
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+
+    this._callback.pointFormSubmit(EditPointView.parceDateToPoint(this._date));
+  }
+
+  setDeleteFormClickHandler = (callback) => {
+    const deleteElement = this.element.querySelector('.event__reset-btn');
+
+    this._callback.deleteFormClick = callback;
+
+    deleteElement.addEventListener('click', this.#deleteFormClickHandler);
+  }
+
+  #deleteFormClickHandler = (evt) => {
+    evt.preventDefault();
+
+    this._callback.deleteFormClick(EditPointView.parceDateToPoint(this._date));
+  }
+
   #serviceToggleEvent = (evt) => {
     const inputElement = evt.target;
+
     if (inputElement.tagName !== 'INPUT') {
       return;
     }
-    const selectedType = this._date.type;
 
+    const selectedType = this._date.type;
     const serviceId = Number(inputElement.id);
     const index = selectedType.services.findIndex((service) => service.id === serviceId);
 
@@ -266,8 +320,8 @@ export default class EditPointView extends SmartView {
       type: {
         name: selectedType.name,
         services: [
-          selectedService,
           ...selectedType.services,
+          selectedService,
         ],
       },
     });
@@ -299,23 +353,14 @@ export default class EditPointView extends SmartView {
       }));
   }
 
-  #destroyDatepickers = () => {
-    if (this.#datepickers.length === 0) {
-      return;
-    }
-
-    this.#datepickers.forEach((datepicker) => datepicker.destroy());
-    this.#datepickers = [];
-  }
-
   #typesEventClickHandler = (evt) => {
-
     if (evt.target.tagName !== 'INPUT') {
       return;
     }
-    const inputElement = evt.target;
 
+    const inputElement = evt.target;
     const type = this.#allServices.find((fella) => fella.name.toLowerCase() === inputElement.value.toLowerCase());
+
     this.updateDate({
       ...deepPoint(this._date),
       type: {
@@ -328,6 +373,7 @@ export default class EditPointView extends SmartView {
 
   #destinationInputHandler = (evt) => {
     evt.preventDefault();
+
     const inputElement = evt.target;
 
     inputElement.value = this.#allDestinations.some((destination) => destination.name === inputElement.value)
@@ -347,6 +393,7 @@ export default class EditPointView extends SmartView {
 
   #priceInputHandler = (evt) => {
     evt.preventDefault();
+
     const inputElement = evt.target;
     const isValue = /^\d+$|^$/.test(evt.target.value);
 
@@ -357,53 +404,6 @@ export default class EditPointView extends SmartView {
     this.updateDate({
       price: Number(inputElement.value),
     }, true);
-  }
-
-  setPointRollupClickHandler = (callback) => {
-    if (this._date.isDisabled) {
-      return;
-    }
-
-    this._callback.pointRollupClick = callback;
-
-    const pointRollupElement = this.element.querySelector('.event__rollup-btn');
-
-    pointRollupElement.addEventListener('click', this.#pointRollupClickHandler);
-  }
-
-  #pointRollupClickHandler = (evt) => {
-    evt.preventDefault();
-
-    this._callback.pointRollupClick();
-  }
-
-  setPointFormSubmitHandler = (callback) => {
-    this._callback.pointFormSubmit = callback;
-
-    const pointForm = this.element.querySelector('form');
-
-    pointForm.addEventListener('submit', this.#pointFormSubmitHandler);
-  }
-
-  setDeleteFormClickHandler = (callback) => {
-
-    this._callback.deleteFormClick = callback;
-
-    const deleteElement = this.element.querySelector('.event__reset-btn');
-
-    deleteElement.addEventListener('click', this.#deleteFormClickHandler);
-  }
-
-  #deleteFormClickHandler = (evt) => {
-    evt.preventDefault();
-
-    this._callback.deleteFormClick(EditPointView.parceDateToPoint(this._date));
-  }
-
-  #pointFormSubmitHandler = (evt) => {
-    evt.preventDefault();
-
-    this._callback.pointFormSubmit(EditPointView.parceDateToPoint(this._date));
   }
 
   #startDateCloseHandler = ([userDate]) => {
@@ -422,7 +422,6 @@ export default class EditPointView extends SmartView {
         endDate: dayjs(userDate),
       },
     });
-
   }
 
   static parcePointToDate = (point) => ({

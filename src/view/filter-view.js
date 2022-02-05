@@ -42,15 +42,15 @@ export default class FilterView extends AbstractView {
     return createFilterTemplate(this.#filters, this.#currentFilter);
   }
 
-  setFilterTypeChangeHandler = (callback) => {
-    this._callback.filterTypeChangeHandler = callback;
-
+  setTypeChangeHandler = (callback) => {
     const filtersElement = this.element;
 
-    filtersElement.addEventListener('click', this.#filterTypeChangeHandler);
+    this._callback.filterTypeChangeHandler = callback;
+
+    filtersElement.addEventListener('click', this.#typeChangeHandler);
   }
 
-  #filterTypeChangeHandler = (evt) => {
+  #typeChangeHandler = (evt) => {
     if (evt.target.tagName !== 'INPUT') {
       return;
     }

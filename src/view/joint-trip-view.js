@@ -1,7 +1,6 @@
 import AbstractView from './abstract-view';
 
 const createStartAndEndTrip = (date) => {
-
   if (!date) {
     return (
       `<p class="trip-info__dates"></p>
@@ -12,15 +11,20 @@ const createStartAndEndTrip = (date) => {
   const endDate = date.end;
   const startDate = date.start;
 
+  let pathTime;
+
   if (startDate.month() === endDate.month()) {
-    return `<p class="trip-info__dates">${startDate.format('MMM D')} — ${endDate.format('D')}</p>`;
+    pathTime = `<p class="trip-info__dates">${startDate.format('MMM D')} — ${endDate.format('D')}</p>`;
+
+    return pathTime;
   }
 
-  return `<p class="trip-info__dates">${startDate.format('MMM D')} — ${endDate.format('MMM D')}</p>`;
+  pathTime = `<p class="trip-info__dates">${startDate.format('MMM D')} — ${endDate.format('MMM D')}</p>`;
+
+  return pathTime;
 };
 
 const createAllPath = (cities) => {
-
   let allPath;
 
   if (cities.length > 3) {
@@ -35,7 +39,6 @@ const createAllPath = (cities) => {
 };
 
 const createJointTripTemplate = (overallPrice, cities, date) => {
-
   const allPath = createAllPath(cities);
   const startAndEndTrip = createStartAndEndTrip(date);
 

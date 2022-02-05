@@ -16,10 +16,12 @@ const Destination = {
     { src: 'http://picsum.photos/300/200?r=0.05754116582269897', description: 'Chamonix central station' },
   ]
 };
+const TYPE_NAME = 'taxi';
+
 
 const BLANK_POINT = {
   type: {
-    name: 'taxi',
+    name: TYPE_NAME,
     services: []
   },
   destination: {
@@ -57,35 +59,19 @@ export default class PointNewPresenter {
       return;
     }
 
-    const services = this.#servicesModel.services;
-    const destinations = this.#destinationsModel.destinations;
     const point = BLANK_POINT;
+    const services = this.#servicesModel.get;
+    const destinations = this.#destinationsModel.get;
 
     this.#editPointComponent = new EditPointView(point, destinations, services);
 
-    this.#editPointComponent.setPointRollupClickHandler(this.#pointRollupClickHandler);
+    this.#editPointComponent.setRollupClickHandler(this.#rollupClickHandler);
     this.#editPointComponent.setDeleteFormClickHandler(this.#deleteFormClickHandler);
-    this.#editPointComponent.setPointFormSubmitHandler(this.#pointFormSubmitHandler);
+    this.#editPointComponent.setFormSubmitHandler(this.#formSubmitHandler);
 
     render(this.#pointListComponent, this.#editPointComponent, RenderPosition.AFTER_BEGIN);
 
     document.addEventListener('keydown', this.#escKeyDownHandler);
-
-  }
-
-  destroy = () => {
-    if (!this.#editPointComponent) {
-      return;
-    }
-
-    const newPointElement = document.querySelector('.trip-main__event-add-btn');
-
-    newPointElement.disabled = false;
-
-    remove(this.#editPointComponent);
-    this.#editPointComponent = null;
-
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
   setSaving = () => {
@@ -107,6 +93,21 @@ export default class PointNewPresenter {
     this.#editPointComponent.shake(resetFormState);
   }
 
+  destroy = () => {
+    if (!this.#editPointComponent) {
+      return;
+    }
+
+    const newPointElement = document.querySelector('.trip-main__event-add-btn');
+
+    newPointElement.disabled = false;
+
+    remove(this.#editPointComponent);
+    this.#editPointComponent = null;
+
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
+  }
+
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
@@ -118,7 +119,7 @@ export default class PointNewPresenter {
     this.destroy();
   }
 
-  #pointFormSubmitHandler = (update) => {
+  #formSubmitHandler = (update) => {
     this.#changeData(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
@@ -126,7 +127,7 @@ export default class PointNewPresenter {
     );
   }
 
-  #pointRollupClickHandler = () => {
+  #rollupClickHandler = () => {
     this.destroy();
   }
 }

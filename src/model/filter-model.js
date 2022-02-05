@@ -4,12 +4,13 @@ import { FilterType } from '../const';
 export default class FilterModel extends AbstractObservable {
   #filter = FilterType.EVERYTHING;
 
-  get filter() {
+  get get() {
     return this.#filter;
   }
 
-  setFilter = (filter, updateType = null) => {
+  set = (filter, updateType = null) => {
     this.#filter = filter;
+
     if (updateType) {
       this._notify(updateType);
     }

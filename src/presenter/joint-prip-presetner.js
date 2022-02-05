@@ -19,22 +19,21 @@ export default class JointTripPresetner {
   }
 
   get points() {
-    return sortPoints(cloneArrayOfObjects(this.#pointsModel.points));
+    return sortPoints(cloneArrayOfObjects(this.#pointsModel.get));
   }
 
   init = () => {
     const points = this.points;
 
-    let prevJointTripComponent = this.#jointTripComponent;
+    const prevJointTripComponent = this.#jointTripComponent;
 
     if (points.length === 0) {
-      remove(prevJointTripComponent);
+      remove(this.#jointTripComponent);
 
-      prevJointTripComponent = null;
+      this.#jointTripComponent = null;
 
       return;
     }
-
 
     const overallPrice = this.#getOverallPraceTrip(points);
     const cities = this.#getCities(points);

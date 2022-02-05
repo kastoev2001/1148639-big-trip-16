@@ -2,7 +2,7 @@ import PointView from '../view/point-view';
 import EditPointView from '../view/edit-point-view';
 
 import { deepPoint, } from '../utils/commonds';
-import {remove, render, RenderPosition, replace,} from '../utils/render';
+import { remove, render, RenderPosition, replace, } from '../utils/render';
 import { UpdateType, UserAction, ViewState, } from '../const';
 
 const Mode = {
@@ -34,8 +34,8 @@ export default class PointPresenter {
   }
 
   init = (point) => {
-    const allDestinations = this.#destinationsModel.destinations;
-    const allServices = this.#servicesModel.services;
+    const allDestinations = this.#destinationsModel.get;
+    const allServices = this.#servicesModel.get;
     this.#point = point;
 
     const prevPointComponent = this.#pointComponent;
@@ -44,10 +44,10 @@ export default class PointPresenter {
     this.#pointComponent = new PointView(point);
     this.#editPointComponent = new EditPointView(point, allDestinations, allServices);
 
-    this.#pointComponent.setPointExpandClickHandler(this.#pointExpandClickHandler);
+    this.#pointComponent.setExpandClickHandler(this.#expandClickHandler);
     this.#pointComponent.setFavoriteClickHandler(this.#favoriteClickHandler);
-    this.#editPointComponent.setPointRollupClickHandler(this.#pointRollupClickHandler);
-    this.#editPointComponent.setPointFormSubmitHandler(this.#pointFormSubmitHandler);
+    this.#editPointComponent.setRollupClickHandler(this.#rollupClickHandler);
+    this.#editPointComponent.setFormSubmitHandler(this.#formSubmitHandler);
     this.#editPointComponent.setDeleteFormClickHandler(this.#deleteFormClickHandler);
 
     if (!prevPointComponent || !prevEditPointComponent) {
@@ -67,11 +67,6 @@ export default class PointPresenter {
     remove(prevEditPointComponent);
   }
 
-  destroy = () => {
-    remove(this.#pointComponent);
-    remove(this.#editPointComponent);
-  }
-
   setViewState = (viewState) => {
     const resetFormState = () => {
       this.#editPointComponent.updateDate({
@@ -87,16 +82,19 @@ export default class PointPresenter {
           isSaving: true,
           isDisabled: true,
         });
+
         break;
       case ViewState.DELETING:
         this.#editPointComponent.updateDate({
           isDeleting: true,
           isDisabled: true,
         });
+
         break;
       case ViewState.ABORTING:
         this.#pointComponent.shake(resetFormState);
         this.#editPointComponent.shake(resetFormState);
+
         break;
     }
   }
@@ -107,28 +105,40 @@ export default class PointPresenter {
     }
   }
 
+  destroy = () => {
+    remove(this.#pointComponent);
+    remove(this.#editPointComponent);
+  }
+
   #replacePointToForm = () => {
     replace(this.#editPointComponent, this.#pointComponent);
+
     document.addEventListener('keydown', this.#escKeyDownHandler);
+
     this.#changeMode();
+
     this.#mode = Mode.EDITING;
   }
 
   #replaceFormToPoint = () => {
     this.#editPointComponent.reset(this.#point);
+
     replace(this.#pointComponent, this.#editPointComponent);
+
     document.removeEventListener('keydown', this.#escKeyDownHandler);
+
     this.#mode = Mode.DEFAULT;
   }
 
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
+
       this.#replaceFormToPoint();
     }
   }
 
-  #pointFormSubmitHandler = (point) => {
+  #formSubmitHandler = (point) => {
     this.#changeData(
       UserAction.UPDATE_POINT,
       UpdateType.MINOR,
@@ -144,11 +154,11 @@ export default class PointPresenter {
     );
   }
 
-  #pointExpandClickHandler = () => {
+  #expandClickHandler = () => {
     this.#replacePointToForm();
   }
 
-  #pointRollupClickHandler = () => {
+  #rollupClickHandler = () => {
     this.#replaceFormToPoint();
   }
 
@@ -156,7 +166,7 @@ export default class PointPresenter {
     this.#changeData(
       UserAction.UPDATE_POINT,
       UpdateType.PATCH,
-      {...this.#point, isFavorite: !this.#point.isFavorite},
+      { ...this.#point, isFavorite: !this.#point.isFavorite },
     );
   }
 }

@@ -5,7 +5,7 @@ const Method = {
   DELETE: 'DELETE',
 };
 
-export default class Service {
+export default class ApiService {
   #endPoint = null;
   #authorization = null;
 
@@ -16,17 +16,17 @@ export default class Service {
 
   get points() {
     return this.#load({ url: 'points', })
-      .then(Service.parseResponse);
+      .then(ApiService.parseResponse);
   }
 
   get services() {
     return this.#load({ url: 'offers', })
-      .then(Service.parseResponse);
+      .then(ApiService.parseResponse);
   }
 
   get destinations() {
     return this.#load({ url: 'destinations', })
-      .then(Service.parseResponse);
+      .then(ApiService.parseResponse);
   }
 
   updatePoint = async (point) => {
@@ -36,8 +36,7 @@ export default class Service {
       body: JSON.stringify(this.#adaptToServer(point)),
       headers: new Headers({ 'Content-Type': 'application/json', }),
     });
-
-    const parsedResponse = await Service.parseResponse(response);
+    const parsedResponse = await ApiService.parseResponse(response);
 
     return parsedResponse;
   }
@@ -49,8 +48,7 @@ export default class Service {
       body: JSON.stringify(this.#adaptToServer(point)),
       headers: new Headers({ 'Content-Type': 'application/json', }),
     });
-
-    const parsedResponse = await Service.parseResponse(response);
+    const parsedResponse = await ApiService.parseResponse(response);
 
     return parsedResponse;
   }
@@ -78,18 +76,11 @@ export default class Service {
     );
 
     try {
-      Service.checkStatus(response);
+      ApiService.checkStatus(response);
+
       return response;
     } catch (err) {
-      Service.catchError(err);
-    }
-  }
-
-  static parseResponse = (response) => response.json();
-
-  static checkStatus = (response) => {
-    if (!response.ok) {
-      throw new Error(`${response.status}: ${response.statusText}`);
+      ApiService.catchError(err);
     }
   }
 
@@ -110,6 +101,14 @@ export default class Service {
     delete adaptedPoint.services;
 
     return adaptedPoint;
+  }
+
+  static parseResponse = (response) => response.json();
+
+  static checkStatus = (response) => {
+    if (!response.ok) {
+      throw new Error(`${response.status}: ${response.statusText}`);
+    }
   }
 
   static catchError = (err) => {

@@ -4,7 +4,7 @@ const createEmptyPointsTemplate = (text) => (
   `<p class="trip-events__msg">${text}"</p>`
 );
 
-export default class EmptyPointsWiew extends AbstractView {
+export default class EmptyPointsView extends AbstractView {
   #text = null;
 
   constructor(text) {

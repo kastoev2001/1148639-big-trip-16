@@ -10,7 +10,7 @@ import FilterModel from './model/filter-model';
 import DestinationsModel from './model/destinations-model';
 import ServicesModel from './model/services-model';
 
-import Service from './servic';
+import ApiService from './api-service';
 
 import { RenderPosition, render, remove, } from './utils/render';
 import { MenuItem, } from './const';
@@ -35,9 +35,7 @@ const menuComponent = new MenuView();
 const tableElement = menuComponent.element.querySelector(`[data-menu-item=${MenuItem.TABLE}]`);
 const statsElement = menuComponent.element.querySelector(`[data-menu-item=${MenuItem.STATS}]`);
 
-let statisticsComponent = null;
-
-const service = new Service(END_POINT, AUTHORIZATION);
+const service = new ApiService(END_POINT, AUTHORIZATION);
 
 const filterModel = new FilterModel();
 const pointsModel = new PointsModel(service);
@@ -48,6 +46,8 @@ const filterPresenter = new FilterPresenter(filtersElement, filterModel, pointsM
 const jointTripPresetner = new JointTripPresetner(mainElement, pointsModel);
 const tripEventPresenter = new TripEventsPresenter(eventsTripsElement, pointsModel, filterModel, destinationsModel, servicesModel);
 
+let statisticsComponent = null;
+
 const switchInTable = () => {
 
   if (tableElement.classList.contains(CLASS_TRIP_TABS_ACTIVE)) {
@@ -57,7 +57,9 @@ const switchInTable = () => {
   eventsTripsElement.classList.remove(CLASS_TRIP_EVENTS_HIDDEN);
   tableElement.classList.add(CLASS_TRIP_TABS_ACTIVE);
   statsElement.classList.remove(CLASS_TRIP_TABS_ACTIVE);
+
   remove(statisticsComponent);
+
   filterPresenter.init();
   tripEventPresenter.init();
 };
@@ -69,15 +71,17 @@ const switchInStats = () => {
 
   tableElement.classList.remove(CLASS_TRIP_TABS_ACTIVE);
   statsElement.classList.add(CLASS_TRIP_TABS_ACTIVE);
+  eventsTripsElement.classList.add(CLASS_TRIP_EVENTS_HIDDEN);
+
   filterPresenter.destroy();
   tripEventPresenter.destroy();
-  eventsTripsElement.classList.add(CLASS_TRIP_EVENTS_HIDDEN);
-  statisticsComponent = new StatisticsView(pointsModel.points);
+
+  statisticsComponent = new StatisticsView(pointsModel.get);
+
   render(mainBodyElement, statisticsComponent, RenderPosition.BEFORE_END);
 };
 
-
-const menuClickHalder = (menuItem) => {
+const tabsClickHalder = (menuItem) => {
   switch (menuItem) {
     case MenuItem.TABLE:
       switchInTable();
@@ -88,10 +92,9 @@ const menuClickHalder = (menuItem) => {
   }
 };
 
-menuComponent.setMenuClickHandler(menuClickHalder);
-
 const newPointClickHandler = (evt) => {
   evt.preventDefault();
+
   if (statsElement.classList.contains(CLASS_TRIP_TABS_ACTIVE)) {
     switchInTable();
 
@@ -103,8 +106,11 @@ const newPointClickHandler = (evt) => {
 
   tripEventPresenter.createPoint();
   filterPresenter.init();
+
   newPointElement.disabled = true;
 };
+
+menuComponent.setTabsClickHandler(tabsClickHalder);
 
 newPointElement.disabled = true;
 
@@ -113,8 +119,6 @@ newPointElement.addEventListener('click', newPointClickHandler);
 tripEventPresenter.init();
 
 pointsModel.init(destinationsModel, servicesModel).finally(() => {
-
-
   newPointElement.disabled = false;
 
   render(navigationElement, menuComponent, RenderPosition.BEFORE_END);

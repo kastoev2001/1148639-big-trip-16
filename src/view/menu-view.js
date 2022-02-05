@@ -8,20 +8,19 @@ const createMenuTemplate = () => (
 );
 
 export default class MenuView extends AbstractView {
-
   get template() {
     return createMenuTemplate();
   }
 
-  setMenuClickHandler = (callback) => {
+  setTabsClickHandler = (callback) => {
     this._callback.menuClick = callback;
 
-    const tripTabsElement = this.element;
+    const tabsElement = this.element;
 
-    tripTabsElement.addEventListener('click', this.#menuClickHandler);
+    tabsElement.addEventListener('click', this.#TabsClickHandler);
   }
 
-  #menuClickHandler = (evt) => {
+  #TabsClickHandler = (evt) => {
     const linkElement = evt.target;
     const chengedMemuItem = Object.values(MenuItem).some((item) => item === linkElement.dataset.menuItem)
       ? linkElement.dataset.menuItem

@@ -20,12 +20,18 @@ export const getDateDiff = (dateDiff) => {
   const minute = dateDiff % 60;
 
   if (day > 0) {
-    return `${day}Д ${hour}Ч ${minute}М`;
+    const timeInDays = `${day}Д ${hour}Ч ${minute}М`;
+
+    return timeInDays;
   } else if (hour > 0) {
-    return `${hour}Ч ${minute}М`;
+    const timeInHours = `${hour}Ч ${minute}М`;
+
+    return timeInHours;
   }
 
-  return `${minute}M`;
+  const timeInMinutes = `${minute}M`;
+
+  return timeInMinutes;
 };
 
 export const isInterval = (dueDate) => dueDate && dayjs().isAfter(dueDate.startDate, 'minute') && dayjs().isBefore(dueDate.endDate, 'minute');

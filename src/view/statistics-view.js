@@ -141,7 +141,6 @@ const renderMoneyChart = (moneyCtx, points) => {
 };
 
 const renderTypeChart = (typeCtx, points) => {
-
   const types = getTypesPoints(points);
   const countTypesPoints = geTypesCount(types, points);
 
@@ -215,9 +214,7 @@ const renderTypeChart = (typeCtx, points) => {
 };
 
 const renderTimeChart = (timeCtx, points) => {
-
   const types = getTypesPoints(points);
-
   const dates = getDates(types, points);
 
   timeCtx.height = `${BAR_HEIGHT * types.length}`;
@@ -312,7 +309,9 @@ export default class StatisticsView extends AbstractView {
 
   constructor(points) {
     super();
+
     this.#points = [...cloneArrayOfObjects(points)];
+
     this.#setCharts();
   }
 

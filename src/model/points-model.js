@@ -13,9 +13,14 @@ export default class PointsModel extends AbstractObservable {
     this.#service = service;
   }
 
+  get get() {
+    return this.#points;
+  }
+
   init = async (destinationsModel, servicesModel) => {
     await destinationsModel.init();
     await servicesModel.init();
+
     try {
       const points = await this.#service.points;
       this.#points = points.map(this.#adaptToClient);
@@ -26,11 +31,7 @@ export default class PointsModel extends AbstractObservable {
     this._notify(UpdateType.INIT);
   }
 
-  get points() {
-    return this.#points;
-  }
-
-  updatePoint = async (updateType, update) => {
+  update = async (updateType, update) => {
     const points = cloneArrayOfObjects(this.#points);
     const index = points.findIndex((point) => point.id === update.id);
 
@@ -54,8 +55,9 @@ export default class PointsModel extends AbstractObservable {
     }
   }
 
-  addPoint = async (updateType, update) => {
+  add = async (updateType, update) => {
     const points = cloneArrayOfObjects(this.#points);
+
     try {
       const response = await this.#service.addPoint(update);
       const newPoint = this.#adaptToClient(response);
@@ -71,7 +73,7 @@ export default class PointsModel extends AbstractObservable {
     }
   }
 
-  deletePoint = async (updateType, update) => {
+  delete = async (updateType, update) => {
     const points = cloneArrayOfObjects(this.#points);
     const index = points.findIndex((point) => point.id === update.id);
 
@@ -86,6 +88,7 @@ export default class PointsModel extends AbstractObservable {
         ...points.slice(0, index),
         ...points.slice(index + 1),
       ];
+
       this._notify(updateType);
     } catch (err) {
       throw new Error('Can\'t delete point');

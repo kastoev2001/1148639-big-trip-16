@@ -6,13 +6,14 @@ export default class ServicesModel {
     this.#service = service;
   }
 
-  get services() {
+  get get() {
     return this.#services;
   }
 
   init = async () => {
     try {
       const services = await this.#service.services;
+
       this.#services = services.map(this.#adaptToClient);
     } catch(err) {
       this.#services = [];
@@ -26,6 +27,5 @@ export default class ServicesModel {
     };
 
     return adaptedService;
-
   }
 }

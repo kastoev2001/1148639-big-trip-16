@@ -2,24 +2,20 @@ import AbstractView from './abstract-view';
 import { getDateDiff } from '../utils/point';
 import { getOverallPrice } from '../utils/point';
 
-const createServicesTemplate = function (services) {
-  return services.map((service) => {
+const createServicesTemplate = (services) => services.map((service) => {
+  const serviceTitle = service.title;
+  const price = service.price;
 
-    const serviceTitle = service.title;
-    const price = service.price;
-
-
-    return `<li class="event__offer">
+  return `<li class="event__offer">
     <span class="event__offer-title">${serviceTitle}</span>
       &plus;&euro;&nbsp;
     <span class="event__offer-price">${price}</span>
     </li>`;
-  })
-    .filter((descriptionService) => descriptionService !== null)
-    .join('');
-};
+})
+  .filter((descriptionService) => descriptionService !== null)
+  .join('');
 
-export const createPointTemplate = function (point) {
+export const createPointTemplate = (point) => {
   const {
     type,
     destination,
@@ -91,6 +87,7 @@ export default class PointView extends AbstractView {
 
   constructor(point) {
     super();
+
     this.#point = point;
   }
 
@@ -98,24 +95,26 @@ export default class PointView extends AbstractView {
     return createPointTemplate(this.#point);
   }
 
-  setPointExpandClickHandler = (callback) => {
-    this._callback.pointExpandClick = callback;
-
+  setExpandClickHandler = (callback) => {
     const pointExpandElement = this.element.querySelector('.event__rollup-btn');
 
-    pointExpandElement.addEventListener('click', this.#pointExpandClickHandler);
+    this._callback.pointExpandClick = callback;
+
+    pointExpandElement.addEventListener('click', this.#expandClickHandler);
   }
 
-  #pointExpandClickHandler = (evt) => {
+  #expandClickHandler = (evt) => {
     evt.preventDefault();
 
     this._callback.pointExpandClick();
   }
 
   setFavoriteClickHandler = (callback) => {
+    const favoriteElement = this.element.querySelector('.event__favorite-btn');
+
     this._callback.favoriteClick = callback;
 
-    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteClickHandler);
+    favoriteElement.addEventListener('click', this.#favoriteClickHandler);
   }
 
   #favoriteClickHandler = (evt) => {

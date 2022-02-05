@@ -25,11 +25,12 @@ export default class FilterPresenter {
   }
 
   get points() {
-    return cloneArrayOfObjects(this.#pointsModel.points);
+    return cloneArrayOfObjects(this.#pointsModel.get);
   }
 
   get filters() {
     const points = this.points;
+
     return [
       {
         type: FilterType.EVERYTHING,
@@ -52,8 +53,8 @@ export default class FilterPresenter {
     const filters = this.filters;
     const prevFilterComponent = this.#filterComponent;
 
-    this.#filterComponent = new FilterView(filters, this.#filterModel.filter);
-    this.#filterComponent.setFilterTypeChangeHandler(this.#filterTypeChangeHandler);
+    this.#filterComponent = new FilterView(filters, this.#filterModel.get);
+    this.#filterComponent.setTypeChangeHandler(this.#typeChangeHandler);
 
     if (!prevFilterComponent) {
       render(this.#filtersContainer, this.#filterComponent, RenderPosition.BEFORE_END);
@@ -68,21 +69,19 @@ export default class FilterPresenter {
     remove(this.#filterComponent);
     this.#filterComponent = null;
 
-    this.#filterModel.setFilter(FilterType.EVERYTHING, FilterType.EVERYTHING);
-
+    this.#filterModel.set(FilterType.EVERYTHING, FilterType.EVERYTHING);
   }
 
   #handleModelEvent = () => {
-
     this.init();
   }
 
-  #filterTypeChangeHandler = (filterType) => {
-    if (this.#filterModel.filter === filterType) {
+  #typeChangeHandler = (filterType) => {
+    if (this.#filterModel.get === filterType) {
       return;
     }
 
-    this.#filterModel.setFilter(filterType, UpdateType.MINOR);
+    this.#filterModel.set(filterType, UpdateType.MINOR);
   }
 
 }
