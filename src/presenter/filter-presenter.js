@@ -69,7 +69,7 @@ export default class FilterPresenter {
     remove(this.#filterComponent);
     this.#filterComponent = null;
 
-    this.#filterModel.set(FilterType.EVERYTHING, FilterType.EVERYTHING);
+    this.#filterModel.set(FilterType.EVERYTHING);
   }
 
   #handleModelEvent = () => {
