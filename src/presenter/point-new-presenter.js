@@ -1,21 +1,57 @@
-import EditPointView from '../view/site-edit-point-view';
+import EditPointView from '../view/edit-point-view';
+import dayjs from 'dayjs';
 
-import { nanoid } from 'nanoid';
+import { deepPoint, } from '../utils/commonds';
+import { remove, render, RenderPosition, } from '../utils/render';
 
-import { deepPoint } from '../utils/commonds';
-import {remove, render, RenderPosition} from '../utils/render';
+import { UserAction, UpdateType, } from '../const';
 
-import { UserAction, UpdateType } from '../const';
+const Destination = {
+  NAME: 'Chamonix',
+  DESTINATION: 'Chamonix, in a middle of Europe, middle-eastern paradise, famous for its crowded street markets with the best street food in Asia.',
+  PICTURES: [
+    { src: 'http://picsum.photos/300/200?r=0.5442767253004888', description: 'Chamonix zoo' },
+    { src: 'http://picsum.photos/300/200?r=0.9459422561320008', description: 'Chamonix city centre' },
+    { src: 'http://picsum.photos/300/200?r=0.14330792188576758', description: 'Chamonix park' },
+    { src: 'http://picsum.photos/300/200?r=0.05754116582269897', description: 'Chamonix central station' },
+  ]
+};
+const TYPE_NAME = 'taxi';
 
-export default class PointPresenter {
-  #pointListComponent = null
-  #changeData = null
+
+const BLANK_POINT = {
+  type: {
+    name: TYPE_NAME,
+    services: []
+  },
+  destination: {
+    name: Destination.NAME,
+    description: Destination.DESTINATION,
+    pictures: Destination.PICTURES,
+  },
+  price: 0,
+  dueDate: {
+    startDate: dayjs(),
+    endDate: dayjs(),
+  },
+  isFavorite: false,
+};
+
+export default class PointNewPresenter {
+  #pointListComponent = null;
+  #changeData = null;
+
+  #destinationsModel = null;
+  #servicesModel = null;
 
   #editPointComponent = null;
 
-  constructor(pointListComponent, changeData) {
+  constructor(pointListComponent, changeData, destinationsModel, servicesModel) {
     this.#pointListComponent = pointListComponent;
     this.#changeData = changeData;
+
+    this.#destinationsModel = destinationsModel;
+    this.#servicesModel = servicesModel;
   }
 
   init = () => {
@@ -23,20 +59,42 @@ export default class PointPresenter {
       return;
     }
 
-    this.#editPointComponent = new EditPointView();
+    const point = BLANK_POINT;
+    const services = this.#servicesModel.get;
+    const destinations = this.#destinationsModel.get;
 
-    this.#editPointComponent.setPointRollupClickHandler(this.#pointRollupClickHandler);
+    this.#editPointComponent = new EditPointView(point, destinations, services);
+
+    this.#editPointComponent.setRollupClickHandler(this.#rollupClickHandler);
     this.#editPointComponent.setDeleteFormClickHandler(this.#deleteFormClickHandler);
-    this.#editPointComponent.setPointFormSubmitHandler(this.#pointFormSubmitHandler);
+    this.#editPointComponent.setFormSubmitHandler(this.#formSubmitHandler);
 
     render(this.#pointListComponent, this.#editPointComponent, RenderPosition.AFTER_BEGIN);
 
     document.addEventListener('keydown', this.#escKeyDownHandler);
+  }
 
+  setSaving = () => {
+    this.#editPointComponent.updateDate({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
+  setAborting = () => {
+    const resetFormState = () => {
+      this.#editPointComponent.updateDate({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#editPointComponent.shake(resetFormState);
   }
 
   destroy = () => {
-    if (this.#editPointComponent === null) {
+    if (!this.#editPointComponent) {
       return;
     }
 
@@ -61,16 +119,15 @@ export default class PointPresenter {
     this.destroy();
   }
 
-  #pointFormSubmitHandler = (update) => {
+  #formSubmitHandler = (update) => {
     this.#changeData(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      {id: nanoid(), ...deepPoint(update)}
+      { ...deepPoint(update) },
     );
-    this.destroy();
   }
 
-  #pointRollupClickHandler = () => {
+  #rollupClickHandler = () => {
     this.destroy();
   }
 }

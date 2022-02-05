@@ -6,13 +6,14 @@ export default class ServicesModel {
     this.#service = service;
   }
 
-  get services() {
+  get get() {
     return this.#services;
   }
 
   init = async () => {
     try {
       const services = await this.#service.services;
+
       this.#services = services.map(this.#adaptToClient);
     } catch(err) {
       this.#services = [];
@@ -22,15 +23,9 @@ export default class ServicesModel {
   #adaptToClient = (service) => {
     const adaptedService = {
       name: service.type,
-      services: service.offers.length !== 0 ? service.offers.map((offer) => ({
-        id: offer.id,
-        service: offer.title,
-        price: offer.price})) : null
+      services: service.offers,
     };
 
-    delete adaptedService['title'];
-
     return adaptedService;
-
   }
 }

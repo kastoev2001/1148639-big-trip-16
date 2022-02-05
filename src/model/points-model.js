@@ -1,10 +1,10 @@
-import { cloneArrayOfObjects } from '../utils/commonds';
+import { cloneArrayOfObjects, } from '../utils/commonds';
 import AbstractObservable from '../utils/pattern/abstract-observable';
 
 import dayjs from 'dayjs';
-import { UpdateType } from '../const';
+import { UpdateType, } from '../const';
 
-export default class PointsModel extends AbstractObservable{
+export default class PointsModel extends AbstractObservable {
   #points = [];
   #service = null;
 
@@ -13,9 +13,14 @@ export default class PointsModel extends AbstractObservable{
     this.#service = service;
   }
 
+  get get() {
+    return this.#points;
+  }
+
   init = async (destinationsModel, servicesModel) => {
     await destinationsModel.init();
     await servicesModel.init();
+
     try {
       const points = await this.#service.points;
       this.#points = points.map(this.#adaptToClient);
@@ -26,11 +31,7 @@ export default class PointsModel extends AbstractObservable{
     this._notify(UpdateType.INIT);
   }
 
-  get points() {
-    return this.#points;
-  }
-
-  updatePoint = async (updateType, update) => {
+  update = async (updateType, update) => {
     const points = cloneArrayOfObjects(this.#points);
     const index = points.findIndex((point) => point.id === update.id);
 
@@ -45,16 +46,34 @@ export default class PointsModel extends AbstractObservable{
       this.#points = [
         ...points.slice(0, index),
         adaptedPoint,
-        ...points.slice(index + 1)
+        ...points.slice(index + 1),
       ];
 
-      this._notify(updateType);
+      this._notify(updateType, adaptedPoint);
     } catch (err) {
       throw new Error('Can\t update point');
     }
   }
 
-  deletePoint = (updateType, update) => {
+  add = async (updateType, update) => {
+    const points = cloneArrayOfObjects(this.#points);
+
+    try {
+      const response = await this.#service.addPoint(update);
+      const newPoint = this.#adaptToClient(response);
+
+      this.#points = [
+        newPoint,
+        ...points,
+      ];
+
+      this._notify(updateType);
+    } catch (err) {
+      throw new Error('Can\t add point');
+    }
+  }
+
+  delete = async (updateType, update) => {
     const points = cloneArrayOfObjects(this.#points);
     const index = points.findIndex((point) => point.id === update.id);
 
@@ -62,47 +81,47 @@ export default class PointsModel extends AbstractObservable{
       throw new Error('Can\'t delete undexisting point');
     }
 
+    try {
+      await this.#service.deletePoint(update);
+
+      this.#points = [
+        ...points.slice(0, index),
+        ...points.slice(index + 1),
+      ];
+
+      this._notify(updateType);
+    } catch (err) {
+      throw new Error('Can\'t delete point');
+    }
+
     this.#points = [
       ...points.slice(0, index),
-      ...points.slice(index + 1)
-    ];
-
-    this._notify(updateType);
-  }
-
-  addPoint = (updateType, update) => {
-    const points = cloneArrayOfObjects(this.#points);
-    this.#points = [
-      update,
-      ...points
+      ...points.slice(index + 1),
     ];
 
     this._notify(updateType);
   }
 
   #adaptToClient = (point) => {
-    const type = {
-      name: point.type,
-      services: point.offers.map((offer) => ({
-        ...offer,
-        service: offer.title
-      }))
-    };
-
     const adaptedPoint = {
-      id: point.id,
+      ...point,
       dueDate: {
         startDate: dayjs(point['date_from']),
-        endDate: dayjs(point['date_to'])
+        endDate: dayjs(point['date_to']),
       },
-      type,
+      type: {
+        name: point.type,
+        services: point.offers,
+      },
       price: point['base_price'],
-      destination: {
-        ...point.destination,
-      },
-      isFavorite: point['is_favorite']
+      isFavorite: point['is_favorite'],
     };
 
+    delete adaptedPoint['base_price'];
+    delete adaptedPoint['date_from'];
+    delete adaptedPoint['date_to'];
+    delete adaptedPoint['is_favorite'];
+    delete adaptedPoint['offers'];
 
     return adaptedPoint;
   }

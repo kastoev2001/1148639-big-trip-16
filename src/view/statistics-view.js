@@ -1,45 +1,45 @@
-import AbstractView from './site-abstract-view';
+import AbstractView from './abstract-view';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import dayjs from 'dayjs';
 
-import { getDateDiff } from '../utils/point';
-import { cloneArrayOfObjects } from '../utils/commonds';
+import { getDateDiff, } from '../utils/point';
+import { cloneArrayOfObjects, } from '../utils/commonds';
 
+const PADDING_TICKS = 5;
+const BAR_HEIGHT = 55;
+const BAR_THICKNESS = 44;
+const ALING_DATALABELS = 'start';
+const POSITION_TITLE = 'left';
 
 const TypeStatistic = {
   MONEY: 'MONEY',
   TYPE: 'TYPE',
-  TIME: 'TIME'
+  TIME: 'TIME',
 };
-const BAR_HEIGHT = 55;
 const FontSize = {
   TITLE: 23,
   TICKS: 13,
-  DATALABELS: 13
+  DATALABELS: 13,
 };
-const PADDING_TICKS = 5;
-const POSITION_TITLE = 'left';
 const Anchor = {
   DATASETS: 'start',
-  DATALABELS: 'end'
-};
-const Align = {
-  DATALABELS: 'start'
+  DATALABELS: 'end',
 };
 const MinWidthBar = {
   [TypeStatistic.TYPE]: 50,
   [TypeStatistic.TIME]: 100,
-  [TypeStatistic.MONEY]: 50
+  [TypeStatistic.MONEY]: 50,
 };
-const BAR_THICKNESS = 44;
 
 const Color = {
   WHITE: '#ffffff',
-  BLACK: '#000000'
+  BLACK: '#000000',
 };
 
-const getcountTimesPoints = (types, points) => {
+const getTypesPoints = (points) => points.map((point) => point.type.name.toUpperCase()).filter((type, i, arr) => arr.indexOf(type) === i);
+
+const getDates = (types, points) => {
   const typesPoints = types
     .map((type) => points.filter((point) => point.type.name.toUpperCase() === type));
 
@@ -56,16 +56,22 @@ const getcountTimesPoints = (types, points) => {
   return dates;
 };
 
-const getTypesPoints = (points) => points.map((point) => point.type.name.toUpperCase()).filter((type, i, arr) => arr.indexOf(type) === i);
+const geTypesCount = (types, points) => (types
+  .map((type) => points.filter((point) => point.type.name.toUpperCase() === type))
+  .map((typesPoints) => typesPoints.reduce((a) => a + 1, 0))
+);
+
+const getPrices = (types, points) => (types
+  .map((type) => points.filter((point) => point.type.name.toUpperCase() === type))
+  .map((typesPoints) => typesPoints.reduce((a, b) => a + b.price, 0))
+);
+
 
 const renderMoneyChart = (moneyCtx, points) => {
   const types = getTypesPoints(points);
+  const prices = getPrices(types, points);
 
-  const countPricesTypesPoints = types
-    .map((type) => points.filter((point) => point.type.name.toUpperCase() === type))
-    .map((typesPoints) => typesPoints.reduce((a, b) => a + b.price,0));
-
-  moneyCtx.height =  `${BAR_HEIGHT * types.length}`;
+  moneyCtx.height = `${BAR_HEIGHT * types.length}`;
 
   return new Chart(moneyCtx, {
     plugins: [ChartDataLabels],
@@ -73,7 +79,7 @@ const renderMoneyChart = (moneyCtx, points) => {
     data: {
       labels: types,
       datasets: [{
-        data: countPricesTypesPoints,
+        data: prices,
         backgroundColor: Color.WHITE,
         hoverBackgroundColor: Color.WHITE,
         anchor: Anchor.DATASETS,
@@ -90,7 +96,7 @@ const renderMoneyChart = (moneyCtx, points) => {
           },
           color: Color.BLACK,
           anchor: Anchor.DATALABELS,
-          align: Align.DATALABELS,
+          align: ALING_DATALABELS,
           formatter: (date) => `${date}`,
         },
       },
@@ -135,12 +141,8 @@ const renderMoneyChart = (moneyCtx, points) => {
 };
 
 const renderTypeChart = (typeCtx, points) => {
-
   const types = getTypesPoints(points);
-
-  const countTypesPoints = types
-    .map((type) => points.filter((point) => point.type.name.toUpperCase() === type))
-    .map((typesPoints) => typesPoints.reduce((a) => a + 1,0));
+  const countTypesPoints = geTypesCount(types, points);
 
   typeCtx.height = `${BAR_HEIGHT * types.length}`;
 
@@ -167,7 +169,7 @@ const renderTypeChart = (typeCtx, points) => {
           },
           color: Color.BLACK,
           anchor: Anchor.DATALABELS,
-          align: Align.DATALABELS,
+          align: ALING_DATALABELS,
           formatter: (date) => `${date}x`,
         },
       },
@@ -212,10 +214,8 @@ const renderTypeChart = (typeCtx, points) => {
 };
 
 const renderTimeChart = (timeCtx, points) => {
-
   const types = getTypesPoints(points);
-
-  const countTimePoints = getcountTimesPoints(types, points);
+  const dates = getDates(types, points);
 
   timeCtx.height = `${BAR_HEIGHT * types.length}`;
 
@@ -225,7 +225,7 @@ const renderTimeChart = (timeCtx, points) => {
     data: {
       labels: types,
       datasets: [{
-        data: countTimePoints,
+        data: dates,
         backgroundColor: Color.WHITE,
         hoverBackgroundColor: Color.WHITE,
         anchor: Anchor.DATASETS,
@@ -242,7 +242,7 @@ const renderTimeChart = (timeCtx, points) => {
           },
           color: Color.BLACK,
           anchor: Anchor.DATALABELS,
-          align: Align.DATALABELS,
+          align: ALING_DATALABELS,
           formatter: getDateDiff,
         },
       },
@@ -309,7 +309,9 @@ export default class StatisticsView extends AbstractView {
 
   constructor(points) {
     super();
+
     this.#points = [...cloneArrayOfObjects(points)];
+
     this.#setCharts();
   }
 
