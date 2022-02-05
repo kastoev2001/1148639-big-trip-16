@@ -15,16 +15,20 @@ export const getOverallPrice = (price, services) => {
 };
 
 export const getDateDiff = (dateDiff) => {
-  const day = Math.floor(dateDiff / 60 / 24);
-  const hour = Math.floor(dateDiff / 60) % 24;
-  const minute = dateDiff % 60;
+  const dayCount = Math.floor(dateDiff / 60 / 24);
+  const hourCount = Math.floor(dateDiff / 60) % 24;
+  const minuteCount = dateDiff % 60;
+
+  const day = String(dayCount).length === 2 ? dayCount : `0${dayCount}`;
+  const hour = String(hourCount).length === 2 ? hourCount : `0${hourCount}`;
+  const minute = String(minuteCount).length === 2 ? minuteCount : `0${minuteCount}`;
 
   if (day > 0) {
-    const timeInDays = `${day}Д ${hour}Ч ${minute}М`;
+    const timeInDays = `${day}D ${hour}H ${minute}M`;
 
     return timeInDays;
   } else if (hour > 0) {
-    const timeInHours = `${hour}Ч ${minute}М`;
+    const timeInHours = `${hour}H ${minute}M`;
 
     return timeInHours;
   }

@@ -81,7 +81,7 @@ export default class FilterPresenter {
       return;
     }
 
-    this.#filterModel.set(filterType, UpdateType.MINOR);
+    this.#filterModel.set(filterType, UpdateType.MAJOR);
   }
 
 }

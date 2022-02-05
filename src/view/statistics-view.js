@@ -39,37 +39,60 @@ const Color = {
 
 const getTypesPoints = (points) => points.map((point) => point.type.name.toUpperCase()).filter((type, i, arr) => arr.indexOf(type) === i);
 
-const getDates = (types, points) => {
-  const typesPoints = types
+const getDates = (points) => {
+  const typesPoints = getTypesPoints(points);
+  const pointsByType = typesPoints
     .map((type) => points.filter((point) => point.type.name.toUpperCase() === type));
-
-  const dates = typesPoints.map((typePoints) => {
-    const dateMin = Math.min.apply(null, typePoints.map((point) => point.dueDate.startDate));
+  let dates = pointsByType.map((pointsType, i) => {
+    const dateMin = Math.min.apply(null, pointsType.map((point) => point.dueDate.startDate));
     let date = dayjs(dateMin);
 
-    for (const point of typePoints) {
+    for (const point of pointsType) {
       date = date.add(point.dueDate.endDate.diff(point.dueDate.startDate, 'minute'), 'minute');
     }
-    return dayjs(date).diff(dateMin, 'minute');
+    return {
+      type: typesPoints[i],
+      date: dayjs(date).diff(dateMin, 'minute'),
+    };
   });
+
+  dates = [...dates].sort((a, b) => b.date - a.date);
 
   return dates;
 };
 
-const geTypesCount = (types, points) => (types
-  .map((type) => points.filter((point) => point.type.name.toUpperCase() === type))
-  .map((typesPoints) => typesPoints.reduce((a) => a + 1, 0))
-);
+const getTypes = (points) => {
+  const typesPoints = getTypesPoints(points);
+  const pointsByType = typesPoints.map((type) => points.filter((point) => point.type.name.toUpperCase() === type));
 
-const getPrices = (types, points) => (types
-  .map((type) => points.filter((point) => point.type.name.toUpperCase() === type))
-  .map((typesPoints) => typesPoints.reduce((a, b) => a + b.price, 0))
-);
+  let types = pointsByType.map((pointsType, i) => ({
+    type: typesPoints[i],
+    count: pointsType.reduce((a) => a + 1, 0),
+  }));
+
+  types = [...types].sort((a, b) => b.count - a.count);
+
+  return types;
+};
+
+const getMoneys = (points) => {
+  const typesPoints = getTypesPoints(points);
+  const pointsByType = typesPoints.map((type) => points.filter((point) => point.type.name.toUpperCase() === type));
+
+  let moneys = pointsByType.map((pointsType, i) => ({
+    type: typesPoints[i],
+    price: pointsType.reduce((a, b) => a + b.price, 0),
+  }));
+
+  moneys = [...moneys].sort((a, b) => b.price - a.price);
+
+  return moneys;
+};
 
 
-const renderMoneyChart = (moneyCtx, points) => {
-  const types = getTypesPoints(points);
-  const prices = getPrices(types, points);
+const renderMoneyChart = (moneyCtx, statisticDate) => {
+  const types = statisticDate.map((type) => type.type);
+  const prices = statisticDate.map((price) => price.price);
 
   moneyCtx.height = `${BAR_HEIGHT * types.length}`;
 
@@ -140,9 +163,9 @@ const renderMoneyChart = (moneyCtx, points) => {
   });
 };
 
-const renderTypeChart = (typeCtx, points) => {
-  const types = getTypesPoints(points);
-  const countTypesPoints = geTypesCount(types, points);
+const renderTypeChart = (typeCtx, statisticDate) => {
+  const types = statisticDate.map((type) => type.type);
+  const countTypes = statisticDate.map((count) => count.count);
 
   typeCtx.height = `${BAR_HEIGHT * types.length}`;
 
@@ -152,7 +175,7 @@ const renderTypeChart = (typeCtx, points) => {
     data: {
       labels: types,
       datasets: [{
-        data: countTypesPoints,
+        data: countTypes,
         backgroundColor: Color.WHITE,
         hoverBackgroundColor: Color.WHITE,
         anchor: Anchor.DATASETS,
@@ -213,9 +236,9 @@ const renderTypeChart = (typeCtx, points) => {
   });
 };
 
-const renderTimeChart = (timeCtx, points) => {
-  const types = getTypesPoints(points);
-  const dates = getDates(types, points);
+const renderTimeChart = (timeCtx, statisticDate) => {
+  const types = statisticDate.map((type) => type.type);
+  const dates = statisticDate.map((date) => date.date);
 
   timeCtx.height = `${BAR_HEIGHT * types.length}`;
 
@@ -320,12 +343,20 @@ export default class StatisticsView extends AbstractView {
   }
 
   #setCharts = () => {
+    const points = cloneArrayOfObjects(this.#points);
+
+    const StatisticDate = {
+      [TypeStatistic.MONEY]: getMoneys(points),
+      [TypeStatistic.TYPE]: getTypes(points),
+      [TypeStatistic.TIME]: getDates(points),
+    };
+
     const moneyElement = this.element.querySelector('#money');
     const typeElement = this.element.querySelector('#type');
     const timeElement = this.element.querySelector('#time');
 
-    renderMoneyChart(moneyElement, this.#points);
-    renderTypeChart(typeElement, this.#points);
-    renderTimeChart(timeElement, this.#points);
+    renderMoneyChart(moneyElement, StatisticDate[TypeStatistic.MONEY]);
+    renderTypeChart(typeElement, StatisticDate[TypeStatistic.TYPE]);
+    renderTimeChart(timeElement, StatisticDate[TypeStatistic.TIME]);
   }
 }
