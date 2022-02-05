@@ -1,25 +1,21 @@
-import AbstractView from './site-abstract-view';
+import AbstractView from './abstract-view';
 import { getDateDiff } from '../utils/point';
 import { getOverallPrice } from '../utils/point';
 
-const createServicesTemplate = function (services) {
-  return services.map((service) => {
+const createServicesTemplate = (services) => services.map((service) => {
+  const serviceTitle = service.title;
+  const price = service.price;
 
-    const serviceTitle = service.service;
-    const price = service.price;
-
-
-    return `<li class="event__offer">
+  return `<li class="event__offer">
     <span class="event__offer-title">${serviceTitle}</span>
       &plus;&euro;&nbsp;
     <span class="event__offer-price">${price}</span>
     </li>`;
-  })
-    .filter((descriptionService) => descriptionService !== null)
-    .join('');
-};
+})
+  .filter((descriptionService) => descriptionService !== null)
+  .join('');
 
-export const createPointTemplate = function (point) {
+export const createPointTemplate = (point) => {
   const {
     type,
     destination,
@@ -28,7 +24,6 @@ export const createPointTemplate = function (point) {
     isFavorite
   } = point;
   const services = type.services;
-
   const { startDate, endDate } = dueDate;
 
   const startDateHour = startDate.format('hh');
@@ -47,6 +42,7 @@ export const createPointTemplate = function (point) {
     : '';
 
   const overallPrice = getOverallPrice(price, services);
+  const servicesTemplate = createServicesTemplate(services);
 
   return (
     `<li class="trip-events__item">
@@ -69,8 +65,8 @@ export const createPointTemplate = function (point) {
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
-  ${services !== null
-      ? createServicesTemplate(services)
+  ${services.length !== 0
+      ? servicesTemplate
       : '<li class="event__offer"></li>'}
   </ul>
   <button class="event__favorite-btn ${fovoritesClassName}" type="button">
@@ -91,6 +87,7 @@ export default class PointView extends AbstractView {
 
   constructor(point) {
     super();
+
     this.#point = point;
   }
 
@@ -98,24 +95,26 @@ export default class PointView extends AbstractView {
     return createPointTemplate(this.#point);
   }
 
-  setPointExpandClickHandler = (callback) => {
-    this._callback.pointExpandClick = callback;
-
+  setExpandClickHandler = (callback) => {
     const pointExpandElement = this.element.querySelector('.event__rollup-btn');
 
-    pointExpandElement.addEventListener('click', this.#pointExpandClickHandler);
+    this._callback.pointExpandClick = callback;
+
+    pointExpandElement.addEventListener('click', this.#expandClickHandler);
   }
 
-  #pointExpandClickHandler = (evt) => {
+  #expandClickHandler = (evt) => {
     evt.preventDefault();
 
     this._callback.pointExpandClick();
   }
 
   setFavoriteClickHandler = (callback) => {
+    const favoriteElement = this.element.querySelector('.event__favorite-btn');
+
     this._callback.favoriteClick = callback;
 
-    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteClickHandler);
+    favoriteElement.addEventListener('click', this.#favoriteClickHandler);
   }
 
   #favoriteClickHandler = (evt) => {
