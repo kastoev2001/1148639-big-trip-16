@@ -6,7 +6,7 @@ export default class DestinationsModel {
     this.#service = service;
   }
 
-  get destinations() {
+  get get() {
     return this.#destinations;
   }
 

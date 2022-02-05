@@ -1,6 +1,6 @@
-import AbstractView from './site-abstract-view';
+import AbstractView from './abstract-view';
 
-import { deepPoint } from '../utils/commonds';
+import { deepPoint, } from '../utils/commonds';
 
 export default class SmartView extends AbstractView {
   _date = null;
@@ -12,7 +12,8 @@ export default class SmartView extends AbstractView {
 
     this._date = {
       ...deepPoint(this._date),
-      ...update};
+      ...update
+    };
     if (onlyDateUpdate) {
       return;
     }
@@ -23,6 +24,7 @@ export default class SmartView extends AbstractView {
   updateElement = () => {
     const prevElement = this.element;
     const parent = prevElement.parentElement;
+
     this.removeElement();
 
     const newElement = this.element;
