@@ -1,10 +1,10 @@
 import EditPointView from '../view/edit-point-view';
 import dayjs from 'dayjs';
 
-import { deepPoint, } from '../utils/commonds';
-import { remove, render, RenderPosition, } from '../utils/render';
+import { deepPoint } from '../utils/commonds';
+import { remove, render, RenderPosition } from '../utils/render';
 
-import { UserAction, UpdateType, } from '../const';
+import { UserAction, UpdateType } from '../const';
 
 const Destination = {
   NAME: 'Chamonix',

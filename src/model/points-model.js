@@ -1,8 +1,8 @@
-import { cloneArrayOfObjects, } from '../utils/commonds';
+import { cloneArrayOfObjects } from '../utils/commonds';
 import AbstractObservable from '../utils/pattern/abstract-observable';
 
 import dayjs from 'dayjs';
-import { UpdateType, } from '../const';
+import { UpdateType } from '../const';
 
 export default class PointsModel extends AbstractObservable {
   #points = [];

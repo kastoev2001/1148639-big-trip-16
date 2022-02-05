@@ -1,9 +1,9 @@
 import PointView from '../view/point-view';
 import EditPointView from '../view/edit-point-view';
 
-import { deepPoint, } from '../utils/commonds';
-import { remove, render, RenderPosition, replace, } from '../utils/render';
-import { UpdateType, UserAction, ViewState, } from '../const';
+import { deepPoint } from '../utils/commonds';
+import { remove, render, RenderPosition, replace } from '../utils/render';
+import { UpdateType, UserAction, ViewState } from '../const';
 
 const Mode = {
   DEFAULT: 'DAFAULT',

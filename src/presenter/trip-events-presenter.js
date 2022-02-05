@@ -5,11 +5,11 @@ import LoadingView from '../view/loading-view';
 import PointNewPresenter from './point-new-presenter';
 import PointPresenter from './point-presenter';
 
-import { remove, render, replace, RenderPosition, } from '../utils/render';
-import { sortPoints, sortPrices, sortTimes, } from '../utils/point';
-import { cloneArrayOfObjects, } from '../utils/commonds';
-import { Filter, } from '../utils/filter';
-import { SortType, UserAction, UpdateType, FilterType, ViewState, } from '../const';
+import { remove, render, replace, RenderPosition } from '../utils/render';
+import { sortPoints, sortPrices, sortTimes } from '../utils/point';
+import { cloneArrayOfObjects } from '../utils/commonds';
+import { Filter } from '../utils/filter';
+import { SortType, UserAction, UpdateType, FilterType, ViewState } from '../const';
 
 const EmptyFiter = {
   [FilterType.EVERYTHING]: 'Click New Event to create your first point',

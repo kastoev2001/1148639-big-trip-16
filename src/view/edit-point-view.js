@@ -3,8 +3,8 @@ import flatpickr from 'flatpickr';
 import dayjs from 'dayjs';
 import he from 'he';
 
-import { deepPoint, } from '../utils/commonds';
-import { isDateLess, } from '../utils/point';
+import { deepPoint } from '../utils/commonds';
+import { isDateLess } from '../utils/point';
 
 import 'flatpickr/dist/flatpickr.min.css';
 

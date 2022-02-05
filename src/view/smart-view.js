@@ -1,6 +1,6 @@
 import AbstractView from './abstract-view';
 
-import { deepPoint, } from '../utils/commonds';
+import { deepPoint } from '../utils/commonds';
 
 export default class SmartView extends AbstractView {
   _date = null;

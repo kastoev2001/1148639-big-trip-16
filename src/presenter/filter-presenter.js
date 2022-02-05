@@ -1,7 +1,7 @@
 import FilterView from '../view/filter-view';
 
-import { FilterType, UpdateType, } from '../const';
-import { RenderPosition, render, replace, remove, } from '../utils/render';
+import { FilterType, UpdateType } from '../const';
+import { RenderPosition, render, replace, remove } from '../utils/render';
 import { Filter } from '../utils/filter';
 import { cloneArrayOfObjects } from '../utils/commonds';
 

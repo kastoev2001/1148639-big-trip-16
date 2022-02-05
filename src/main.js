@@ -12,8 +12,8 @@ import ServicesModel from './model/services-model';
 
 import ApiService from './api-service';
 
-import { RenderPosition, render, remove, } from './utils/render';
-import { MenuItem, } from './const';
+import { RenderPosition, render, remove } from './utils/render';
+import { MenuItem } from './const';
 
 const AUTHORIZATION = 'Basic lsjk3nd2af';
 const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';

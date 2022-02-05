@@ -1,5 +1,5 @@
 import AbstractView from './abstract-view';
-import { MenuItem, } from '../const';
+import { MenuItem,} from '../const';
 const createMenuTemplate = () => (
   `<nav class="trip-controls__trip-tabs  trip-tabs">
     <a class="trip-tabs__btn  trip-tabs__btn--active" data-menu-item="${MenuItem.TABLE}" href="#">Table</a>

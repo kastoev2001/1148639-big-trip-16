@@ -3,8 +3,8 @@ import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import dayjs from 'dayjs';
 
-import { getDateDiff, } from '../utils/point';
-import { cloneArrayOfObjects, } from '../utils/commonds';
+import { getDateDiff } from '../utils/point';
+import { cloneArrayOfObjects } from '../utils/commonds';
 
 const PADDING_TICKS = 5;
 const BAR_HEIGHT = 55;
