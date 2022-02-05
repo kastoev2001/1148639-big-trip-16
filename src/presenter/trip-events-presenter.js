@@ -219,6 +219,10 @@ export default class TripEventsPresenter {
   #renderNoPoint = () => {
     const prevNoPointComponent = this.#noPointComponent;
 
+    // if (this.points.length === 0) {
+    //   this.#filterModel.set(FilterType.EVERYTHING);
+    // }
+
     this.#noPointComponent = new NoPointView(EmptyFiter[this.#filterModel.get]);
 
     if (prevNoPointComponent !== null) {
