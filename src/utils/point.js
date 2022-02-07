@@ -1,9 +1,9 @@
 import dayjs from 'dayjs';
-
+window.date = dayjs;
 export const getOverallPrice = (price, services) => {
-  let overallPrice = Number(price);
+  let overallPrice = price;
 
-  if (services !== null) {
+  if (services) {
     for (const service of services) {
       overallPrice += service.price;
     }
@@ -15,19 +15,23 @@ export const getOverallPrice = (price, services) => {
 };
 
 export const getDateDiff = (dateDiff) => {
-  const dayCount = Math.floor(dateDiff / 60 / 24);
-  const hourCount = Math.floor(dateDiff / 60) % 24;
-  const minuteCount = dateDiff % 60;
+  const DAY_IN_HOURS = 24;
+  const HOUR_IN_MINUTES = 60;
+  const DISCHARGE = 2;
 
-  const day = String(dayCount).length === 2 ? dayCount : `0${dayCount}`;
-  const hour = String(hourCount).length === 2 ? hourCount : `0${hourCount}`;
-  const minute = String(minuteCount).length === 2 ? minuteCount : `0${minuteCount}`;
+  const dayCount = Math.floor((dateDiff / HOUR_IN_MINUTES) / DAY_IN_HOURS);
+  const hourCount = Math.floor(dateDiff / HOUR_IN_MINUTES) % DAY_IN_HOURS;
+  const minuteCount = dateDiff % HOUR_IN_MINUTES;
 
-  if (day > 0) {
+  const day = String(dayCount).length === DISCHARGE ? dayCount : `0${dayCount}`;
+  const hour = String(hourCount).length === DISCHARGE ? hourCount : `0${hourCount}`;
+  const minute = String(minuteCount).length === DISCHARGE ? minuteCount : `0${minuteCount}`;
+
+  if (dayCount !== 0) {
     const timeInDays = `${day}D ${hour}H ${minute}M`;
 
     return timeInDays;
-  } else if (hour > 0) {
+  } else if (hourCount !== 0) {
     const timeInHours = `${hour}H ${minute}M`;
 
     return timeInHours;

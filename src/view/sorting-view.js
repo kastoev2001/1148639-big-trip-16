@@ -42,14 +42,15 @@ export default class SortingView extends AbstractView {
   }
 
   #typeChengeHandler = (evt) => {
-    const chengedType = Object.values(SortType).some((sortType) => sortType === evt.target.dataset.sortType)
-      ? evt.target.dataset.sortType
+    const currentSortType = evt.target.dataset.sortType;
+    const chengedType = Object.values(SortType).some((sortType) => sortType === currentSortType)
+      ? currentSortType
       : '';
 
     if (evt.target.tagName !== 'LABEL' || chengedType === '') {
       return;
     }
 
-    this._callback.sortTypeChange(evt.target.dataset.sortType);
+    this._callback.sortTypeChange(currentSortType);
   }
 }

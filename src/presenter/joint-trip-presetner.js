@@ -27,7 +27,7 @@ export default class JointTripPresetner {
 
     const prevJointTripComponent = this.#jointTripComponent;
 
-    if (points.length === 0) {
+    if (!points.length) {
       remove(this.#jointTripComponent);
 
       this.#jointTripComponent = null;
@@ -41,7 +41,7 @@ export default class JointTripPresetner {
 
     this.#jointTripComponent = new JointTripView(overallPrice, cities, date);
 
-    if (prevJointTripComponent !== null) {
+    if (prevJointTripComponent) {
       replace(this.#jointTripComponent, prevJointTripComponent);
       remove(prevJointTripComponent);
 
@@ -60,7 +60,7 @@ export default class JointTripPresetner {
     let overallPraceTrip = 0;
 
     for (const point of points) {
-      if (point.type.services !== null) {
+      if (point.type.services) {
         overallPraceTrip += point.type.services.reduce((a, b) => a + b.price, 0);
       }
       overallPraceTrip += point.price;

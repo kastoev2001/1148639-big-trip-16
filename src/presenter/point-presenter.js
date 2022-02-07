@@ -100,7 +100,7 @@ export default class PointPresenter {
   }
 
   resetPoint = () => {
-    if (this.#mode !== Mode.DEFAULT) {
+    if (this.#mode === Mode.EDITING) {
       this.#replaceFormToPoint();
     }
   }

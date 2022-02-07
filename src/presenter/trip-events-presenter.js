@@ -134,7 +134,7 @@ export default class TripEventsPresenter {
       case UpdateType.MINOR:
         this.#clear();
 
-        if (this.points.length === 0) {
+        if (!this.points.length) {
           remove(this.#sortingComponent);
 
           this.#renderNoPoint();
@@ -206,7 +206,7 @@ export default class TripEventsPresenter {
       return;
     }
 
-    if (this.points.length === 0) {
+    if (!this.points.length) {
       this.#renderNoPoint();
 
       return;
@@ -219,13 +219,9 @@ export default class TripEventsPresenter {
   #renderNoPoint = () => {
     const prevNoPointComponent = this.#noPointComponent;
 
-    // if (this.points.length === 0) {
-    //   this.#filterModel.set(FilterType.EVERYTHING);
-    // }
-
     this.#noPointComponent = new NoPointView(EmptyFiter[this.#filterModel.get]);
 
-    if (prevNoPointComponent !== null) {
+    if (prevNoPointComponent) {
       replace(this.#noPointComponent, prevNoPointComponent);
     }
 

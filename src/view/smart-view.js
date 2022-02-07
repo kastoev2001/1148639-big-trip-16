@@ -3,15 +3,15 @@ import AbstractView from './abstract-view';
 import { deepPoint } from '../utils/commonds';
 
 export default class SmartView extends AbstractView {
-  _date = null;
+  _data = null;
 
   updateDate = (update, onlyDateUpdate) => {
     if (!update) {
       return;
     }
 
-    this._date = {
-      ...deepPoint(this._date),
+    this._data = {
+      ...deepPoint(this._data),
       ...update
     };
     if (onlyDateUpdate) {

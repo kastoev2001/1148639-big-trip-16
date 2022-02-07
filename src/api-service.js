@@ -89,8 +89,8 @@ export default class ApiService {
       ...point,
       type: point.type.name,
       'base_price': point.price,
-      'date_from': point.dueDate.startDate !== null ? point.dueDate.startDate.toDate().toISOString() : null,
-      'date_to': point.dueDate.endDate !== null ? point.dueDate.endDate.toDate().toISOString() : null,
+      'date_from': point.dueDate.startDate ? point.dueDate.startDate.toDate().toISOString() : null,
+      'date_to': point.dueDate.endDate ? point.dueDate.endDate.toDate().toISOString() : null,
       'is_favorite': point.isFavorite,
       offers: point.type.services,
     };
@@ -99,6 +99,7 @@ export default class ApiService {
     delete adaptedPoint.dueDate;
     delete adaptedPoint.isFavorite;
     delete adaptedPoint.services;
+    delete adaptedPoint.isEdit;
 
     return adaptedPoint;
   }

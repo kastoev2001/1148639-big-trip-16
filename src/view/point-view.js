@@ -24,7 +24,7 @@ export const createPointTemplate = (point) => {
     isFavorite
   } = point;
   const services = type.services;
-  const { startDate, endDate } = dueDate;
+  const { endDate, startDate, } = dueDate;
 
   const startDateHour = startDate.format('hh');
   const startDateMinute = startDate.format('mm');

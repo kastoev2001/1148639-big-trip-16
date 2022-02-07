@@ -3,7 +3,7 @@ import MenuView from './view/menu-view';
 
 import TripEventsPresenter from './presenter/trip-events-presenter';
 import FilterPresenter from './presenter/filter-presenter';
-import JointTripPresetner from './presenter/joint-prip-presetner';
+import JointTripPresetner from './presenter/joint-trip-presetner';
 
 import PointsModel from './model/points-model';
 import FilterModel from './model/filter-model';

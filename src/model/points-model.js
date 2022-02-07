@@ -115,6 +115,7 @@ export default class PointsModel extends AbstractObservable {
       },
       price: point['base_price'],
       isFavorite: point['is_favorite'],
+      isEdit: true,
     };
 
     delete adaptedPoint['base_price'];

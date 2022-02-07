@@ -35,6 +35,7 @@ const BLANK_POINT = {
     endDate: dayjs(),
   },
   isFavorite: false,
+  isEdit: false,
 };
 
 export default class PointNewPresenter {
@@ -55,7 +56,7 @@ export default class PointNewPresenter {
   }
 
   init = () => {
-    if (this.#editPointComponent !== null) {
+    if (this.#editPointComponent) {
       return;
     }
 
@@ -122,7 +123,7 @@ export default class PointNewPresenter {
   #formSubmitHandler = (update) => {
     this.#changeData(
       UserAction.ADD_POINT,
-      UpdateType.MINOR,
+      UpdateType.MAJOR,
       { ...deepPoint(update) },
     );
   }

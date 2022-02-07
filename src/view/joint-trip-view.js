@@ -2,10 +2,7 @@ import AbstractView from './abstract-view';
 
 const createStartAndEndTrip = (date) => {
   if (!date) {
-    return (
-      `<p class="trip-info__dates"></p>
-      <p class="trip-info__dates"></p>`
-    );
+    return '<p class="trip-info__dates"></p>';
   }
 
   const endDate = date.end;
@@ -25,15 +22,16 @@ const createStartAndEndTrip = (date) => {
 };
 
 const createAllPath = (cities) => {
-  let allPath;
+  const LIMIT_SITIES = 3;
+  let allPath = '';
 
-  if (cities.length > 3) {
-    allPath = `${cities[0]} ... — ... ${cities[cities.length - 1]}`;
+  if (cities.length > LIMIT_SITIES) {
+    allPath = `<h1 class="trip-info__title">${cities[0]} ... — ... ${cities[cities.length - 1]}</h1>`;
 
     return allPath;
   }
 
-  allPath = cities.join(' — ');
+  allPath = `<h1 class="trip-info__title">${cities.join(' — ')}</h1>`;
 
   return allPath;
 };
