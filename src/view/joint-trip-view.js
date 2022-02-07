@@ -23,10 +23,12 @@ const createStartAndEndTrip = (date) => {
 
 const createAllPath = (cities) => {
   const LIMIT_SITIES = 3;
+  const firstCity = cities[0];
+  const lastCity = cities.length - 1;
   let allPath = '';
 
   if (cities.length > LIMIT_SITIES) {
-    allPath = `<h1 class="trip-info__title">${cities[0]} ... — ... ${cities[cities.length - 1]}</h1>`;
+    allPath = `<h1 class="trip-info__title">${firstCity} ... — ... ${cities[lastCity]}</h1>`;
 
     return allPath;
   }

@@ -65,7 +65,7 @@ export const createPointTemplate = (point) => {
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
-  ${services.length !== 0
+  ${services.length
       ? servicesTemplate
       : '<li class="event__offer"></li>'}
   </ul>
